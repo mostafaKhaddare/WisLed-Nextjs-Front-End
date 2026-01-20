@@ -20,7 +20,7 @@ export const FramedTextSection = ({ data }: { data: WhyUsAttributes }) => {
             <Box className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
               <Image
                 className="dark:invert"
-                src={tile.Image.url}
+                src={process.env.NEXT_PUBLIC_STRAPI_URL + tile.Image.url}
                 height={24}
                 width={24}
                 alt={tile.Image.alternativeText ?? `Tile icon ${id}`}

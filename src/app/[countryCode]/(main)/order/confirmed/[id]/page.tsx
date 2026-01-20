@@ -27,8 +27,8 @@ async function getOrder(id: string) {
 }
 
 export const metadata: Metadata = {
-  title: 'Order Confirmed',
-  description: 'You purchase was successful',
+  title: 'Commande Confirmée | Wisled',
+  description: 'Votre commande a été validée avec succès. Merci de faire confiance à Wisled pour vos solutions d’éclairage.',
 }
 
 export default async function OrderConfirmedPage(props: Props) {

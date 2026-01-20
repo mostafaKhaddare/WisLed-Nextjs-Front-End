@@ -1,5 +1,6 @@
 import React, { useId } from 'react'
 
+import { Menu as HeadlessMenu } from '@headlessui/react'
 import { cn } from '@lib/util/cn'
 import { composeEventHandlers } from '@lib/util/compose-event-handlers'
 import { ChevronRightIcon } from '@modules/common/icons'
@@ -279,3 +280,12 @@ export const MenuSeparator: React.FC<
   React.ComponentPropsWithoutRef<typeof Divider>
 > = ({ className, ...props }) => <Divider className={className} {...props} />
 MenuSeparator.displayName = 'MenuSeparator'
+
+/**
+ * The button that triggers the menu. Replaces Menu.Button (deprecated).
+ */
+export const MenuButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof HeadlessMenu.Button>
+>((props, ref) => <HeadlessMenu.Button ref={ref} {...props} />)
+MenuButton.displayName = 'MenuButton'

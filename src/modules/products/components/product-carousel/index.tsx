@@ -29,7 +29,7 @@ export function ProductCarousel({
   testId,
 }: ProductCarouselProps) {
   return (
-    <Container className="overflow-hidden" data-testid={testId}>
+    <Container className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500 overflow-x-auto" data-testid={testId}>
       <Box className="flex flex-col gap-6 small:gap-12">
         <CarouselWrapper title={title} productsCount={products.length}>
           <Box className="flex gap-2">

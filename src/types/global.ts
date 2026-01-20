@@ -29,6 +29,15 @@ export type ProductFilters = {
     value: string
   }[]
 }
+export type CategoryImage = {
+  id?: string
+
+  url: string
+
+  type: 'thumbnail' | 'image'
+
+  category_id?: string
+}
 
 export type SearchedProduct = {
   id: string

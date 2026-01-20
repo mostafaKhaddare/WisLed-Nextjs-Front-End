@@ -62,7 +62,7 @@ export default function ProductFiltersDrawer({ children }: PropsWithChildren) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
       <DialogTrigger asChild>
-        <Button variant="tonal" className="flex small:hidden">
+        <Button size='sm'   variant="filled" className="flex !py-2 small:hidden">
           <FilterIcon />
           Filters
         </Button>

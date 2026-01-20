@@ -20,8 +20,8 @@ export default function ActiveFilterItem({
   handleRemoveFilter,
 }: ActiveFilterItemProps) {
   return (
-    <Box className="flex items-start gap-4 medium:items-center">
-      <Label className="text-secondary">{label}:</Label>
+    <Box className="flex items-center gap-4 medium:items-center">
+      <Label className="text-secondary ">{label}:</Label>
       <Box className="flex flex-wrap gap-2">
         {options
           ?.sort((a, b) =>
@@ -31,11 +31,11 @@ export default function ActiveFilterItem({
             <Chips
               key={id}
               rightIcon={<XIcon />}
-              className="cursor-inherit"
+              className="cursor-inherit p-1"
               selected
               onClick={() => handleRemoveFilter(filterKey, option.id)}
             >
-              <p className="text-center">{option.value}</p>
+              <p className="text-center">{option.value} </p>
             </Chips>
           ))}
       </Box>

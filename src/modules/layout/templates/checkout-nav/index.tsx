@@ -3,7 +3,7 @@ import { Button } from '@modules/common/components/button'
 import { Container } from '@modules/common/components/container'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Text } from '@modules/common/components/text'
-import { ArrowLeftIcon, SolaceLogo } from '@modules/common/icons'
+import { ArrowLeftIcon, WisLedLogo } from '@modules/common/icons'
 
 export default function CheckoutNav() {
   return (
@@ -29,7 +29,7 @@ export default function CheckoutNav() {
       </Box>
       <Box className="flex items-center justify-end small:flex-1 small:justify-center">
         <LocalizedClientLink href="/">
-          <SolaceLogo className="h-6 small:h-7" />
+          <WisLedLogo className="h-6 small:h-7" />
         </LocalizedClientLink>
       </Box>
       <div className="hidden flex-1 basis-0 small:flex" />

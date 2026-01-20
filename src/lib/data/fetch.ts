@@ -2,6 +2,7 @@ import {
   AboutUsData,
   BlogData,
   BlogPost,
+  CategoriesData,
   CollectionsData,
   ContentPageData,
   FAQData,
@@ -40,7 +41,9 @@ export const getHeroBannerData = async (): Promise<HeroBannerData> => {
     }
   )
 
-  return res.json()
+  const data = await res.json()
+
+  return data
 }
 
 export const getMidBannerData = async (): Promise<MidBannerData> => {
@@ -51,7 +54,9 @@ export const getMidBannerData = async (): Promise<MidBannerData> => {
     }
   )
 
-  return res.json()
+  const data = await res.json()
+
+  return data
 }
 
 export const getCollectionsData = async (): Promise<CollectionsData> => {
@@ -62,6 +67,12 @@ export const getCollectionsData = async (): Promise<CollectionsData> => {
   return res.json()
 }
 
+export const getCategoriesData = async (): Promise<CategoriesData> => {
+  const res = await fetchStrapiClient(`/api/categories?&populate=*`, {
+    next: { tags: ['collections-main'] },
+  })
+  return res.json()
+}
 export const getExploreBlogData = async (): Promise<BlogData> => {
   const res = await fetchStrapiClient(
     `/api/blogs?populate[1]=FeaturedImage&sort=createdAt:desc&pagination[start]=0&pagination[limit]=3`,

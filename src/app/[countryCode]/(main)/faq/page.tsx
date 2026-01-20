@@ -9,9 +9,9 @@ import SidebarBookmarks from '@modules/content/components/sidebar-bookmarks'
 import StoreBreadcrumbs from '@modules/store/templates/breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'FAQs',
+  title: 'FAQs | Wisled',
   description:
-    'Find quick answers to common questions about our products/services.',
+      'Trouvez rapidement les réponses aux questions fréquentes concernant nos produits/services.',
 }
 
 export default async function FAQPage() {
@@ -31,7 +31,7 @@ export default async function FAQPage() {
       <Container className="!py-8">
         <StoreBreadcrumbs breadcrumb="Frequently asked questions" />
         <Heading as="h1" className="mt-4 text-4xl medium:text-5xl">
-          Frequently asked questions
+          Questions fréquentes
         </Heading>
         <Box className="mt-6 grid grid-cols-12 medium:mt-12">
           <Box className="col-span-12 mb-10 medium:col-span-3 medium:mb-0">

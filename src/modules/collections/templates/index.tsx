@@ -5,6 +5,7 @@ import { storeSortOptions } from '@lib/constants'
 import { getCollectionByHandle } from '@lib/data/collections'
 import { getProductsList, getStoreFilters } from '@lib/data/products'
 import { getRegion } from '@lib/data/regions'
+import { getProductPrice } from '@lib/util/get-product-price'
 import { StoreCollection } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'
@@ -28,8 +29,8 @@ export default async function CollectionTemplate({
   searchParams: Record<string, string>
   params: { countryCode: string; handle: string }
 }) {
-  const { sortBy, page, type, material, price } = searchParams
-  const { countryCode, handle } = params
+  const { sortBy, page, type, material, price } = await searchParams
+  const { countryCode, handle } = await params
 
   const region = await getRegion(countryCode)
   if (!region) notFound()
@@ -42,15 +43,81 @@ export default async function CollectionTemplate({
   const pageNumber = page ? parseInt(page) : 1
   const filters = await getStoreFilters()
 
-  const { results, count } = await search({
-    currency_code: region.currency_code,
-    order: sortBy,
-    page: pageNumber,
-    collection: [currentCollection.id],
-    type: type?.split(','),
-    material: material?.split(','),
-    price: price?.split(','),
-  })
+  let results: any[] = []
+  let count = 0
+  try {
+    const searchResponse = await search({
+      currency_code: region.currency_code,
+      order: sortBy,
+      page: pageNumber,
+      collection: [currentCollection.id],
+      type: type?.split(','),
+      material: material?.split(','),
+      price: price?.split(','),
+    })
+    results = searchResponse.results
+    count = searchResponse.count
+  } catch (_) {
+    const queryParams: any = {
+      limit: 12,
+      order:
+        sortBy === 'price_asc'
+          ? 'calculated_price'
+          : sortBy === 'price_desc'
+            ? '-calculated_price'
+            : sortBy === 'created_at'
+              ? '-created_at'
+              : sortBy,
+      collection_id: [currentCollection.id],
+    }
+
+    if (type) queryParams.type_id = type.split(',')
+    if (material) queryParams.materials = material.split(',')
+
+    if (price) {
+      const ranges = price.split(',')
+      if (ranges.includes('under-100')) {
+        queryParams.price_to = 100
+      }
+      if (ranges.includes('100-500')) {
+        queryParams.price_from = 100
+        queryParams.price_to = 500
+      }
+      if (ranges.includes('501-1000')) {
+        queryParams.price_from = 501
+        queryParams.price_to = 1000
+      }
+      if (ranges.includes('more-than-1000')) {
+        queryParams.price_from = 1000
+      }
+    }
+
+    const { products: fallbackProducts, count: fallbackCount } =
+      await getProductsList({
+        pageParam: pageNumber,
+        queryParams,
+        countryCode: countryCode,
+      }).then(({ response }) => response)
+
+    const shaped = fallbackProducts.map((product: any) => {
+      const prices = getProductPrice({ product })
+      const cheapest = prices?.cheapestPrice
+      return {
+        id: product.id,
+        title: product.title,
+        handle: product.handle,
+        thumbnail: product.thumbnail,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+        calculated_price: cheapest?.calculated_price_number?.toString() ?? '0',
+        sale_price: cheapest?.original_price_number?.toString() ?? '0',
+        regular_price: cheapest?.original_price_number?.toString() ?? '0',
+      }
+    })
+
+    results = shaped
+    count = fallbackCount ?? shaped.length
+  }
 
   // TODO: Add logic in future
   const { products: recommendedProducts } = await getProductsList({

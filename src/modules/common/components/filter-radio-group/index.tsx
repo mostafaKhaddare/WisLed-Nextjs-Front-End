@@ -21,7 +21,7 @@ const FilterRadioGroup = ({
       {items?.map((item) => (
         <Label
           key={item.value}
-          className="grid cursor-pointer grid-cols-[25px_1fr] items-center space-x-2 p-3"
+          className="grid cursor-pointer grid-cols-[25px_1fr] items-center space-x-2 p-3 rounded-md transition-colors duration-200 hover:bg-secondary/10"
         >
           <input
             type="radio"

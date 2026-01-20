@@ -10,9 +10,9 @@ import { MDXRemote } from '@modules/mdx/MDXRemote'
 import StoreBreadcrumbs from '@modules/store/templates/breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions',
+  title: 'Conditions Générales',
   description:
-    'Review the terms governing the use of our website, products and services, including user responsibilities, legal rights, and policies.',
+    'Consultez les conditions d\'utilisation régissant notre site web, nos produits et services, notamment les responsabilités des utilisateurs, les droits juridiques et nos politiques.',
 }
 
 export default async function TermsAndConditionsPage() {
@@ -34,7 +34,7 @@ export default async function TermsAndConditionsPage() {
       <Container className="!py-8">
         <StoreBreadcrumbs breadcrumb="Terms & Conditions" />
         <Heading as="h1" className="mt-4 text-4xl medium:text-5xl">
-          Terms & Conditions
+          Conditions Générales
         </Heading>
         <Box className="mt-6 grid grid-cols-12 medium:mt-12">
           <Box className="col-span-12 mb-10 medium:col-span-3 medium:mb-0">

@@ -81,7 +81,7 @@ export const getProductsList = async function ({
       },
       { next: { tags: ['products'] } }
     )
-    .then(({ products }) => {
+    .then(({ products, count: totalCount }) => {
       const filteredProducts = products.filter((product) => {
         if (product.variants.length === 1) {
           return product.variants[0].inventory_quantity > 0
@@ -89,13 +89,14 @@ export const getProductsList = async function ({
         return product.variants.length > 1
       })
 
-      const filteredCount = filteredProducts.length
-      const nextPage = filteredCount > offset + limit ? pageParam + 1 : null
+      // Use the total count from the API, not the filtered count
+      // The filtered products are just for the current page
+      const nextPage = filteredProducts.length === limit && (offset + limit) < totalCount ? pageParam + 1 : null
 
       return {
         response: {
           products: filteredProducts,
-          count: filteredCount,
+          count: totalCount, // Use total count from API
         },
         nextPage: nextPage,
         queryParams,

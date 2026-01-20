@@ -57,7 +57,7 @@ const Sorting = ({ options, sortBy, setQueryParams }: SortingProps) => {
             }
           />
         </SelectTrigger>
-        <SelectContent className="w-[200px]">
+        <SelectContent className="w-[100px]">
           {options.map((option, index) => (
             <SelectItem
               key={index}
@@ -69,11 +69,11 @@ const Sorting = ({ options, sortBy, setQueryParams }: SortingProps) => {
           ))}
         </SelectContent>
       </Select>
-      <div className="relative z-20 flex w-full justify-end small:hidden">
+      <div className="relative z-20  w-full justify-start small:hidden">
         <Menu as="div">
           {({ close }) => (
             <>
-              <Menu.Button className="flex w-full items-center justify-center gap-2 rounded-full bg-fg-secondary py-3.5 text-md text-basic-primary">
+              <Menu.Button className=" rounded-3xl text-md px-4 py-3 transition-all duration-150 ease-in-out flex gap-2 h-9 w-full items-center justify-center bg-fg-primary hover:bg-fg-primary-hover active:bg-fg-primary-pressed text-inverse-primary">
                 <SortIcon />
                 Sort
               </Menu.Button>

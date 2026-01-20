@@ -17,15 +17,16 @@ export function ExploreBlog({ posts }: { posts: BlogPost[] }) {
   })
 
   return (
-    <Container className="overflow-hidden" data-testid="get-inspired-section">
+    <Container className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500 overflow-x-auto" data-testid="get-inspired-section">
       <Box className="flex flex-col gap-6 small:gap-12">
         <Box className="flex items-center justify-between">
-          <Heading
-            as="h2"
-            className="text-2xl text-basic-primary small:text-3xl"
-          >
-            Get inspired
-          </Heading>
+        
+            <Heading
+    as="h2"
+    className=" text-2xl font-bold text-basic-primary small:text-3xl"
+  >
+   Inspirez-vous
+  </Heading>
           <Button className="hidden w-max large:flex" variant="tonal" asChild>
             <LocalizedClientLink href="/blog">Read more</LocalizedClientLink>
           </Button>
@@ -48,10 +49,9 @@ export function ExploreBlog({ posts }: { posts: BlogPost[] }) {
         </div>
         <Button
           className="mx-auto flex w-max large:hidden"
-          variant="tonal"
           asChild
         >
-          <LocalizedClientLink href="/blog">Read more</LocalizedClientLink>
+          <LocalizedClientLink href="/blog">Afficher tout</LocalizedClientLink>
         </Button>
       </Box>
     </Container>

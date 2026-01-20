@@ -2,7 +2,13 @@ import { sdk } from '@lib/config'
 
 export const listCategories = async function () {
   return sdk.store.category
-    .list({ fields: '+category_children' }, { next: { tags: ['categories'] } })
+    .list(
+      {
+        fields:
+          '*category_children, *products, *parent_category, *parent_category.parent_category, *product_category_image',
+      },
+      { next: { tags: ['categories'] } }
+    )
     .then(({ product_categories }) => product_categories)
 }
 
@@ -18,11 +24,19 @@ export const getCategoriesList = async function (
   )
 }
 
-export const getCategoryByHandle = async function (categoryHandle: string[]) {
+export const getCategoryByHandle = async function (
+  categoryHandle: string[] | string
+) {
+  const handleParam = Array.isArray(categoryHandle)
+    ? categoryHandle[categoryHandle.length - 1]
+    : categoryHandle
+
   return sdk.store.category.list(
-    // TODO: Look into fixing the type
-    // @ts-ignore
-    { handle: categoryHandle },
+    {
+      handle: handleParam,
+      fields:
+        '*category_children, *products, *parent_category, *parent_category.parent_category, *product_category_image',
+    },
     { next: { tags: ['categories'] } }
   )
 }

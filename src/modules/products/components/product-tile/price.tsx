@@ -6,20 +6,20 @@ export default function ProductPrice({
   salePrice,
 }: {
   calculatedPrice: string
-  salePrice: string
+  salePrice?: string
 }) {
   if (!calculatedPrice) {
     return null
   }
 
   return (
-    <Box className="flex items-center justify-center gap-2">
-      {salePrice !== calculatedPrice && (
-        <Text size="md" className="text-secondary line-through">
+    <Box className="flex items-center justify-start gap-2">
+      {salePrice && (
+        <Text className="text-md text-action-primary  order-2 line-through" size="md">
           {salePrice}
         </Text>
       )}
-      <Text className="font-bold text-basic-primary" size="lg">
+      <Text className="font-bold text-lg order-1 text-action-primary  " size="lg">
         {calculatedPrice}
       </Text>
     </Box>

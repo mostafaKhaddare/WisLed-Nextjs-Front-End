@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 
 import { Button } from '@modules/common/components/button'
@@ -27,7 +29,7 @@ export const RecentSearches = ({
       {searches.length ? (
         searches.map((search, id) => {
           return (
-            <Button key={id} variant="text" asChild className="w-min">
+            <Button key={id} variant="text" asChild className="w-full justify-start">
               <div className="flex gap-4">
                 <SearchIcon />
                 <LocalizedClientLink

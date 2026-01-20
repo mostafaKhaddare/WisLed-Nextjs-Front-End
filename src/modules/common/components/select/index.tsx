@@ -90,7 +90,7 @@ export const SelectTrigger = React.forwardRef<HTMLButtonElement, TriggerProps>(
         ref={ref}
         onClick={() => context.setIsOpen(!context.isOpen)}
         className={cn(
-          'border-primary flex w-full items-center justify-between gap-2 border !bg-secondary px-4 py-3 text-md text-basic-primary focus-within:ring-0 focus-within:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+          'border-primary flex w-full items-center justify-between gap-2 border bg-secondary px-4 py-3 text-md text-basic-primary transition-colors duration-200 ease-in-out hover:bg-fg-secondary focus-within:ring-0 focus-within:ring-offset-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
           { 'border-negative focus:border-negative': context.error },
           { 'border-action-primary': context.isOpen },
           className
@@ -140,7 +140,7 @@ export const SelectContent = ({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          'z-10 max-h-[300px] w-max border border-action-primary bg-primary py-2',
+          'z-10 max-h-[300px] w-max border border-action-primary bg-secondary py-2 shadow-lg',
           className
         )}
         position={position}
@@ -149,13 +149,13 @@ export const SelectContent = ({
         align={align}
         {...props}
       >
-        <SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-primary py-0.5 text-secondary">
+        <SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-secondary py-0.5 text-basic-primary">
           <ChevronDownIcon className="h-4.5 w-4.5 rotate-180 text-basic-primary" />
         </SelectPrimitive.ScrollUpButton>
         <SelectPrimitive.Viewport className="w-full">
           {children}
         </SelectPrimitive.Viewport>
-        <SelectPrimitive.ScrollDownButton className="flex h-auto cursor-default items-center justify-center bg-primary py-0.5 text-secondary">
+        <SelectPrimitive.ScrollDownButton className="flex h-auto cursor-default items-center justify-center bg-secondary py-0.5 text-basic-primary">
           <ChevronDownIcon className="h-4.5 w-4.5 text-basic-primary" />
         </SelectPrimitive.ScrollDownButton>
       </SelectPrimitive.Content>
@@ -197,7 +197,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, ItemProps>(
         ref={ref}
         value={value}
         className={cn(
-          'duration-250 flex w-full cursor-pointer items-center justify-between gap-2 p-4 text-lg text-basic-primary !outline-none transition-all ease-in-out hover:bg-hover focus:bg-hover',
+          'duration-250 flex w-full cursor-pointer items-center justify-between gap-2 p-4 text-lg text-basic-primary !outline-none transition-all ease-in-out hover:bg-fg-secondary focus:bg-fg-secondary',
           className
         )}
         {...props}

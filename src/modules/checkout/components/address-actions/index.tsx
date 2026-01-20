@@ -6,6 +6,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { deleteCustomerAddress } from '@lib/data/customer'
 import { cn } from '@lib/util/cn'
 import { Button } from '@modules/common/components/button'
+import { MenuButton } from '@modules/common/components/menu'
 import { toast } from '@modules/common/components/toast'
 import { EditIcon, TrashIcon, VerticalDotsIcon } from '@modules/common/icons'
 
@@ -50,7 +51,7 @@ export default function AddressActions({
       <Menu as="div">
         {({ open }) => (
           <>
-            <Menu.Button
+            <MenuButton
               className={cn(
                 'flex h-12 w-12 items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-md text-basic-primary transition-all duration-200 ease-in-out hover:bg-fg-secondary active:bg-fg-secondary',
                 { 'bg-fg-secondary': open }
@@ -58,7 +59,7 @@ export default function AddressActions({
               data-testid="address-actions-button"
             >
               <VerticalDotsIcon />
-            </Menu.Button>
+            </MenuButton>
             <Transition
               enter="transition ease-in-out duration-75"
               enterFrom="opacity-0"

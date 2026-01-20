@@ -5,8 +5,9 @@ import { getProductsList } from '@lib/data/products'
 import BlogTemplate from '@modules/blog/templates'
 
 export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Read our latest blog posts',
+  title: 'Blog Wisled | Actualités et Innovations en Éclairage LED',
+  description:
+    'Découvrez les dernières tendances en technologie LED, systèmes de contrôle et solutions d’éclairage intelligent. Suivez l’expertise Wisled au quotidien.',
 }
 
 type Params = {

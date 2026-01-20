@@ -19,14 +19,14 @@ export const getCollectionsList = cache(async function (
     .then(({ collections }) => ({ collections, count: collections.length }))
 })
 
+// src/lib/data/collections.ts
 export const getCollectionByHandle = cache(async function (
   handle: string
 ): Promise<HttpTypes.StoreCollection> {
   return sdk.store.collection
-    .list({ handle }, { next: { tags: ['collections'] } })
+    .list({ handle: [handle] }, { next: { tags: ['collections'] } })
     .then(({ collections }) => collections[0])
 })
-
 export const getCollectionsWithProducts = cache(
   async (countryCode: string): Promise<HttpTypes.StoreCollection[] | null> => {
     const { collections } = await getCollectionsList(3)

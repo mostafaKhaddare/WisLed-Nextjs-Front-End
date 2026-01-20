@@ -29,7 +29,7 @@ export function Pagination({
     label: string | number,
     isCurrent: boolean
   ) => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams.toString())
     params.set('page', p.toString())
     const href = `${pathname}?${params.toString()}`
 
@@ -61,7 +61,7 @@ export function Pagination({
 
   const renderArrowButton = (direction: 'prev' | 'next', disabled: boolean) => {
     const newPage = direction === 'prev' ? page - 1 : page + 1
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams.toString())
     params.set('page', newPage.toString())
     const href = `${pathname}?${params.toString()}`
 

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+
 
 import { formatNameForTestId } from '@lib/util/formatNameForTestId'
 import { Badge } from '@modules/common/components/badge'
@@ -9,7 +9,7 @@ import { Text } from '@modules/common/components/text'
 import { ProductActions } from './action'
 import { LoadingImage } from './loading-image'
 import ProductPrice from './price'
-
+import { useMemo } from 'react' 
 export function ProductTile({
   product,
   regionId,
@@ -39,10 +39,10 @@ export function ProductTile({
       className="group flex h-full flex-col"
       data-testid={formatNameForTestId(`${product.title}-product-tile`)}
     >
-      <Box className="relative h-[290px] small:h-[504px]">
+      <Box className="relative h-[237px] small:h-[366px]">
         {isNew && (
-          <Box className="absolute left-3 top-3 z-10 small:left-5 small:top-5">
-            <Badge label="New product" variant="brand" />
+          <Box className="absolute left-3 bottom-5 z-10 small:left-5 small:top-5">
+            <Badge label="noveaux produits" variant="brand" />
           </Box>
         )}
         <LocalizedClientLink href={`/products/${product.handle}`}>
@@ -69,7 +69,7 @@ function ProductInfo({
   productHandle,
   productTitle,
   calculatedPrice,
-  salePrice,
+ 
 }: {
   productHandle: string
   productTitle: string
@@ -77,18 +77,18 @@ function ProductInfo({
   salePrice: string
 }) {
   return (
-    <Box className="flex flex-col gap-3 p-4 small:gap-6 small:p-5">
-      <div className="flex flex-1 flex-col justify-between gap-4">
+    <Box className="flex flex-col gap-3 pt-4 pr-4 small:gap-6 small:p-5">
+      <div className="flex flex-1 flex-col justify-between gap-2">
         <LocalizedClientLink href={`/products/${productHandle}`}>
           <Text
             title={productTitle}
             as="span"
-            className="line-clamp-2 text-center text-lg text-basic-primary"
+            className="line-clamp-3 font-bold text-left text-lg text-basic-primary"
           >
             {productTitle}
           </Text>
         </LocalizedClientLink>
-        <ProductPrice calculatedPrice={calculatedPrice} salePrice={salePrice} />
+        <ProductPrice calculatedPrice={calculatedPrice}  />
       </div>
     </Box>
   )

@@ -6,15 +6,28 @@ export type BoxProps<T extends React.ElementType = 'div'> = {
   as?: T
   asChild?: boolean
   children?: React.ReactNode
-} & React.ComponentPropsWithoutRef<T>
+} & React.ComponentPropsWithoutRef<T> & {
+      ref?: React.Ref<T>
+    }
 
-export function Box<T extends React.ElementType = 'div'>({
-  as,
-  asChild,
-  children,
-  ...props
-}: BoxProps<T>) {
-  const Component = asChild ? Slot : as || 'div'
+export const Box = React.forwardRef(
+  <T extends React.ElementType = 'div'>(
+    {
+      as,
+      asChild,
+      children,
+      ...props
+    }: BoxProps<T>,
+    ref: React.Ref<T>
+  ) => {
+    const Component = asChild ? Slot : as || 'div'
 
-  return <Component {...props}>{children}</Component>
-}
+    return (
+      <Component ref={ref as React.Ref<T>} {...props}>
+        {children}
+      </Component>
+    )
+  }
+)
+
+Box.displayName = 'Box'

@@ -64,7 +64,11 @@ export default function ActiveProductFilters({
     return activePricesHandles?.includes(price.id)
   })
 
-  const clearAllUrl = useClearFiltersUrl()
+  const clearAllUrl = useClearFiltersUrl();
+
+  // Preserve sortBy when clearing all filters
+  const currentSortBy = searchParams.get("sortBy");
+  const finalClearAllUrl = currentSortBy ? `${clearAllUrl}?sortBy=${currentSortBy}` : clearAllUrl;
 
   const handleRemoveFilter = (key: string, id: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -85,9 +89,15 @@ export default function ActiveProductFilters({
           ? `/${countryCode}/collections/${currentCollection.handle}`
           : `/${countryCode}/shop`
 
+    // Preserve sortBy when removing other filters
+    const currentSortBy = searchParams.get("sortBy");
+    if (currentSortBy) {
+      params.set("sortBy", currentSortBy);
+    }
+
     router.push(
-      params.toString() ? `${basePath}?${params.toString()}` : `${basePath}`
-    )
+      params.toString() ? `${basePath}?${params.toString()}` : basePath
+    );
   }
 
   if (
@@ -136,8 +146,8 @@ export default function ActiveProductFilters({
           handleRemoveFilter={handleRemoveFilter}
         />
       )}
-      <Button asChild variant="text" className="py-2">
-        <Link href={clearAllUrl}>Clear filters</Link>
+      <Button asChild variant="text" className="text-sm font-semibold text-gray-600 hover:text-red-600 transition-colors underline sm:ml-auto sm:shrink-02">
+        <Link href={finalClearAllUrl}>Clear filters</Link>
       </Button>
     </Box>
   )

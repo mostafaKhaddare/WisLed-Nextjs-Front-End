@@ -13,7 +13,7 @@ export function BlogTile({ post }: { post: BlogPost }) {
         <LocalizedClientLink href={`/blog/${post.Slug}`}>
           <Image
             className="h-full w-full object-cover object-center"
-            src={post.FeaturedImage.url}
+            src={process.env.NEXT_PUBLIC_STRAPI_URL + post.FeaturedImage.url}
             alt={post.FeaturedImage.alternativeText ?? 'Blog post image'}
             width={600}
             height={600}

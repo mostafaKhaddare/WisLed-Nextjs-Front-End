@@ -1,5 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
+import { WhatsAppButton } from '@modules/common/components/whatsapp-button'  // Import the WhatsAppButton component
 
 import { getBaseURL } from '@lib/util/env'
 import Footer from '@modules/layout/templates/footer'
@@ -19,6 +20,7 @@ export default async function PageLayout(props: {
     <>
       <NavWrapper countryCode={countryCode} />
       {props.children}
+      <WhatsAppButton />
       <Footer countryCode={countryCode} />
     </>
   )

@@ -75,9 +75,11 @@ export default async function CollectionPageLayout(
 
   const { children } = props
 
-  const currentCollection = await getCollectionByHandle(handle).then(
-    (collection: StoreCollection) => collection
-  )
+  const currentCollection = await getCollectionByHandle(handle)
+
+  if (!currentCollection) {
+    notFound()
+  }
 
   return (
     <>

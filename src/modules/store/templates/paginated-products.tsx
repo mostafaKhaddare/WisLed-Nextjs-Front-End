@@ -26,7 +26,7 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid w-full grid-cols-1 gap-x-2 gap-y-6 small:grid-cols-2 large:grid-cols-3"
+        className="grid w-full grid-cols-2 gap-x-2 gap-y-6 small:grid-cols-2 large:grid-cols-4 "
         data-testid="products-list"
       >
         {products.map((p) => {
@@ -40,10 +40,18 @@ export default async function PaginatedProducts({
                   handle: p.handle,
                   thumbnail: p.thumbnail,
                   calculatedPrice: convertToLocale({
-                    amount: Number(p.calculated_price),
+                    amount: (() => {
+                      const raw = (p as any).calculated_price
+                      if (typeof raw === 'number') return raw
+                      if (typeof raw === 'string') {
+                        const parsed = Number(raw.replace(/[^0-9.\-]/g, ''))
+                        return isNaN(parsed) ? 0 : parsed
+                      }
+                      return 0
+                    })(),
                     currency_code: region.currency_code,
                   }),
-                  salePrice: p.sale_price,
+                  salePrice: (p as any).sale_price,
                 }}
                 regionId={region.id}
               />
@@ -61,3 +69,7 @@ export default async function PaginatedProducts({
     </>
   )
 }
+
+
+
+

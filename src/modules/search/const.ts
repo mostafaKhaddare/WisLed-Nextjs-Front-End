@@ -1,6 +1,6 @@
 export const PRICING_OPTIONS = [
-  { id: 'under-100', value: 'Under $100' },
-  { id: '100-500', value: '$100-$500' },
-  { id: '501-1000', value: '$501-$1000' },
-  { id: 'more-than-1000', value: '$1001+' },
-] as const
+  { id: "0-50", value: "$0 - $50" },
+  { id: "50-100", value: "$50 - $100" },
+  { id: "100-200", value: "$100 - $200" },
+  { id: "200-999999", value: "$200+" }
+]

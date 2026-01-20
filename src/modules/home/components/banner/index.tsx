@@ -10,25 +10,26 @@ import { HeroBanner } from 'types/strapi'
 
 export const Banner = ({ data }: { data: HeroBanner }) => {
   const { Image: bannerImage, CTA, Headline, Text: text } = data
+  const image = Array.isArray(bannerImage) ? bannerImage[0] : bannerImage
+
 
   return (
     <Container>
       <Box className="relative h-[440px] medium:h-[478]">
         <Image
-          src={bannerImage.url}
-          alt={bannerImage.alternativeText ?? 'Banner image'}
-          layout="fill"
-          objectFit="cover"
-          className="object-right-top"
+          src={process.env.NEXT_PUBLIC_STRAPI_URL + image.url}
+          alt={image.alternativeText ?? 'Banner image'}
+          fill
+          className="object-cover object-right-top"
         />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-10 text-center text-white">
-          <Heading className="text-3xl">{Headline}</Heading>
+        <div className="absolute inset-0 font-bold flex flex-col items-center justify-center px-10 text-center text-white">
+          <Heading className="text-3xl xl:text-5xl">{Headline}</Heading>
 
-          <Text size="lg" className="mt-2 medium:max-w-[600px]">
+          <Text size="lg" className="mt-2   medium:max-w-[600px]">
             {text}
           </Text>
-          <Button className="mt-8" asChild>
+          <Button variant='filled' className="mt-8" asChild>
             <LocalizedClientLink href={CTA.BtnLink}>
               {CTA.BtnText}
             </LocalizedClientLink>

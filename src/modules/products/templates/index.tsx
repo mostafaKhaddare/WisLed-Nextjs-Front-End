@@ -44,14 +44,14 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         data-testid="product-container"
       >
         <ProductBreadcrumbs product={product} countryCode={countryCode} />
-        <Box className="relative flex flex-col gap-y-6 large:flex-row large:items-start large:gap-x-16 xl:gap-x-[120px]">
+        <Box className="relative flex flex-col gap-y-6 large:flex-row large:items-start large:gap-x-8 xl:gap-x-[120px]">
           <Box className="relative block w-full">
             <ImageGallery
               title={product.title}
               images={product?.images || []}
             />
           </Box>
-          <Box className="flex w-full flex-col gap-y-6 py-8 large:sticky large:top-24 large:max-w-[440px] large:py-0">
+          <Box className="flex w-full flex-col gap-y-4 py-8 large:sticky large:top-24 large:max-w-[550px] large:py-0">
             <ProductInfo product={product} />
             <Suspense fallback={<SkeletonProductActions />}>
               <ProductActionsWrapper
@@ -71,7 +71,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           <ProductCarousel
             products={productsList.products}
             regionId={region.id}
-            title="Complete the look"
+            title="Complétez votre installation"
           />
         </Suspense>
       )}

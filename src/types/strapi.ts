@@ -27,7 +27,10 @@ export type HeroBanner = {
   Image: {
     url: string
     alternativeText?: string
-  }
+  } | {
+    url: string
+    alternativeText?: string
+  }[]
 }
 
 export type BannerResponse<T extends string> = {
@@ -74,9 +77,24 @@ export type Collection = {
   locale: string
   Description: string
 }
+export type Category = {
+  id: number
+  documentId: string
+  Title: string
+  Handle: string
+  createdAt: string
+  updatedAt: string
+  publishedAt: string
+  Image: StrapiPhotoAttributes
+  locale: string
+  Description: string
+}
 
 export type CollectionsData = {
   data: Collection[]
+}
+export type CategoriesData = {
+  data: Category[]
 }
 
 export type VariantColor = {

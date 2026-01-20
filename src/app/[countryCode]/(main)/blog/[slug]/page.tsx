@@ -30,7 +30,7 @@ export async function generateMetadata(props) {
 
   if (!article) {
     return {
-      title: 'Article Not Found',
+      title: 'Article Introuvable | Wisled',
     }
   }
 

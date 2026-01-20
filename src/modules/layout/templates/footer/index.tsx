@@ -18,29 +18,52 @@ import { Text } from '@modules/common/components/text'
 import {
   ChevronDownIcon,
   FacebookIcon,
-  LinkedinIcon,
-  SolaceLogo,
-  XLogoIcon,
+  WhatsappIcon,
+  WisLedLogo,
+  InstagramIcon
 } from '@modules/common/icons'
+
 
 function SocialMedia({ className }: { className?: string }) {
   return (
-    <Box className={cn('flex gap-2', className)}>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="linkedin-link">
-          <LinkedinIcon />
+   <Box className={cn('flex gap-2', className)}>
+      
+      {/* Instagram */}
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
+        <LocalizedClientLink 
+          href="https://instagram.com/wisled" 
+          target="_blank" 
+          data-testid="instagram-link"
+          className="text-static hover:text-[#E1306C] transition-colors"
+        >
+          <InstagramIcon />
         </LocalizedClientLink>
       </div>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="facebook-link">
+
+      {/* Facebook */}
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
+        <LocalizedClientLink 
+          href="https://facebook.com/wisled" 
+          target="_blank" 
+          data-testid="facebook-link"
+          className="text-static hover:text-[#1877F2] transition-colors"
+        >
           <FacebookIcon />
         </LocalizedClientLink>
       </div>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="x-link">
-          <XLogoIcon />
+
+      {/* WhatsApp */}
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
+        <LocalizedClientLink 
+          href="https://wa.me/212666650286" 
+          target="_blank" 
+          data-testid="whatsapp-link"
+          className="text-static hover:text-[#25D366] transition-colors"
+        >
+          <WhatsappIcon />
         </LocalizedClientLink>
       </div>
+
     </Box>
   )
 }
@@ -61,7 +84,7 @@ export default async function Footer({ countryCode }: { countryCode: string }) {
               href="#"
               className="w-max cursor-pointer text-static"
             >
-              <SolaceLogo />
+              <WisLedLogo />
             </LocalizedClientLink>
             <SocialMedia className="hidden large:flex" />
           </Box>
@@ -147,7 +170,7 @@ export default async function Footer({ countryCode }: { countryCode: string }) {
         <Divider alignment="horizontal" variant="secondary" />
         <Box className="flex flex-wrap gap-6 gap-y-1">
           <Text size="md" className="shrink-0 text-secondary">
-            © {new Date().getFullYear()} Solace. All rights reserved.
+            © {new Date().getFullYear()} WisLed. All rights reserved.
           </Text>
           {footerNavigation.other.map((link, id) => (
             <NavigationItem

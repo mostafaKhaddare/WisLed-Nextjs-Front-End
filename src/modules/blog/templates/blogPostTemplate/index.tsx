@@ -46,47 +46,67 @@ export default async function BlogPostTemplate({
   const restOfContent = paragraphs.slice(1).join('\n\n')
 
   return (
-    <Container className="flex flex-col gap-6 !py-8 medium:gap-8">
-      <Box className="flex flex-col gap-4">
+    <Container className="flex flex-col gap-8 !py-8 medium:gap-12">
+      {/* Header Section */}
+      <Box className="flex flex-col gap-6">
         <BlogBreadcrumbs blogTitle={article.Title} countryCode={countryCode} />
-        <Heading as="h1" className="text-4xl text-basic-primary small:text-5xl">
+        <Heading as="h1" className="text-4xl font-bold text-basic-primary small:text-5xl leading-tight">
           {article.Title}
         </Heading>
+        <BlogInfo
+          createdAt={article.createdAt}
+          readTime={readTime(article.Content)}
+        />
       </Box>
-      <Box className="grid grid-cols-12 gap-4">
+
+      {/* Main Content Grid */}
+      <Box className="grid grid-cols-12 gap-6 medium:gap-8">
+        {/* Table of Contents Sidebar */}
         <Box
           className={cn(
-            'col-span-12 hidden large:col-span-3 large:block',
+            'col-span-12 hidden large:col-span-3 large:block sticky top-24',
             hasHeadings ? 'block' : 'hidden'
           )}
         >
-          <TableOfContents headings={headings} />
+          <Box className="rounded-lg bg-secondary/5 p-6">
+            <TableOfContents headings={headings} />
+          </Box>
         </Box>
+
+        {/* Main Article Content */}
         <Box
           className={cn(
             'col-span-12 large:col-span-9 large:col-start-5',
             hasHeadings
               ? 'large:col-span-9'
-              : 'large:col-span-12 large:col-start-1'
+              : 'large:col-span-10 large:col-start-2'
           )}
         >
-          <Box className="relative h-[400px] w-full">
+          {/* Featured Image */}
+          <Box className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-lg medium:h-[450px]">
             <Image
-              src={article.FeaturedImage.url}
+              src={process.env.NEXT_PUBLIC_STRAPI_URL + article.FeaturedImage.url}
               alt={`${article.FeaturedImage.alternativeText ? article.FeaturedImage.alternativeText : article.Title}`}
               fill
-              className="w-full object-cover"
+              className="w-full object-cover transition-transform duration-500 hover:scale-105"
+              priority
             />
           </Box>
-          <BlogInfo
-            createdAt={article.createdAt}
-            readTime={readTime(article.Content)}
-          />
-          <BlogContent content={firstParagraph} />
-          <Box className="my-6 medium:hidden">
+
+          {/* First Paragraph - Intro */}
+          <Box className="mb-8 border-l-4 border-action-primary bg-secondary/5 p-6 medium:mb-12">
+            <BlogContent content={firstParagraph} />
+          </Box>
+
+          {/* Mobile Table of Contents */}
+          <Box className="my-8 rounded-lg bg-secondary/5 p-6 medium:hidden">
             <TableOfContents headings={headings} />
           </Box>
-          <BlogContent content={restOfContent} />
+
+          {/* Rest of Content */}
+          <Box className="prose prose-invert max-w-none">
+            <BlogContent content={restOfContent} />
+          </Box>
         </Box>
       </Box>
     </Container>

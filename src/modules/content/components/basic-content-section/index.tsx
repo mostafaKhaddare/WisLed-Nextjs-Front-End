@@ -19,7 +19,7 @@ export const BasicContentSection = ({ data }: { data: ContentAttributes }) => {
       </Box>
       <Box className="relative h-[224px] grow small:h-[400px] large:min-w-[400px] large:max-w-[600px]">
         <Image
-          src={data.Image.url}
+          src={process.env.NEXT_PUBLIC_STRAPI_URL + data.Image.url}
           alt={data.Image.alternativeText ?? 'Content section image'}
           fill
           objectFit="cover"

@@ -40,43 +40,66 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
           {current}
         </Text>
       </Text>
+
       <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
         {filteredOptions?.map((v) => {
           const color = getVariantColor(v, variantsColors)
           const image = color?.Image
           const hex = color?.Color
 
-          return image ? (
+          // Render image/color variant if exists
+          if (image || hex) {
+            return image ? (
+              <button
+                onClick={() => updateOption(option.id, v)}
+                key={v}
+                className={cn('border-primary h-12 w-12 border', {
+                  'border-action-primary': v === current,
+                })}
+                aria-label="Choose variant color"
+                disabled={disabled}
+                data-testid="option-button"
+              >
+                <Image
+                  src={process.env.NEXT_PUBLIC_STRAPI_URL + image.url}
+                  alt={image.alternativeText ?? 'Variant color'}
+                  width={80}
+                  height={80}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ) : (
+              <button
+                onClick={() => updateOption(option.id, v)}
+                key={v}
+                className={cn('border-primary h-12 w-12 border', {
+                  'border-action-primary': v === current,
+                })}
+                aria-label="Choose variant color"
+                style={{ backgroundColor: hex }}
+                disabled={disabled}
+                data-testid="option-button"
+              />
+            )
+          }
+
+          // Render plain button for non-color variants (like 12V / 24V)
+          return (
             <button
               onClick={() => updateOption(option.id, v)}
               key={v}
-              className={cn('border-primary h-12 w-12 border', {
-                'border-action-primary': v === current,
-              })}
-              aria-label="Choose variant color"
+              className={cn(
+                'h-12 min-w-[48px] rounded border px-3 text-sm font-medium',
+                {
+                  'border-action-primary': v === current,
+                }
+              )}
+              aria-label={`Choose ${v}`}
               disabled={disabled}
               data-testid="option-button"
             >
-              <Image
-                src={image.url}
-                alt={image.alternativeText ?? 'Variant color'}
-                width={80}
-                height={80}
-                className="h-full w-full object-cover"
-              />
+              {v}
             </button>
-          ) : (
-            <button
-              onClick={() => updateOption(option.id, v)}
-              key={v}
-              className={cn('border-primary h-12 w-12 border', {
-                'border-action-primary': v === current,
-              })}
-              aria-label="Choose variant color"
-              style={{ backgroundColor: hex }}
-              disabled={disabled}
-              data-testid="option-button"
-            />
           )
         })}
       </div>

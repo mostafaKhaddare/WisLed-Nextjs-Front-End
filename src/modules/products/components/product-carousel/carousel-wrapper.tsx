@@ -55,7 +55,7 @@ export default function CarouselWrapper({
   return (
     <>
       <Box className="flex justify-between">
-        <Heading as="h2" className="text-2xl text-basic-primary small:text-3xl">
+        <Heading as="h2" className="text-2xl font-bold text-basic-primary small:text-3xl">
           {title}
         </Heading>
         <Box
@@ -67,7 +67,7 @@ export default function CarouselWrapper({
         >
           <Button
             withIcon
-            variant="icon"
+            variant="filled"
             className="bg-fg-secondary text-action-primary hover:bg-fg-secondary-hover hover:text-action-primary-hover active:bg-fg-secondary-pressed active:text-action-primary-pressed"
             onClick={scrollPrev}
             disabled={!canScrollPrev}
@@ -76,7 +76,7 @@ export default function CarouselWrapper({
           </Button>
           <Button
             withIcon
-            variant="icon"
+            variant="filled"
             className="bg-fg-secondary text-action-primary hover:bg-fg-secondary-hover hover:text-action-primary-hover active:bg-fg-secondary-pressed active:text-action-primary-pressed"
             onClick={scrollNext}
             disabled={!canScrollNext}

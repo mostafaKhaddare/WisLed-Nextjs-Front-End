@@ -57,7 +57,7 @@ export async function generateMetadata(
       `${title} category.`
 
     return {
-      title: `${title} | Solace Medusa Starter`,
+      title: `${title} | WisLed Shop`,
       description,
       alternates: {
         canonical: `${params.category.join('/')}`,
@@ -73,21 +73,25 @@ export default async function CategoryPageLayout(
 ) {
   const params = await props.params
 
-  const { category } = params
+  const { category } = await params
 
   const { children } = props
 
   const { product_categories } = await getCategoryByHandle(category)
-  const currentCategory = product_categories[product_categories.length - 1]
+  const currentCategory = product_categories?.[product_categories.length - 1]
+
+  if (!currentCategory) {
+    notFound()
+  }
 
   return (
     <>
-      <Container className="flex flex-col gap-8 !py-8">
-        <Box className="flex flex-col gap-4">
+      <Container className="flex flex-col gap-2 !pt-6 !pb-1">
+        <Box className="flex flex-col border-b border-gray-200 gap-3">
           <StoreBreadcrumbs breadcrumb={currentCategory.name} />
           <Heading
             as="h1"
-            className="text-4xl text-basic-primary small:text-5xl"
+            className="text-3xl text-basic-primary small:text-5xl pb-4"
           >
             {currentCategory.name}
           </Heading>

@@ -67,3 +67,63 @@
     -webkit-appearance: none;
   }
 }
+/* Horizontal scrollbar styling */
+.category-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-scroll::-webkit-scrollbar-track {
+  background: #e5e7eb; /* gray-200 */
+  border-radius: 4px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* gray-400 */
+  border-radius: 4px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* gray-500 */
+}
+
+.embla {
+  overflow: hidden;
+}
+
+.embla__viewport {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.embla__container {
+  display: flex;
+  touch-action: pan-x;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.embla__container.embla__container--vertical {
+  flex-direction: column;
+  touch-action: pan-y;
+}
+
+.embla__container.embla__container--horizontal {
+  flex-direction: row;
+  touch-action: pan-x;
+}
+
+.embla__slide {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 1.5rem; /* match h-6 = 24px */
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.embla__slide__inner {
+  padding: 0 1rem; /* match px-4 */
+  white-space: nowrap;
+}

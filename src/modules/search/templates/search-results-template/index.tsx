@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 
 import { storeSortOptions } from '@lib/constants'
 import { getProductsList, getStoreFilters } from '@lib/data/products'
+import { getProductPrice } from '@lib/util/get-product-price'
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { StoreRegion } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
@@ -48,16 +49,89 @@ export default async function SearchResultsTemplate({
   const pageNumber = page ? parseInt(page) : 1
   const filters = await getStoreFilters()
 
-  const { results, count } = await search({
-    currency_code: region.currency_code,
-    query,
-    order: sortBy,
-    page: pageNumber,
-    collection,
-    type,
-    material,
-    price,
-  })
+  let results: any[] = []
+  let count = 0
+  try {
+    const searchResponse = await search({
+      currency_code: region.currency_code,
+      query,
+      order: sortBy,
+      page: pageNumber,
+      collection,
+      type,
+      material,
+      price,
+    })
+    results = searchResponse.results
+    count = searchResponse.count
+  } catch (_) {
+    const queryParams: any = {
+      limit: 12,
+      order:
+        sortBy === 'price_asc'
+          ? 'calculated_price'
+          : sortBy === 'price_desc'
+            ? '-calculated_price'
+            : sortBy === 'created_at'
+              ? '-created_at'
+              : sortBy,
+    }
+
+    if (collection) queryParams.collection_id = collection
+    if (type) queryParams.type_id = type
+    if (material) queryParams.materials = material
+
+    if (price) {
+      const ranges = price
+      if (ranges.includes('under-100')) {
+        queryParams.price_to = 100
+      }
+      if (ranges.includes('100-500')) {
+        queryParams.price_from = 100
+        queryParams.price_to = 500
+      }
+      if (ranges.includes('501-1000')) {
+        queryParams.price_from = 501
+        queryParams.price_to = 1000
+      }
+      if (ranges.includes('more-than-1000')) {
+        queryParams.price_from = 1000
+      }
+    }
+
+    const {
+      response: { products: fallbackProducts, count: fallbackCount },
+    } = await getProductsList({
+      pageParam: pageNumber,
+      queryParams,
+      countryCode: countryCode,
+    })
+
+    const shaped = fallbackProducts.map((product: any) => {
+      const prices = getProductPrice({ product })
+      const cheapest = prices?.cheapestPrice
+      return {
+        id: product.id,
+        title: product.title,
+        handle: product.handle,
+        thumbnail: product.thumbnail,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+        calculated_price: cheapest?.calculated_price_number?.toString() ?? '0',
+        sale_price: cheapest?.original_price_number?.toString() ?? '0',
+        regular_price: cheapest?.original_price_number?.toString() ?? '0',
+      }
+    })
+
+    // Apply simple text filtering to mimic search behavior
+    const q = (safeDecodeURIComponent(query) || '').toLowerCase()
+    const filtered = q
+      ? shaped.filter((p: any) => p.title?.toLowerCase().includes(q))
+      : shaped
+
+    results = filtered
+    count = fallbackCount ?? filtered.length
+  }
 
   // TODO: Add logic in future
   const {

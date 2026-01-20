@@ -15,13 +15,13 @@ export default function NotFound() {
     <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6">
       <Text className="text-5xl font-semibold small:text-4xl">404</Text>
       <Heading className="text-5xl small:text-4xl" as="h1">
-        Page not found
+        Page non trouvée
       </Heading>
       <Text className="text-secondary" size="md">
-        Sorry, we couldn’t find the page you’re looking for.
+        Désolé, nous n’avons pas pu trouver la page que vous recherchez.
       </Text>
       <Button asChild>
-        <LocalizedClientLink href="/">Go to homepage</LocalizedClientLink>
+        <LocalizedClientLink href="/">Aller à la page d&apos;accueil</LocalizedClientLink>
       </Button>
     </div>
   )

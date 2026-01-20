@@ -64,15 +64,15 @@ const CollectionTile = ({
   imgSrc: string
 }) => {
   return (
-    <Box className="group relative max-h-[282px]">
+    <Box className="group relative max-h-[282px] overflow-hidden rounded-md">
       <Image
-        src={imgSrc}
+        src={process.env.NEXT_PUBLIC_STRAPI_URL + imgSrc}
         alt={`${title} collection image`}
         width={600}
         height={300}
         className="h-full w-full object-cover object-center"
       />
-      <Box className="absolute left-0 top-0 flex h-full w-full flex-col p-10">
+      <Box className="absolute left-0 top-0 flex h-full w-full flex-col p-6">
         <Button
           asChild
           className="w-max self-end transition-all duration-500 ease-in-out"
@@ -86,7 +86,7 @@ const CollectionTile = ({
             href={`/collections/${handle}`}
             className="w-max"
           >
-            <Heading as="h3" className="mt-auto text-3xl text-static">
+            <Heading as="h3" className="mt-auto font-bold text-xl text-static">
               {title}
             </Heading>
           </LocalizedClientLink>

@@ -92,14 +92,16 @@ const SideMenu = ({
           onClick={() => handleOpenDialogChange(false)}
         >
           <Image
-            src={strapiCollection.Image.url}
+            src={
+              process.env.NEXT_PUBLIC_STRAPI_URL + strapiCollection.Image.url
+            }
             alt={strapiCollection.Title}
             width={600}
             height={160}
             className="h-[160px] w-full object-cover"
           />
           <Box className="absolute bottom-6 left-6">
-            <Heading as="h3" className="text-2xl text-static">
+            <Heading as="h3" className="text-xl text-static font-bold">
               {strapiCollection.Title}
             </Heading>
           </Box>
@@ -107,7 +109,7 @@ const SideMenu = ({
       ) : (
         <Fragment key={index}>
           <Button
-            variant="ghost"
+            variant="mobileNav"
             className="w-full justify-between"
             onClick={
               hasChildren
@@ -189,14 +191,14 @@ const SideMenu = ({
         >
           <DialogHeader className="flex items-center gap-4 !p-4 text-xl text-basic-primary small:text-2xl">
             {currentCategory && (
-              <Button variant="tonal" withIcon size="sm" onClick={handleBack}>
+              <Button variant="filled" withIcon size="sm" onClick={handleBack}>
                 <ArrowLeftIcon className="h-5 w-5" />
               </Button>
             )}
             {currentCategory?.name || 'Menu'}
             <Button
               onClick={() => handleOpenDialogChange(false)}
-              variant="icon"
+              variant="text"
               withIcon
               size="sm"
               className="ml-auto p-2"
@@ -211,13 +213,14 @@ const SideMenu = ({
             <Box className="flex flex-col">
               {shouldRenderButton && (
                 <Button
-                  variant="tonal"
+                  variant="filled"
                   className="mb-4 w-max"
                   size="sm"
                   onClick={() => handleOpenDialogChange(false)}
                   asChild={!!currentCategory}
                 >
                   <LocalizedClientLink
+                  
                     href={
                       currentCategory ? `${currentCategory.handle}` : `/shop`
                     }

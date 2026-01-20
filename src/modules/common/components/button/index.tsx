@@ -17,9 +17,11 @@ const buttonVariants = cva({
       destructive:
         'text-static bg-fg-primary-negative hover:bg-fg-primary-negative-hover active:bg-fg-primary-negative-pressed',
       icon: 'bg-transparent hover:bg-fg-secondary-hover active:bg-fg-secondary-pressed text-action-primary hover:text-action-primary-hover active:text-action-primary-pressed',
+      mobileNav:
+        'bg-transparent text-fg-primary hover:text-action-primary-hover active:text-action-primary-pressed',
     },
     size: {
-      sm: 'h-10',
+      sm: 'h-9',
       md: 'h-12',
     },
     withIcon: {
@@ -40,7 +42,7 @@ const buttonVariants = cva({
     {
       withIcon: true,
       size: 'sm',
-      className: '!p-[10px]',
+      className: '!p-[9px]',
     },
     {
       withIcon: true,
@@ -51,7 +53,7 @@ const buttonVariants = cva({
       withIcon: true,
       variant: 'tonal',
       className:
-        'bg-secondary text-basic-primary hover:bg-hover active:bg-pressed',
+        'bg-primary text-basic-primary hover:bg-hover active:bg-pressed',
     },
     {
       withIcon: true,
@@ -71,6 +73,7 @@ export interface ButtonProps
   rightIcon?: ReactElement<any>
   withIcon?: boolean
   testId?: string
+  variant?: 'filled' | 'ghost' | 'tonal' | 'text' | 'destructive' | 'icon' | 'mobileNav'
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -83,6 +86,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       asChild,
       withIcon,
+      variant,
       testId,
       ...props
     },
@@ -109,15 +113,24 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       </>
     )
 
-    const buttonClassName = cn(
-      buttonVariants({ ...props, isLoading, withIcon }),
-      className
-    )
-
     return (
       <Comp
+        className={cn(
+          buttonVariants({
+            variant,
+            size:
+              withIcon && !children
+                ? props.size
+                : variant === 'mobileNav'
+                ? undefined
+                : props.size,
+            withIcon: (withIcon && !children) || variant === 'mobileNav',
+            isLoading,
+            disabled: props.disabled,
+          }),
+          className
+        )}
         ref={ref}
-        className={buttonClassName}
         data-testid={testId}
         {...props}
       >

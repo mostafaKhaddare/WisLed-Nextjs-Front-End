@@ -1,28 +1,26 @@
 import { Metadata } from 'next'
 
 import { getAboutUs, getExploreBlogData } from '@lib/data/fetch'
-import { Banner } from '@modules/content/components/banner'
 import { BasicContentSection } from '@modules/content/components/basic-content-section'
 import { FramedTextSection } from '@modules/content/components/framed-text-section'
 import { NumericalSection } from '@modules/content/components/numerical-section'
 import { ExploreBlog } from '@modules/home/components/explore-blog'
 
 export const metadata: Metadata = {
-  title: 'About Us',
+  title: 'À propos de Wisled | Solutions d’Éclairage Innovantes',
   description:
-    'At Solace, we deliver innovative products designed to meet your needs with quality and care.',
+    'Découvrez Wisled, votre expert en technologie LED et systèmes de contrôle. Nous concevons des solutions d’éclairage innovantes et de haute qualité adaptées à vos besoins professionnels.',
 }
 
 export default async function AboutUsPage() {
   const {
-    data: { Banner: bannerData, OurStory, WhyUs, OurCraftsmanship, Numbers },
+    data: {OurStory, WhyUs, OurCraftsmanship, Numbers },
   } = await getAboutUs()
 
   const { data: posts } = await getExploreBlogData()
 
   return (
     <>
-      {bannerData && <Banner data={bannerData} />}
       {OurStory && <BasicContentSection data={OurStory} />}
       {WhyUs && <FramedTextSection data={WhyUs} />}
       {OurCraftsmanship && <BasicContentSection data={OurCraftsmanship} />}

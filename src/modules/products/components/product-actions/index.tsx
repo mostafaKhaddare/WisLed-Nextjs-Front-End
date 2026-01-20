@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-
+import { FaWhatsapp } from "react-icons/fa";
 import { addToCart } from '@lib/data/cart'
 import { useCartStore } from '@lib/store/useCartStore'
 import { HttpTypes } from '@medusajs/types'
@@ -15,7 +15,6 @@ import { toast } from '@modules/common/components/toast'
 import OptionSelect from '@modules/products/components/product-actions/option-select'
 import { isEqual } from 'lodash'
 import { VariantColor } from 'types/strapi'
-
 import ProductPrice from '../product-price'
 
 type ProductActionsProps = {
@@ -56,6 +55,17 @@ export default function ProductActions({
     }))
   }
 
+  const selectedVariant = useMemo(() => {
+    if (!product.variants || product.variants.length === 0) {
+      return
+    }
+
+    return product.variants.find((v) => {
+      const variantOptions = optionsAsKeymap(v.options)
+      return isEqual(variantOptions, options)
+    })
+  }, [product.variants, options])
+
   // add the selected variant to the cart
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
@@ -79,38 +89,42 @@ export default function ProductActions({
     }
   }
 
-  const selectedVariant = useMemo(() => {
-    if (!product.variants || product.variants.length === 0) {
-      return
-    }
+  // --- NEW WHATSAPP FUNCTION START ---
+  const handleWhatsAppClick = () => {
+    // 1. Get the current URL
+    const productLink = window.location.href;
 
-    return product.variants.find((v) => {
-      const variantOptions = optionsAsKeymap(v.options)
-      return isEqual(variantOptions, options)
-    })
-  }, [product.variants, options])
+    // 2. Build the Title dynamically
+    // If a variant is selected (e.g. Red, Size M), we add it to the title
+    const variantSuffix = selectedVariant?.title ? ` - ${selectedVariant.title}` : '';
+    const fullProductTitle = `${product.title}${variantSuffix}`;
+
+    // 3. Your Phone Number (Update this!)
+    const phoneNumber = "212648522511"; 
+
+    // 4. Create the message
+    const message = `Bonjour, j'aimerais commander : ${fullProductTitle}.\n\nLien : ${productLink}\n\nMerci.`;
+
+    // 5. Open WhatsApp
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+  // --- NEW WHATSAPP FUNCTION END ---
 
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
-    // If we don't manage inventory, we can always add to cart
     if (selectedVariant && !selectedVariant.manage_inventory) {
       return true
     }
-
-    // If we allow back orders on the variant, we can add to cart
     if (selectedVariant?.allow_backorder) {
       return true
     }
-
-    // If there is inventory available, we can add to cart
     if (
       selectedVariant?.manage_inventory &&
       (selectedVariant?.inventory_quantity || 0) > 0
     ) {
       return true
     }
-
-    // Otherwise, we can't add to cart
     return false
   }, [selectedVariant])
 
@@ -205,8 +219,18 @@ export default function ProductActions({
               : !inStock
                 ? 'Out of stock'
                 : 'Add to cart'}
-          </Button>
+          </Button> 
         </Box>
+        
+        {/* WhatsApp Button */}
+          <Button 
+            onClick={handleWhatsAppClick}
+            className="w-full bg-green-600 text-white py-3 px-6 rounded-full font-medium flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
+          >
+            <FaWhatsapp size={20} />
+            <span>Chat on WhatsApp</span>
+          </Button>
+
         {maxQuantity === 0 && inStock && (
           <Text size="sm" className="text-negative">
             You cannot add more items to your cart - you already have the

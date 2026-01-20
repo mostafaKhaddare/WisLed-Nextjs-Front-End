@@ -104,7 +104,13 @@ export async function search({
   )
 
   if (!response.ok) {
-    throw new Error(`Response error. Status: ${response.status}`)
+    let errorBody: string | undefined
+    try {
+      errorBody = await response.text()
+    } catch (_) {}
+    const message = `Response error. Status: ${response.status}${errorBody ? ` Body: ${errorBody}` : ''}`
+    // Silently propagate error to callers to decide handling/logging
+    throw new Error(message)
   }
 
   const data = await response.json()

@@ -1,7 +1,9 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 
-import { getCollectionsList } from '@lib/data/collections'
+import { listCategories } from '@lib/data/categories'
+import {  getCollectionsList } from '@lib/data/collections'
+// cms import
 import {
   getCollectionsData,
   getExploreBlogData,
@@ -10,17 +12,19 @@ import {
 } from '@lib/data/fetch'
 import { getProductsList } from '@lib/data/products'
 import { getRegion } from '@lib/data/regions'
+import { CategoryCarousel } from '@modules/categories/components/category-carousel'
 import { Banner } from '@modules/home/components/banner'
 import Collections from '@modules/home/components/collections'
 import { ExploreBlog } from '@modules/home/components/explore-blog'
 import Hero from '@modules/home/components/hero'
 import { ProductCarousel } from '@modules/products/components/product-carousel'
+import SkeletonCategoriesCarousel from '@modules/skeletons/templates/skeleton-categories-carousel'
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
 
 export const metadata: Metadata = {
-  title: 'Solace Medusa Starter Template',
+  title: 'Wisled | Expert en Solutions d’Éclairage LED et Contrôle',
   description:
-    'A performant frontend ecommerce starter template with Next.js 14 and Medusa 2.0.',
+    'Découvrez Wisled, votre boutique spécialisée en éclairage LED haute performance et systèmes de contrôle avancés (DMX, SPI). Qualité et innovation pour tous vos projets.',
 }
 
 export default async function Home(props: {
@@ -30,14 +34,16 @@ export default async function Home(props: {
 
   const { countryCode } = params
 
-  const [{ collections: collectionsList }, { products }] = await Promise.all([
-    getCollectionsList(),
-    getProductsList({
-      pageParam: 0,
-      queryParams: { limit: 9 },
-      countryCode: countryCode,
-    }).then(({ response }) => response),
-  ])
+  const [categories, { collections: collectionsList }, { products }] =
+    await Promise.all([
+      listCategories(),
+      getCollectionsList(),
+      getProductsList({
+        pageParam: 0,
+        queryParams: { limit: 9 },
+        countryCode: countryCode,
+      }).then(({ response }) => response),
+    ])
 
   const region = await getRegion(countryCode)
 
@@ -64,7 +70,18 @@ export default async function Home(props: {
 
   return (
     <>
-      {HeroBanner && <Hero data={HeroBanner} />}
+      {HeroBanner && HeroBanner.Headline && <Hero data={HeroBanner} />}
+      <Suspense fallback={<SkeletonCategoriesCarousel />}>
+        <CategoryCarousel
+          testId="our-bestsellers-section"
+          categories={categories}
+          title="Achetez par catégorie"
+          viewAll={{
+            link: '/categories',
+            text: 'Afficher tout',
+          }}
+        />
+      </Suspense>
       {strapiCollections && (
         <Collections
           cmsCollections={strapiCollections}
@@ -76,14 +93,15 @@ export default async function Home(props: {
           testId="our-bestsellers-section"
           products={products}
           regionId={region.id}
-          title="Our bestsellers"
+          title="Nos meilleures ventes"
           viewAll={{
-            link: '/shop',
-            text: 'View all',
+            link: '/categories',
+            text: 'Afficher tout',
           }}
         />
       </Suspense>
-      {MidBanner && <Banner data={MidBanner} />}
+    {MidBanner && <Banner data={MidBanner} />}
+      {/* ------------------------------------------------ */}
       {posts && posts.length > 0 && <ExploreBlog posts={posts} />}
     </>
   )
