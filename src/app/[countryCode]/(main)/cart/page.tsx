@@ -10,8 +10,8 @@ import { ProductCarousel } from '@modules/products/components/product-carousel'
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
 
 export const metadata: Metadata = {
-  title: 'Cart',
-  description: 'View your cart',
+  title: 'Panier',
+  description: 'Voir votre panier',
 }
 
 const fetchCart = async () => {
@@ -55,7 +55,7 @@ export default async function Cart(props: {
       <Suspense fallback={<SkeletonProductsCarousel />}>
         <ProductCarousel
           products={products}
-          title="You may also like"
+          title="Vous pouvez également aimer"
           regionId={region.id}
         />
       </Suspense>

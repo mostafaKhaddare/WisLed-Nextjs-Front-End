@@ -55,16 +55,22 @@ export default function ProductActions({
     }))
   }
 
+  // Determine if this product has real selectable options
+  const hasOptions = (product.options || []).length > 0
+
   const selectedVariant = useMemo(() => {
     if (!product.variants || product.variants.length === 0) {
-      return
+      return undefined
     }
-
+    // If the product has no options configured, just use the first variant automatically
+    if (!hasOptions) {
+      return product.variants[0]
+    }
     return product.variants.find((v) => {
       const variantOptions = optionsAsKeymap(v.options)
       return isEqual(variantOptions, options)
     })
-  }, [product.variants, options])
+  }, [product.variants, options, hasOptions])
 
   // add the selected variant to the cart
   const handleAddToCart = async () => {
@@ -77,14 +83,13 @@ export default function ProductActions({
         quantity: qty,
         countryCode,
       })
+      setTimeout(() => {
+        openCartDropdown()
+        toast('success', 'Produit ajouté au panier !')
+      }, 1000)
     } catch (error) {
       toast('error', error)
     } finally {
-      setTimeout(() => {
-        openCartDropdown()
-        toast('success', 'Product was added to cart!')
-      }, 1000)
-
       setIsAdding(false)
     }
   }
@@ -99,8 +104,8 @@ export default function ProductActions({
     const variantSuffix = selectedVariant?.title ? ` - ${selectedVariant.title}` : '';
     const fullProductTitle = `${product.title}${variantSuffix}`;
 
-    // 3. Your Phone Number (Update this!)
-    const phoneNumber = "212648522511"; 
+    // 3. Phone number from env — NEXT_PUBLIC_WHATSAPP_PHONE in .env (e.g. 212648522511)
+    const phoneNumber = (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212648522511').replace(/\D/g, '')
 
     // 4. Create the message
     const message = `Bonjour, j'aimerais commander : ${fullProductTitle}.\n\nLien : ${productLink}\n\nMerci.`;
@@ -113,15 +118,13 @@ export default function ProductActions({
 
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
-    if (selectedVariant && !selectedVariant.manage_inventory) {
-      return true
-    }
-    if (selectedVariant?.allow_backorder) {
-      return true
-    }
+    // No variant configured at all — treat as available
+    if (!selectedVariant) return false
+    if (!selectedVariant.manage_inventory) return true
+    if (selectedVariant.allow_backorder) return true
     if (
-      selectedVariant?.manage_inventory &&
-      (selectedVariant?.inventory_quantity || 0) > 0
+      selectedVariant.manage_inventory &&
+      (selectedVariant.inventory_quantity || 0) > 0
     ) {
       return true
     }
@@ -139,6 +142,10 @@ export default function ProductActions({
         }
         return sum
       }, 0) || 0
+
+    if (selectedVariant?.allow_backorder) {
+      return 100
+    }
 
     if (
       selectedVariant?.inventory_quantity !== null &&
@@ -173,7 +180,7 @@ export default function ProductActions({
         <ProductPrice product={product} variant={selectedVariant} />
         <Divider />
         <div>
-          {product.variants.length > 0 && (
+          {hasOptions && (
             <div className="flex flex-col gap-y-4">
               {(product.options || []).map((option) => {
                 return (
@@ -214,27 +221,27 @@ export default function ProductActions({
             isLoading={isAdding}
             data-testid="add-product-button"
           >
-            {!selectedVariant
-              ? 'Select variant'
+            {!selectedVariant && hasOptions
+              ? 'Choisir une variante'
               : !inStock
-                ? 'Out of stock'
-                : 'Add to cart'}
-          </Button> 
-        </Box>
-        
-        {/* WhatsApp Button */}
-          <Button 
-            onClick={handleWhatsAppClick}
-            className="w-full bg-green-600 text-white py-3 px-6 rounded-full font-medium flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
-          >
-            <FaWhatsapp size={20} />
-            <span>Chat on WhatsApp</span>
+                ? 'Rupture de stock'
+                : 'Ajouter au panier'}
           </Button>
+        </Box>
+
+        {/* WhatsApp Button */}
+        <Button
+          onClick={handleWhatsAppClick}
+          className="w-full bg-green-600 text-white py-3 px-6 rounded-full font-medium flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
+        >
+          <FaWhatsapp size={20} />
+          <span>Commander via WhatsApp</span>
+        </Button>
 
         {maxQuantity === 0 && inStock && (
           <Text size="sm" className="text-negative">
-            You cannot add more items to your cart - you already have the
-            maximum number in cart.
+            Vous ne pouvez pas ajouter plus d'articles — vous avez déjà la
+            quantité maximale dans votre panier.
           </Text>
         )}
       </div>

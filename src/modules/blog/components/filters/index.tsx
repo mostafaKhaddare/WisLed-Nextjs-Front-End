@@ -38,14 +38,14 @@ const Filters = ({ data, countryCode }: FiltersProps) => {
 
   const allCategories = [
     {
-      value: 'all-posts',
-      label: 'All posts',
+      value: 'Tous les articles',
+      label: 'Tous les articles',
     },
     ...data,
   ]
 
   // Get current category value from URL params (only one selected value is allowed)
-  const selectedCategory = searchParams.get('category') || 'all-posts'
+  const selectedCategory = searchParams.get('category') || 'Tous les articles'
   const searchParamsObj = omit(
     Object.fromEntries(searchParams.entries()),
     'page' // Remove pagination when changing filters
@@ -56,7 +56,7 @@ const Filters = ({ data, countryCode }: FiltersProps) => {
     const params = new URLSearchParams(searchParams)
     const category = searchParams.get('category')
 
-    if (category === 'all-posts') {
+    if (category === 'Tous les articles') {
       params.delete('category')
     }
 

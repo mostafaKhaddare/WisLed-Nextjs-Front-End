@@ -145,7 +145,7 @@ const Addresses = ({
           ) : (
             <Stepper state="completed" />
           )}
-          Shipping address
+          Adresse de livraison
         </Heading>
         {!isOpen && cart?.shipping_address && (
           <Button
@@ -154,7 +154,7 @@ const Addresses = ({
             onClick={handleEdit}
             data-testid="edit-address-button"
           >
-            Edit
+            Modifier
           </Button>
         )}
       </Box>
@@ -175,7 +175,7 @@ const Addresses = ({
               <div>
                 <Divider className="my-6" />
                 <Heading as="h2" className="pb-6 text-2xl">
-                  Billing address
+                  Adresse de facturation
                 </Heading>
                 <BillingAddress
                   cart={cart}
@@ -190,7 +190,7 @@ const Addresses = ({
               className="mt-6"
               data-testid="submit-address-button"
             >
-              Proceed to delivery
+              Procéder à la livraison
             </SubmitButton>
           </Box>
         </form>
@@ -206,7 +206,7 @@ const Addresses = ({
                     data-testid="shipping-address-summary"
                   >
                     <Text size="lg" className="text-basic-primary">
-                      Shipping Address
+                      Adresse de livraison
                     </Text>
                     <Text className="text-secondary">
                       {cart.shipping_address.first_name}{' '}
@@ -233,11 +233,11 @@ const Addresses = ({
                     data-testid="billing-address-summary"
                   >
                     <Text size="lg" className="text-basic-primary">
-                      Billing Address
+                      Adresse de facturation
                     </Text>
                     {sameAsShipping ? (
                       <Text className="text-secondary">
-                        Same as shipping address
+                        Identique à l&apos;adresse de livraison
                       </Text>
                     ) : (
                       <>

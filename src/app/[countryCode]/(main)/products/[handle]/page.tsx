@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { getProductByHandle, getProductsList } from '@lib/data/products'
 import { getRegion, listRegions } from '@lib/data/regions'
 import ProductTemplate from '@modules/products/templates'
+import ProductJsonLd from '@modules/products/components/json-ld'
+import { getBaseURL } from '@lib/util/env'
 
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
@@ -57,13 +59,26 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
+  const title = `${product.title} | WisLed`
+  const description = product.description || `${product.title} - WisLed`
+  const images = product.images?.map((img) => img.url) || (product.thumbnail ? [product.thumbnail] : [])
+
   return {
-    title: `${product.title} | Solace Medusa Starter`,
-    description: `${product.title}`,
+    title,
+    description,
     openGraph: {
-      title: `${product.title} | Solace Medusa Starter`,
-      description: `${product.title}`,
-      images: product.thumbnail ? [product.thumbnail] : [],
+      title,
+      description,
+      images,
+      url: `${getBaseURL()}/${params.countryCode}/products/${handle}`,
+      type: 'website',        // Note: 'product' is not a valid OG type in Next.js Metadata API;
+      // the correct signal for product pages is sent via JSON-LD instead.
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images,
     },
   }
 }
@@ -83,10 +98,13 @@ export default async function ProductPage(props: Props) {
   }
 
   return (
-    <ProductTemplate
-      product={pricedProduct}
-      region={region}
-      countryCode={params.countryCode}
-    />
+    <>
+      <ProductJsonLd product={pricedProduct} region={region} currencyCode={region.currency_code} />
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+      />
+    </>
   )
 }

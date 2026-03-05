@@ -141,7 +141,7 @@ const ShippingAddress = ({
         })}
       >
         <Input
-          label="First name"
+          label="Prénom"
           name="shipping_address.first_name"
           autoComplete="given-name"
           value={values.shipping_address.first_name}
@@ -151,7 +151,7 @@ const ShippingAddress = ({
           data-testid="shipping-first-name-input"
         />
         <Input
-          label="Last name"
+          label="Nom"
           name="shipping_address.last_name"
           autoComplete="family-name"
           value={values.shipping_address.last_name}
@@ -161,7 +161,7 @@ const ShippingAddress = ({
           data-testid="shipping-last-name-input"
         />
         <Input
-          label="Company name (optional)"
+          label="Nom de l'entreprise (facultatif)"
           name="shipping_address.company"
           value={values.shipping_address.company}
           onChange={handleChange}
@@ -169,7 +169,7 @@ const ShippingAddress = ({
           data-testid="shipping-company-input"
         />
         <Input
-          label="Address"
+          label="Adresse"
           name="shipping_address.address_1"
           autoComplete="address-line1"
           value={values.shipping_address.address_1}
@@ -179,7 +179,7 @@ const ShippingAddress = ({
           data-testid="shipping-address-input"
         />
         <Input
-          label="Postal code"
+          label="Code postal"
           name="shipping_address.postal_code"
           autoComplete="postal-code"
           value={values.shipping_address.postal_code}
@@ -189,7 +189,7 @@ const ShippingAddress = ({
           data-testid="shipping-postal-code-input"
         />
         <Input
-          label="City"
+          label="Ville"
           name="shipping_address.city"
           autoComplete="address-level2"
           value={values.shipping_address.city}
@@ -199,7 +199,7 @@ const ShippingAddress = ({
           data-testid="shipping-city-input"
         />
         <CountrySelect
-          label="Country"
+          label="Pays"
           name="shipping_address.country_code"
           autoComplete="country"
           region={cart?.region}
@@ -211,7 +211,7 @@ const ShippingAddress = ({
           data-testid="shipping-country-select"
         />
         <Input
-          label="State / Province (optional)"
+          label="État / Province (facultatif)"
           name="shipping_address.province"
           autoComplete="address-level1"
           value={values.shipping_address.province}
@@ -219,10 +219,10 @@ const ShippingAddress = ({
           data-testid="shipping-province-input"
         />
         <Input
-          label="Email"
+          label="E-mail"
           name="email"
           type="email"
-          title="Enter a valid email address."
+          title="Veuillez saisir une adresse e-mail valide."
           autoComplete="email"
           value={values.email}
           onChange={handleChange}
@@ -231,7 +231,7 @@ const ShippingAddress = ({
           data-testid="billing-email-input"
         />
         <Input
-          label="Phone number"
+          label="Numéro de téléphone"
           name="shipping_address.phone"
           autoComplete="tel"
           value={values.shipping_address.phone}

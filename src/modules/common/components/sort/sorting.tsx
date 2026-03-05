@@ -43,17 +43,17 @@ const Sorting = ({ options, sortBy, setQueryParams }: SortingProps) => {
   return (
     <Box className="flex items-center gap-4">
       <Text size="md" className="hidden text-secondary small:block">
-        Sort by:
+        Trier par :
       </Text>
       <Select
         value={sortBy}
         onValueChange={(e: string) => handleChange(e)}
         className="hidden w-[200px] small:block"
       >
-        <SelectTrigger aria-label="Sort by" data-testid="select-sort-by">
+        <SelectTrigger aria-label="Trier par" data-testid="select-sort-by">
           <SelectValue
             placeholder={
-              options && options.length > 0 ? options[0].label : 'Select'
+              options && options.length > 0 ? options[0].label : 'Choisir'
             }
           />
         </SelectTrigger>
@@ -75,7 +75,7 @@ const Sorting = ({ options, sortBy, setQueryParams }: SortingProps) => {
             <>
               <Menu.Button className=" rounded-3xl text-md px-4 py-3 transition-all duration-150 ease-in-out flex gap-2 h-9 w-full items-center justify-center bg-fg-primary hover:bg-fg-primary-hover active:bg-fg-primary-pressed text-inverse-primary">
                 <SortIcon />
-                Sort
+                Trier
               </Menu.Button>
               <Transition
                 enter="transition ease-out duration-75"

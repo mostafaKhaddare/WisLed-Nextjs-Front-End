@@ -30,11 +30,11 @@ export const PRODUCT_LIST_PATHNAMES = {
 export const blogSortOptions = [
   {
     value: 'desc',
-    label: 'Newest',
+    label: 'Les plus récents',
   },
   {
     value: 'asc',
-    label: 'Oldest',
+    label: 'Les plus anciens',
   },
 ]
 
@@ -45,17 +45,18 @@ export const storeSortOptions = [
   },
   {
     value: 'created_at',
-    label: 'Nouveau',
+    label: 'Nouveautés',
   },
   {
     value: 'price_asc',
-    label: 'Prix : Bas - Élevé',
+    label: 'Prix : Bas → Élevé',
   },
   {
     value: 'price_desc',
-    label: 'Prix : Élevé - Bas',
+    label: 'Prix : Élevé → Bas',
   },
 ]
+
 
 /* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
 export const paymentInfoMap: Record<
@@ -63,7 +64,7 @@ export const paymentInfoMap: Record<
   { title: string; icon: React.JSX.Element }
 > = {
   pp_stripe_stripe: {
-    title: 'Credit card',
+    title: 'Carte de crédit',
     icon: <StripeIcon />,
   },
   'pp_stripe-blik_stripe': {
@@ -87,7 +88,7 @@ export const paymentInfoMap: Record<
     icon: <PayPalIcon />,
   },
   pp_system_default: {
-    title: 'Manual Payment',
+    title: 'Paiement manuel',
     icon: <CreditCard />,
   },
   // Add more payment providers here
@@ -129,73 +130,73 @@ export const noDivisionCurrencies = [
 ]
 
 export const passwordRequirements = [
-  'At least 8 characters',
-  'One lowercase letter',
-  'One uppercase letter',
-  'One number or symbol',
+  'Au moins 8 caractères',
+  'Une lettre minuscule',
+  'Une lettre majuscule',
+  'Un chiffre ou un symbole',
 ]
 
 export const createNavigation = (
   productCategories: StoreProductCategory[],
   collections?: StoreCollection[]
 ) => [
-  {
-    name: 'Shop',
-    handle: '/shop',
-    category_children: productCategories
-      .filter((category) => !category.parent_category)
-      .map((category) => {
-        // Get the first image from product_category_image if available
-        const categoryImage =
-          (category as any).product_category_image?.[0] || null
-        return {
-          name: category.name,
-          type: 'parent_category',
-          handle: `/categories/${category.handle}`,
-          image: categoryImage
-            ? {
+    {
+      name: 'Boutique',
+      handle: '/shop',
+      category_children: productCategories
+        .filter((category) => !category.parent_category)
+        .map((category) => {
+          // Get the first image from product_category_image if available
+          const categoryImage =
+            (category as any).product_category_image?.[0] || null
+          return {
+            name: category.name,
+            type: 'parent_category',
+            handle: `/categories/${category.handle}`,
+            image: categoryImage
+              ? {
                 url: categoryImage.url,
                 alt: categoryImage.alternative_text || category.name,
               }
-            : null,
-          category_children: category.category_children.map((subCategory) => {
-            const subCategoryImage =
-              (subCategory as any).product_category_image?.[0] || null
-            return {
-              name: subCategory.name,
-              handle: `/categories/${subCategory.handle}`,
-              icon: null,
-              image: subCategoryImage
-                ? {
+              : null,
+            category_children: category.category_children.map((subCategory) => {
+              const subCategoryImage =
+                (subCategory as any).product_category_image?.[0] || null
+              return {
+                name: subCategory.name,
+                handle: `/categories/${subCategory.handle}`,
+                icon: null,
+                image: subCategoryImage
+                  ? {
                     url: subCategoryImage.url,
                     alt: subCategoryImage.alternative_text || subCategory.name,
                   }
-                : null,
-              category_children: null,
-            }
-          }),
-        }
-      }),
-  },
-  {
-    name: 'Collections',
-    handle: '/shop',
-    category_children: !collections
-      ? null
-      : collections.map((collection) => ({
+                  : null,
+                category_children: null,
+              }
+            }),
+          }
+        }),
+    },
+    {
+      name: 'Collections',
+      handle: '/shop',
+      category_children: !collections
+        ? null
+        : collections.map((collection) => ({
           name: collection.title,
           type: 'collection',
           handle: `/collections/${collection.handle}`,
           handle_id: collection.handle,
           category_children: null,
         })),
-  },
-  {
-    name: 'À propos',
-    handle: '/about-us',
-    category_children: null,
-  },
-]
+    },
+    {
+      name: 'À propos',
+      handle: '/about-us',
+      category_children: null,
+    },
+  ]
 
 export const createFooterNavigation = (
   productCategories: StoreProductCategory[]
@@ -203,7 +204,7 @@ export const createFooterNavigation = (
   return {
     navigation: [
       {
-        header: 'Categories',
+        header: 'Catégories',
         links: [
           ...productCategories
             .filter((category) => !category.parent_category)
@@ -242,10 +243,7 @@ export const createFooterNavigation = (
             title: 'Blog',
             href: '/blog',
           },
-          {
-            title: 'Carrières',
-            href: '#',
-          },
+
         ],
       },
       {
@@ -254,10 +252,6 @@ export const createFooterNavigation = (
           {
             title: 'FAQ',
             href: '/faq',
-          },
-          {
-            title: 'Centre d\'aide',
-            href: '#',
           },
           {
             title: 'Contactez-nous',

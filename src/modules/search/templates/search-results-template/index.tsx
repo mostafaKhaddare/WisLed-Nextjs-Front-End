@@ -67,6 +67,7 @@ export default async function SearchResultsTemplate({
   } catch (_) {
     const queryParams: any = {
       limit: 12,
+      q: query,
       order:
         sortBy === 'price_asc'
           ? 'calculated_price'
@@ -107,33 +108,11 @@ export default async function SearchResultsTemplate({
       countryCode: countryCode,
     })
 
-    const shaped = fallbackProducts.map((product: any) => {
-      const prices = getProductPrice({ product })
-      const cheapest = prices?.cheapestPrice
-      return {
-        id: product.id,
-        title: product.title,
-        handle: product.handle,
-        thumbnail: product.thumbnail,
-        created_at: product.created_at,
-        updated_at: product.updated_at,
-        calculated_price: cheapest?.calculated_price_number?.toString() ?? '0',
-        sale_price: cheapest?.original_price_number?.toString() ?? '0',
-        regular_price: cheapest?.original_price_number?.toString() ?? '0',
-      }
-    })
-
-    // Apply simple text filtering to mimic search behavior
-    const q = (safeDecodeURIComponent(query) || '').toLowerCase()
-    const filtered = q
-      ? shaped.filter((p: any) => p.title?.toLowerCase().includes(q))
-      : shaped
-
-    results = filtered
-    count = fallbackCount ?? filtered.length
+    results = fallbackProducts
+    count = fallbackCount
   }
 
-  // TODO: Add logic in future
+
   const {
     response: { products: recommendedProducts },
   } = await getProductsList({
@@ -160,7 +139,7 @@ export default async function SearchResultsTemplate({
                 &quot;{safeDecodeURIComponent(query)}&quot;
               </Heading>
               <Text className="text-md text-secondary">
-                {count === 1 ? `${count} product` : `${count} products`}
+                {count === 1 ? `${count} produit` : `${count} produits`}
               </Text>
               <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap">
                 <Box className="hidden small:flex">
@@ -194,10 +173,10 @@ export default async function SearchResultsTemplate({
             <SearchResultsIcon />
             <Box className="flex flex-col items-center gap-2">
               <Heading as="h3" className="text-xl small:text-2xl">
-                No results for &quot;{safeDecodeURIComponent(query)}&quot;
+                Aucun résultat pour &quot;{safeDecodeURIComponent(query)}&quot;
               </Heading>
               <p className="text-center text-md text-secondary">
-                Please try again using a different spelling or phrase
+                Veuillez réessayer avec une orthographe ou une expression différente
               </p>
             </Box>
           </Box>
@@ -208,7 +187,7 @@ export default async function SearchResultsTemplate({
           <ProductCarousel
             products={recommendedProducts}
             regionId={region.id}
-            title="Recommended products"
+            title="Produits recommandés"
           />
         </Suspense>
       )}

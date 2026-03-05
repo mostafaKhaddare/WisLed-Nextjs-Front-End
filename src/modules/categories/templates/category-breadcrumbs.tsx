@@ -10,7 +10,7 @@ export default function CategoryBreadcrumbs({
   categoryTrail: Array<{ name: string; handle: string }>
 }) {
   return (
-    <nav className="mb-1 w-full p-2" aria-label="Breadcrumb">
+    <nav className=" w-full p-2" aria-label="Breadcrumb">
  
         <div className="max-w-full overflow-x-auto scrollbar-hide">
           <ol role="list" className="flex items-center  text-sm ">
@@ -43,7 +43,7 @@ export default function CategoryBreadcrumbs({
                   ) : (
                     <Link
                       href={href}
-                      className=" text-action-primary px-3  text-xs font-medium truncate ml-1 "
+                      className=" text-action-primary px-3  text-md font-medium truncate ml-1 "
                     >
                       {cat.name}
                     </Link>

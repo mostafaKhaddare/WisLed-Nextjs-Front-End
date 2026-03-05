@@ -121,8 +121,8 @@ const AddressSelect: React.FC<AddressSelectProps> = ({
             <DialogClose className="right-4" />
           </DialogHeader>
           <VisuallyHidden.Root>
-            <DialogTitle>Select address modal</DialogTitle>
-          </VisuallyHidden.Root>
+            <DialogTitle>Sélectionner une adresse</DialogTitle>
+          </VisuallyHidden.Root>  
           <DialogBody className="flex flex-col gap-6 overflow-y-auto p-4 small:p-5">
             <FormikProvider value={formik}>
               {addNewAddress ? (

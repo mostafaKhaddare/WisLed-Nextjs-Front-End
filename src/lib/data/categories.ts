@@ -5,7 +5,7 @@ export const listCategories = async function () {
     .list(
       {
         fields:
-          '*category_children, *products, *parent_category, *parent_category.parent_category, *product_category_image',
+          '*category_children, *category_children.product_category_image, *products, *parent_category, *parent_category.parent_category, *product_category_image',
       },
       { next: { tags: ['categories'] } }
     )
@@ -35,7 +35,7 @@ export const getCategoryByHandle = async function (
     {
       handle: handleParam,
       fields:
-        '*category_children, *products, *parent_category, *parent_category.parent_category, *product_category_image',
+        '*category_children, *category_children.product_category_image, *products, *parent_category, *parent_category.parent_category, *product_category_image',
     },
     { next: { tags: ['categories'] } }
   )

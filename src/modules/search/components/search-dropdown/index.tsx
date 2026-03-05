@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useRef } from 'react'
 
 import { cn } from '@lib/util/cn'
 import { StoreProduct } from '@medusajs/types'
@@ -21,76 +21,108 @@ export default function SearchDropdown({
   countryCode: string
   recommendedProducts: StoreProduct[]
 }) {
-  const [delayClose, setDelayClose] = useState(null)
-  const handleMouseEnter = () => {
-    if (delayClose) {
-      clearTimeout(delayClose)
-    }
-    setIsOpen(true)
-  }
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const handleMouseLeave = () => {
-    const timeout = setTimeout(() => {
-      setIsOpen(false)
-    }, 500)
-    setDelayClose(timeout)
-  }
-
+  // Close on outside click
   useEffect(() => {
-    return () => {
-      if (delayClose) {
-        clearTimeout(delayClose)
+    if (!isOpen) return
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false)
       }
     }
-  }, [delayClose])
+
+    // Small delay so the opening click doesn't immediately close it
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+    }, 50)
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen, setIsOpen])
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, setIsOpen])
+
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="hidden w-full large:absolute large:left-1/2 large:top-4 large:z-30 large:block large:-translate-x-1/2"
+      ref={dropdownRef}
+      className="w-full large:relative large:z-30 large:block"
     >
+      {/* Search input */}
       <ControlledSearchBox
         countryCode={countryCode}
         open={isOpen}
         closeSearch={() => setIsOpen(false)}
       />
+
+      {/* Dropdown panel */}
       <Box
         className={cn(
-          'absolute left-0 top-full z-50 w-full translate-y-0 bg-primary shadow-lg transition-all duration-300',
+          'absolute right-0 top-full z-50 mt-4 w-[750px] origin-top-right overflow-hidden rounded-2xl border border-gray-100 bg-white/95 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-3xl transition-all duration-300 ease-out',
+          'dark:border-white/[0.08] dark:bg-[#121212]/95 dark:shadow-black/50',
           isOpen
-            ? 'pointer-events-auto opacity-100'
-            : 'pointer-events-none invisible opacity-0'
+            ? 'pointer-events-auto translate-y-0 opacity-100'
+            : 'pointer-events-none -translate-y-2 opacity-0'
         )}
       >
-        <Container className="flex gap-2 !px-14 !pb-8 !pt-5">
-          <Box className="flex w-[326px] flex-col">
-            <Box className="flex h-[62px] items-center">
-              <Text size="md" className="text-secondary">
-                Search results
+        <div className="flex min-h-[320px]">
+          {/* Left Column: Recent Searches */}
+          <Box className="flex w-[260px] shrink-0 flex-col border-r border-gray-100 bg-gray-50/60 p-6 dark:border-white/[0.08] dark:bg-white/[0.03]">
+            <div className="mb-4 flex items-center justify-between">
+              <Text size="md" className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Récent
               </Text>
-            </Box>
-            <RecentSearches handleOpenDialogChange={setIsOpen} />
+            </div>
+            <div className="flex-1">
+              <RecentSearches handleOpenDialogChange={setIsOpen} />
+            </div>
           </Box>
-          <Box className="flex-1">
-            <Box className="flex h-[62px] items-center">
-              <Text size="md" className="text-secondary">
-                Recommended
+
+          {/* Right Column: Recommended */}
+          <Box className="flex-1 p-6">
+            <div className="mb-5 flex items-center border-b border-gray-100 pb-3 dark:border-white/[0.08]">
+              <Text size="md" className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Produits Recommandés
               </Text>
-            </Box>
-            <Box className="grid gap-3 xl:grid-cols-2">
-              {recommendedProducts.map((item, id) => {
-                return (
+            </div>
+            <div className="grid gap-4">
+              {recommendedProducts.length > 0 ? (
+                recommendedProducts.map((item, id) => (
                   <Fragment key={id}>
                     <RecommendedItem
                       item={item}
                       handleOpenDialogChange={setIsOpen}
                     />
                   </Fragment>
-                )
-              })}
-            </Box>
+                ))
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center text-center">
+                  <Text className="text-sm text-gray-400 dark:text-gray-500">
+                    Découvrez nos nouveautés
+                  </Text>
+                </div>
+              )}
+            </div>
           </Box>
-        </Container>
+        </div>
       </Box>
     </div>
   )

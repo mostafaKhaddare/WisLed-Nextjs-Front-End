@@ -60,7 +60,7 @@ export default async function BlogPostTemplate({
       </Box>
 
       {/* Main Content Grid */}
-      <Box className="grid grid-cols-12 gap-6 medium:gap-8">
+      <Box className="grid grid-cols-12 gap-6 medium:gap-8 items-start">
         {/* Table of Contents Sidebar */}
         <Box
           className={cn(
@@ -76,7 +76,7 @@ export default async function BlogPostTemplate({
         {/* Main Article Content */}
         <Box
           className={cn(
-            'col-span-12 large:col-span-9 large:col-start-5',
+            'col-span-12',
             hasHeadings
               ? 'large:col-span-9'
               : 'large:col-span-10 large:col-start-2'

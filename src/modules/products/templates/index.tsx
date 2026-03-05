@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 
 import { retrieveCart } from '@lib/data/cart'
 import { getProductVariantsColors } from '@lib/data/fetch'
-import { getProductsListByCollectionId } from '@lib/data/products'
+import { getProductsListByCollectionId, getProductsById } from '@lib/data/products'
 import { HttpTypes } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'
@@ -22,6 +22,20 @@ type ProductTemplateProps = {
   countryCode: string
 }
 
+/**
+ * Helper to parse a metadata field that may be a comma-separated string or an
+ * array of product IDs, and return a clean string[].
+ */
+function parseMetadataIds(value: unknown): string[] {
+  if (typeof value === 'string') {
+    return value.split(',').map((s) => s.trim()).filter(Boolean)
+  }
+  if (Array.isArray(value)) {
+    return (value as string[]).map((s) => String(s).trim()).filter(Boolean)
+  }
+  return []
+}
+
 const ProductTemplate: React.FC<ProductTemplateProps> = async ({
   product,
   region,
@@ -29,11 +43,31 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 }: ProductTemplateProps) => {
   const variantsColors = await getProductVariantsColors()
 
-  const { response: productsList } = await getProductsListByCollectionId({
-    collectionId: product.collection_id,
-    countryCode,
-    excludeProductId: product.id,
-  })
+  // ── 1. INCLUDED PRODUCTS ────────────────────────────────────────────────────
+  // Metadata key: "included_products"
+  // These are items physically bundled with / included in this product.
+  const includedIds = parseMetadataIds(product.metadata?.included_products)
+  const includedProductsList = includedIds.length
+    ? await getProductsById({ ids: includedIds, regionId: region.id })
+    : []
+
+  // ── 2. RELATED PRODUCTS ──────────────────────────────────────────────────────
+  // Metadata key: "related_products"
+  // These are curated companion / suitable products manually chosen in the admin.
+  // Falls back to same-collection products if no related_products metadata is set.
+  const relatedIds = parseMetadataIds(product.metadata?.related_products)
+
+  let relatedProductsList: HttpTypes.StoreProduct[] = []
+  if (relatedIds.length > 0) {
+    relatedProductsList = await getProductsById({ ids: relatedIds, regionId: region.id })
+  } else if (product.collection_id) {
+    const { response: productsList } = await getProductsListByCollectionId({
+      collectionId: product.collection_id,
+      countryCode,
+      excludeProductId: product.id,
+    })
+    relatedProductsList = productsList.products
+  }
 
   const cart = await retrieveCart()
 
@@ -66,12 +100,24 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         </Box>
       </Container>
 
-      {productsList.products.length > 0 && (
+      {/* ── INCLUDED PRODUCTS ── */}
+      {includedProductsList.length > 0 && (
         <Suspense fallback={<SkeletonProductsCarousel />}>
           <ProductCarousel
-            products={productsList.products}
+            products={includedProductsList}
             regionId={region.id}
-            title="Complétez votre installation"
+            title="Articles inclus avec ce produit"
+          />
+        </Suspense>
+      )}
+
+      {/* ── RELATED PRODUCTS ── */}
+      {relatedProductsList.length > 0 && (
+        <Suspense fallback={<SkeletonProductsCarousel />}>
+          <ProductCarousel
+            products={relatedProductsList}
+            regionId={region.id}
+            title="Produits similaires & compatibles"
           />
         </Suspense>
       )}

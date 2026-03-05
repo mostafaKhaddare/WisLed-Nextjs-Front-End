@@ -8,9 +8,9 @@ const buttonVariants = cva({
   variants: {
     variant: {
       filled:
-        'bg-fg-primary hover:bg-fg-primary-hover active:bg-fg-primary-pressed text-inverse-primary',
+        'bg-fg-primary hover:bg-fg-primary-hover active:bg-fg-primary-pressed text-inverse-primary dark:bg-fg-primary',
       ghost:
-        'bg-transparent hover:bg-hover active:bg-pressed !rounded-xl !p-4 text-action-primary',
+        'bg-transparent hover:bg-hover active:bg-pressed !rounded-xl !p-4 text-action-primary dark:text-fg-primary',
       tonal:
         'bg-fg-secondary text-action-primary hover:bg-fg-secondary-hover active:bg-fg-secondary-pressed [.dark_&]:bg-fg-tertiary [.dark_&]:hover:bg-fg-tertiary-hover [.dark_&]:active:bg-fg-tertiary-pressed',
       text: 'bg-transparent text-action-primary hover:text-action-primary-hover active:text-action-primary-pressed',
@@ -18,7 +18,7 @@ const buttonVariants = cva({
         'text-static bg-fg-primary-negative hover:bg-fg-primary-negative-hover active:bg-fg-primary-negative-pressed',
       icon: 'bg-transparent hover:bg-fg-secondary-hover active:bg-fg-secondary-pressed text-action-primary hover:text-action-primary-hover active:text-action-primary-pressed',
       mobileNav:
-        'bg-transparent text-fg-primary hover:text-action-primary-hover active:text-action-primary-pressed',
+        'bg-transparent text-fg-primary hover:text-action-primary-hover active:text-action-primary-pressed dark:bg-fg-primary',
     },
     size: {
       sm: 'h-9',
@@ -66,7 +66,7 @@ const buttonVariants = cva({
 
 export interface ButtonProps
   extends React.ComponentPropsWithoutRef<'button'>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   children: React.ReactNode
   asChild?: boolean
   leftIcon?: ReactElement<any>
@@ -122,8 +122,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               withIcon && !children
                 ? props.size
                 : variant === 'mobileNav'
-                ? undefined
-                : props.size,
+                  ? undefined
+                  : props.size,
             withIcon: (withIcon && !children) || variant === 'mobileNav',
             isLoading,
             disabled: props.disabled,

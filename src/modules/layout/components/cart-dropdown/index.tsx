@@ -78,7 +78,7 @@ const CartDropdown = ({
       onMouseLeave={closeCartDropdown}
     >
       <Popover className="relative h-full">
-        <Popover.Button className="rounded-full bg-transparent !p-2 text-action-primary hover:bg-fg-secondary-hover hover:text-action-primary-hover active:bg-fg-secondary-pressed active:text-action-primary-pressed xsmall:!p-3.5">
+        <Popover.Button className="rounded-full bg-transparent !p-2 text-black hover:bg-fg-secondary-hover hover:text-action-primary-hover active:bg-fg-secondary-pressed active:text-action-primary-pressed xsmall:!p-3.5 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:active:bg-white/15 dark:active:text-white">
           <LocalizedClientLink href="/cart" data-testid="nav-cart-link">
             <Box className="relative">
               <BagIcon />
@@ -100,11 +100,11 @@ const CartDropdown = ({
         >
           <Popover.Panel
             static
-            className="absolute right-0 top-[calc(100%+8px)] hidden w-[460px] border border-action-primary bg-primary text-ui-fg-base small:block"
+            className="absolute right-0 top-[calc(100%+8px)] hidden w-[460px] rounded-xl border border-basic-primary/10 bg-primary shadow-2xl text-ui-fg-base dark:border-white/[0.06] dark:bg-[#14161b] small:block"
             data-testid="nav-cart-dropdown"
           >
             <Box className="flex items-center border-b-[0.5px] border-basic-primary p-5">
-              <Text className="text-2xl">Shopping Cart</Text>
+              <Text className="text-2xl">Panier</Text>
             </Box>
             {cartState && cartState.items?.length ? (
               <>
@@ -132,6 +132,7 @@ const CartDropdown = ({
                               images={item.variant?.product?.images}
                               size="square"
                               className="h-[90px] w-[80px] rounded-none"
+                              alt={item.product_title}
                             />
                           </LocalizedClientLink>
                           <Box className="flex w-full justify-between px-4 py-3">
@@ -161,7 +162,7 @@ const CartDropdown = ({
                                         data-value={item.quantity}
                                       >
                                         {item.quantity}{' '}
-                                        {item.quantity > 1 ? 'items' : 'item'}
+                                        {item.quantity > 1 ? 'articles' : 'article'}
                                       </span>
                                     </Box>
                                     <Box className="mt-3 flex">
@@ -201,7 +202,7 @@ const CartDropdown = ({
                   </Box>
                   <LocalizedClientLink href="/cart" passHref>
                     <Button className="w-full" data-testid="go-to-cart-button">
-                      Go to cart
+                      Voir le panier
                     </Button>
                   </LocalizedClientLink>
                 </Box>
@@ -211,15 +212,15 @@ const CartDropdown = ({
                 <BagIcon className="h-14 w-14" />
                 <Box className="flex flex-col items-center justify-center gap-y-2">
                   <Heading as="h4" className="text-2xl">
-                    Your shopping cart is empty.
+                    Votre panier est vide.
                   </Heading>
                   <Text className="text-secondary">
-                    Are you looking for inspiration?
+                    Besoin d'inspiration ?
                   </Text>
                 </Box>
                 <Button onClick={closeCartDropdown} asChild className="w-full">
                   <LocalizedClientLink href="/">
-                    Explore Home page
+                    Explorer la boutique
                   </LocalizedClientLink>
                 </Button>
               </Box>

@@ -2,16 +2,16 @@ import { Suspense } from 'react'
 import { Metadata } from 'next'
 
 import { listCategories } from '@lib/data/categories'
-import {  getCollectionsList } from '@lib/data/collections'
-// cms import
+import { getCollectionsList } from '@lib/data/collections'
+import { getBestSellers, getProductsList } from '@lib/data/products'
+import { getRegion } from '@lib/data/regions'
 import {
   getCollectionsData,
   getExploreBlogData,
   getHeroBannerData,
   getMidBannerData,
+  getInspirationsData,
 } from '@lib/data/fetch'
-import { getProductsList } from '@lib/data/products'
-import { getRegion } from '@lib/data/regions'
 import { CategoryCarousel } from '@modules/categories/components/category-carousel'
 import { Banner } from '@modules/home/components/banner'
 import Collections from '@modules/home/components/collections'
@@ -20,6 +20,8 @@ import Hero from '@modules/home/components/hero'
 import { ProductCarousel } from '@modules/products/components/product-carousel'
 import SkeletonCategoriesCarousel from '@modules/skeletons/templates/skeleton-categories-carousel'
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
+import LookbookSection from '@modules/home/components/lookbook/LookbookSection'
+import OrganizationJsonLd from '@modules/seo/components/organization-json-ld'
 
 export const metadata: Metadata = {
   title: 'Wisled | Expert en Solutions d’Éclairage LED et Contrôle',
@@ -34,43 +36,50 @@ export default async function Home(props: {
 
   const { countryCode } = params
 
-  const [categories, { collections: collectionsList }, { products }] =
+  const [categories, { collections: collectionsList }, bestSellers] =
     await Promise.all([
       listCategories(),
       getCollectionsList(),
-      getProductsList({
-        pageParam: 0,
-        queryParams: { limit: 9 },
+      getBestSellers({
         countryCode: countryCode,
-      }).then(({ response }) => response),
+        limit: 12,
+      }),
     ])
 
   const region = await getRegion(countryCode)
 
-  if (!products || !collectionsList || !region) {
+  if (!bestSellers || !collectionsList || !region) {
     return null
   }
 
-  // CMS data
+  // CMS data — all Strapi calls are safe (return null on failure, never throw)
   const [
     strapiCollections,
-    {
-      data: { HeroBanner },
-    },
-    {
-      data: { MidBanner },
-    },
-    { data: posts },
+    heroBannerResult,
+    midBannerResult,
+    blogResult,
+    inspirationsData,
   ] = await Promise.all([
     getCollectionsData(),
     getHeroBannerData(),
     getMidBannerData(),
     getExploreBlogData(),
+    getInspirationsData(),
   ])
+
+  const HeroBanner = heroBannerResult?.data?.HeroBanner ?? null
+  const MidBanner = midBannerResult?.data?.MidBanner ?? null
+  const posts = blogResult?.data ?? []
+
 
   return (
     <>
-      {HeroBanner && HeroBanner.Headline && <Hero data={HeroBanner} />}
+      <OrganizationJsonLd />
+      {/* Hero: always rendered — falls back to CSS gradient when Strapi is offline */}
+      {HeroBanner && <Hero data={HeroBanner} />}
+
+
+
       <Suspense fallback={<SkeletonCategoriesCarousel />}>
         <CategoryCarousel
           testId="our-bestsellers-section"
@@ -82,16 +91,20 @@ export default async function Home(props: {
           }}
         />
       </Suspense>
+
+
       {strapiCollections && (
         <Collections
           cmsCollections={strapiCollections}
           medusaCollections={collectionsList}
         />
       )}
+      {/* SHOP THE LOOK SECTION */}
+      <LookbookSection regionId={region.id} inspirations={inspirationsData?.data || []} />
       <Suspense fallback={<SkeletonProductsCarousel />}>
         <ProductCarousel
           testId="our-bestsellers-section"
-          products={products}
+          products={bestSellers}
           regionId={region.id}
           title="Nos meilleures ventes"
           viewAll={{
@@ -100,7 +113,9 @@ export default async function Home(props: {
           }}
         />
       </Suspense>
-    {MidBanner && <Banner data={MidBanner} />}
+
+      {/* MidBanner: only render if image exists (Banner component requires it) */}
+      {MidBanner && MidBanner.Image && <Banner data={MidBanner} />}
       {/* ------------------------------------------------ */}
       {posts && posts.length > 0 && <ExploreBlog posts={posts} />}
     </>

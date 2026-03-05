@@ -1,4 +1,6 @@
-import { useMemo } from 'react'
+'use client'
+
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
 
 import { cn } from '@lib/util/cn'
@@ -24,7 +26,7 @@ const CollectionTile = ({
 }) => {
   return (
     <Box
-      className={cn('group relative overflow-hidden', {
+      className={cn('group relative overflow-hidden h-[180px] small:h-[300px] w-full', {
         // You can keep your grid span logic here if you had any
       })}
     >
@@ -35,7 +37,7 @@ const CollectionTile = ({
         height={300}
         loading="lazy"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        className="h-full w-full object-cover object-center"
+        className="h-full w-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
       />
 
       {/* --- ADDED OVERLAY HERE --- */}
@@ -43,7 +45,7 @@ const CollectionTile = ({
           group-hover:bg-black/50 = darkens on hover (50% opacity)
           transition-colors duration-500 = smooth animation
       */}
-      <div className="absolute inset-0 bg-black/30 transition-all duration-500 group-hover:bg-black/40" />
+      <div className="absolute inset-0 bg-black/30 transition-all duration-500 group-hover:bg-black/50" />
       {/* -------------------------- */}
 
       <Box className="absolute left-0 top-0 hidden h-full w-full flex-col p-6 small:flex large:p-10">
@@ -56,12 +58,12 @@ const CollectionTile = ({
           </LocalizedClientLink>
         </Button>
         <Box className="mt-auto text-static">
-          <Heading as="h3" className="mt-auto text-2xl large:text-3xl">
+          <Heading as="h3" className="mt-auto text-2xl text-white large:text-3xl">
             {title}
           </Heading>
           <Text
             size="lg"
-            className="line-clamp-2 transition-all duration-500 ease-in-out large:h-0 large:opacity-0 large:group-hover:h-12 large:group-hover:opacity-100"
+            className="line-clamp-2 text-white/80 transition-all duration-500 ease-in-out large:h-0 large:opacity-0 large:group-hover:h-12 large:group-hover:opacity-100"
           >
             {description}
           </Text>
@@ -72,7 +74,7 @@ const CollectionTile = ({
           href={`/collections/${encodeURIComponent(handle)}`}
           className="flex h-full w-full flex-col justify-end"
         >
-          <Heading as="h3" className="text-2xl text-static large:text-3xl">
+          <Heading as="h3" className="text-2xl text-white large:text-3xl">
             {title}
           </Heading>
         </LocalizedClientLink>
@@ -87,6 +89,8 @@ const Collections = ({
   cmsCollections: CollectionsData
   medusaCollections: StoreCollection[]
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const validCollections = useMemo(() => {
     if (!cmsCollections.data.length || !medusaCollections.length) return null
     const collections = cmsCollections.data.filter((cmsCollection) =>
@@ -94,41 +98,59 @@ const Collections = ({
         (medusaCollection) => medusaCollection.handle === cmsCollection.Handle
       )
     )
-    if (!collections || collections.length < 3) return null
+    if (!collections || collections.length < 1) return null
     return collections.sort((a, b) => b.id - a.id)
   }, [cmsCollections, medusaCollections])
 
-  const newestCollections = useMemo(() => {
-    if (!validCollections) return null
-    return validCollections.slice(0,4 )
-  }, [validCollections])
+  const collectionsToShow = useMemo(() => {
+    if (!validCollections) return []
+    return isExpanded ? validCollections : validCollections.slice(0, 4)
+  }, [validCollections, isExpanded])
 
-  if (!newestCollections) return null
+  if (!validCollections) return null
 
   return (
- <Container>
-  {/* 1. Place the Heading here, above the grid */}
-  <Heading
-    as="h2"
-    className="mb-6 text-2xl font-bold text-basic-primary small:text-3xl"
-  >
-   Acheter par application
-  </Heading>
+    <Container>
+      {/* 1. Place the Heading here, above the grid */}
+      <Heading
+        as="h2"
+        className="mb-8 text-2xl font-bold text-basic-primary small:text-3xl"
+      >
+        Acheter par application
+      </Heading>
 
-  {/* 2. Move the grid classes to a new inner div */}
-  <div className="grid max-h-[800px] grid-rows-3 gap-2 small:max-h-[800px] small:grid-cols-2 small:grid-rows-2 large:max-h-[660px]">
-    {newestCollections.slice(0, 5).map((element, id) => (
-      <CollectionTile
-        key={id}
-        title={element.Title}
-        handle={element.Handle}
-        imgSrc={process.env.NEXT_PUBLIC_STRAPI_URL + element.Image.url}
-        description={element.Description}
-        id={id}
-      />
-    ))}
-  </div>
-</Container>
+      {/* 2. Flexible Grid */}
+      <div className="grid grid-cols-1 gap-4 small:grid-cols-2 large:grid-cols-2 xl:grid-cols-2">
+        {/* Adjusted to 2 cols for better visuals for collections, or maybe 4? User said 4 items. 
+             If 4 items, 2x2 grid is standard. If I change to 4 cols, they might be small. 
+             Let's use responsive: 1 col mobile, 2 cols tablet, 2 cols desktop?
+             The previous code had grid-cols-2 small:grid-cols-2.
+             Let's use grid-cols-1 small:grid-cols-2.
+         */}
+        {collectionsToShow.map((element, id) => (
+          <CollectionTile
+            key={id}
+            title={element.Title}
+            handle={element.Handle}
+            imgSrc={process.env.NEXT_PUBLIC_STRAPI_URL + element.Image.url}
+            description={element.Description}
+          />
+        ))}
+      </div>
+
+      {/* 3. Toggle Button */}
+      {validCollections.length > 4 && (
+        <div className="mt-8 flex justify-center">
+          <Button
+            variant="tonal"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="min-w-[150px]"
+          >
+            {isExpanded ? 'Voir moins' : 'Voir plus'}
+          </Button>
+        </div>
+      )}
+    </Container>
   )
 }
 

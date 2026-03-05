@@ -20,11 +20,11 @@ export default function StoreBreadcrumbs({
       <Breadcrumbs className="text-basic-primary">
         <BreadcrumbsList className="hidden small:flex">
           <BreadcrumbsItem>
-            <BreadcrumbsLink href="/">Home Page</BreadcrumbsLink>
+            <BreadcrumbsLink href="/">Page d’accueil</BreadcrumbsLink>
           </BreadcrumbsItem>
           <BreadcrumbsSeparator />
           <BreadcrumbsItem>
-            <BreadcrumbsStatic>{breadcrumb ?? 'Shop'}</BreadcrumbsStatic>
+            <BreadcrumbsStatic>{breadcrumb ?? 'Boutique'}</BreadcrumbsStatic>
           </BreadcrumbsItem>
         </BreadcrumbsList>
         <BreadcrumbsList className="flex small:hidden">
@@ -34,7 +34,7 @@ export default function StoreBreadcrumbs({
               className="flex items-center gap-2 text-md"
             >
               <ArrowLeftIcon className="h-[18px] w-[18px]" />
-              Back to Home Page
+              Retour à la page d’accueil
             </BreadcrumbsLink>
           </BreadcrumbsItem>
         </BreadcrumbsList>

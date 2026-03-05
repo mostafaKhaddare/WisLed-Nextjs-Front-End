@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 
 import { getFAQ } from '@lib/data/fetch'
+import { FAQSection } from 'types/strapi'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'
 import { Heading } from '@modules/common/components/heading'
@@ -11,20 +12,17 @@ import StoreBreadcrumbs from '@modules/store/templates/breadcrumbs'
 export const metadata: Metadata = {
   title: 'FAQs | Wisled',
   description:
-      'Trouvez rapidement les réponses aux questions fréquentes concernant nos produits/services.',
+    'Trouvez rapidement les réponses aux questions fréquentes concernant nos produits/services.',
 }
 
 export default async function FAQPage() {
-  const {
-    data: { FAQSection },
-  } = await getFAQ()
+  const result = await getFAQ()
+  const faqSections: FAQSection[] = result?.data?.FAQSection ?? []
 
-  const bookmarks = FAQSection.map((section) => {
-    return {
-      id: section.Bookmark,
-      label: section.Title,
-    }
-  })
+  const bookmarks = faqSections.map((section) => ({
+    id: section.Bookmark,
+    label: section.Title,
+  }))
 
   return (
     <Container className="min-h-screen max-w-full bg-secondary !p-0">
@@ -39,9 +37,13 @@ export default async function FAQPage() {
           </Box>
 
           <Box className="col-span-12 space-y-10 medium:col-span-8 medium:col-start-5">
-            {FAQSection.map((section, id) => (
-              <FAQAccordion key={id} data={section} />
-            ))}
+            {faqSections.length > 0 ? (
+              faqSections.map((section, id) => (
+                <FAQAccordion key={id} data={section} />
+              ))
+            ) : (
+              <p className="text-secondary">Aucune question disponible pour le moment.</p>
+            )}
           </Box>
         </Box>
       </Container>

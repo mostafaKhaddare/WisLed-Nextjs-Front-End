@@ -107,6 +107,9 @@ export default async function CategoryTemplate({
         calculated_price: cheapest?.calculated_price_number ?? 0,
         sale_price: cheapest?.original_price_number ?? 0,
         regular_price: cheapest?.original_price_number ?? 0,
+        // Include variants & options so ProductTile can render variant swatches
+        variants: product.variants ?? [],
+        options: product.options ?? [],
       }
     })
 
@@ -143,6 +146,15 @@ export default async function CategoryTemplate({
       <Container className="flex flex-col gap-6 !px-2 !pb-8 !pt-4">
         <CategoryBreadcrumbs countryCode={countryCode} categoryTrail={categoryTrail} />
 
+        <Box className="flex flex-col gap-2 px-2">
+
+          {currentCategory.description && (
+            <Text className="text-md text-secondary md:hidden">
+              {currentCategory.description}
+            </Text>
+          )}
+        </Box>
+
         {/* Subcategories */}
         {currentCategory.category_children?.length > 0 && (
           <Box className="w-full">
@@ -153,9 +165,9 @@ export default async function CategoryTemplate({
                     key={subcat.id}
                     as="a"
                     href={`/${countryCode}/categories/${subcat.handle}`}
-                    className="group flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-gray-200 shadow-sm cursor-pointer"
+                    className="group flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-gray-200 shadow-sm cursor-pointer transition-colors hover:border-gray-400 dark:bg-white/[0.04] dark:border-white/[0.08] dark:hover:border-white/[0.15]"
                   >
-                    <Text className="font-medium text-sm text-gray-700 whitespace-nowrap group-hover:text-black">
+                    <Text className="font-medium text-sm text-gray-700 whitespace-nowrap group-hover:text-black dark:text-white/70 dark:group-hover:text-white">
                       {subcat.name}
                     </Text>
                   </Box>
@@ -165,10 +177,12 @@ export default async function CategoryTemplate({
           </Box>
         )}
 
-        <Box className="flex flex-col gap-4 mb-2 ">
-          <Text className="text-md font-bold text-secondary ml-2">
-            {count === 1 ? `${count} product` : `${count} products`}
-          </Text>
+        <Box className="flex flex-col gap-4 mb-2">
+          <Box className="flex items-center justify-between px-2">
+            <Text className="text-sm font-semibold text-secondary">
+              {count === 1 ? `${count} produit` : `${count} produits`}
+            </Text>
+          </Box>
 
           <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap">
             <Box className="hidden small:flex">
@@ -191,14 +205,19 @@ export default async function CategoryTemplate({
           {results.length > 0 ? (
             <PaginatedProducts products={results} page={pageNumber} total={count} countryCode={countryCode} />
           ) : (
-            <p className="py-10 text-center text-lg text-secondary">No products.</p>
+            <Box className="py-16 text-center">
+              <Text className="text-lg font-semibold text-black dark:text-white/90">Aucun produit trouvé</Text>
+              <Text className="text-sm text-secondary">
+                Essayez d'ajuster les filtres ou explorez une autre catégorie.
+              </Text>
+            </Box>
           )}
         </Suspense>
       </Container>
 
       {recommendedProducts.length > 0 && (
         <Suspense fallback={<SkeletonProductsCarousel />}>
-          <ProductCarousel products={recommendedProducts} regionId={region.id} title="Recommended products" />
+          <ProductCarousel products={recommendedProducts} regionId={region.id} title="Produits recommandés " />
         </Suspense>
       )}
     </>

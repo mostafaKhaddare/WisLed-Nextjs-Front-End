@@ -45,7 +45,7 @@ export const RecentSearches = ({
           )
         })
       ) : (
-        <Text className="text-secondary">No search history</Text>
+        <Text className="text-secondary">Aucun historique de recherche</Text>
       )}
     </>
   )

@@ -26,13 +26,13 @@ import {
 
 function SocialMedia({ className }: { className?: string }) {
   return (
-   <Box className={cn('flex gap-2', className)}>
-      
+    <Box className={cn('flex gap-2', className)}>
+
       {/* Instagram */}
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
-        <LocalizedClientLink 
-          href="https://instagram.com/wisled" 
-          target="_blank" 
+        <LocalizedClientLink
+          href="https://instagram.com/wisled"
+          target="_blank"
           data-testid="instagram-link"
           className="text-static hover:text-[#E1306C] transition-colors"
         >
@@ -42,9 +42,9 @@ function SocialMedia({ className }: { className?: string }) {
 
       {/* Facebook */}
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
-        <LocalizedClientLink 
-          href="https://facebook.com/wisled" 
-          target="_blank" 
+        <LocalizedClientLink
+          href="https://facebook.com/wisled"
+          target="_blank"
           data-testid="facebook-link"
           className="text-static hover:text-[#1877F2] transition-colors"
         >
@@ -54,9 +54,9 @@ function SocialMedia({ className }: { className?: string }) {
 
       {/* WhatsApp */}
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
-        <LocalizedClientLink 
-          href="https://wa.me/212666650286" 
-          target="_blank" 
+        <LocalizedClientLink
+          href="https://wa.me/212666650286"
+          target="_blank"
           data-testid="whatsapp-link"
           className="text-static hover:text-[#25D366] transition-colors"
         >
@@ -81,7 +81,7 @@ export default async function Footer({ countryCode }: { countryCode: string }) {
         <Box className="flex flex-col gap-8 small:gap-12 large:flex-row xl:gap-0">
           <Box className="flex flex-col justify-between xl:min-w-[437px]">
             <LocalizedClientLink
-              href="#"
+              href="/"
               className="w-max cursor-pointer text-static"
             >
               <WisLedLogo />
@@ -170,7 +170,7 @@ export default async function Footer({ countryCode }: { countryCode: string }) {
         <Divider alignment="horizontal" variant="secondary" />
         <Box className="flex flex-wrap gap-6 gap-y-1">
           <Text size="md" className="shrink-0 text-secondary">
-            © {new Date().getFullYear()} WisLed. All rights reserved.
+            © {new Date().getFullYear()} WisLed. Tous droits réservés.
           </Text>
           {footerNavigation.other.map((link, id) => (
             <NavigationItem

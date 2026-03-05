@@ -27,18 +27,17 @@ const CheckoutSummary = ({
               <PaymentButton cart={cart} data-testid="submit-order-button" />
               <Box className="flex w-full">
                 <Text className="text-center text-sm text-secondary">
-                  By clicking the Place order button, you confirm that you have
-                  read, understand and accept our{' '}
+                  En cliquant sur le bouton Passer la commande, vous confirmez avoir lu, compris et accepté nos{' '}
                   <LocalizedClientLink href="#" className="underline">
-                    Terms of Use
+                       Conditions d&apos;utilisation
                   </LocalizedClientLink>
                   ,{' '}
                   <LocalizedClientLink href="#" className="underline">
-                    Terms of Sale
+                  Conditions de vente
                   </LocalizedClientLink>{' '}
-                  and{' '}
+                  et{' '}
                   <LocalizedClientLink href="#" className="underline">
-                    Returns Policy
+                    notre Politique de retour
                   </LocalizedClientLink>
                   .
                 </Text>

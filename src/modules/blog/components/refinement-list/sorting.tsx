@@ -47,7 +47,7 @@ const Sorting = ({
   return (
     <Box className="relative !z-30 flex items-center gap-4">
       <Text size="md" className="hidden text-secondary medium:block">
-        Sort by:
+        Trier par:
       </Text>
       <Select
         value={sortBy}

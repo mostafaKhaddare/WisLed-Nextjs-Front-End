@@ -87,7 +87,7 @@ const Shipping: React.FC<ShippingProps> = ({
           ) : (
             <Stepper state="focussed">2</Stepper>
           )}
-          Delivery
+          Livraison
         </Heading>
         {!isOpen &&
           cart?.shipping_address &&
@@ -99,7 +99,7 @@ const Shipping: React.FC<ShippingProps> = ({
               onClick={handleEdit}
               data-testid="edit-delivery-button"
             >
-              Edit
+              Modifier
             </Button>
           )}
       </Box>
@@ -155,7 +155,7 @@ const Shipping: React.FC<ShippingProps> = ({
             disabled={!cart.shipping_methods?.[0]}
             data-testid="submit-delivery-option-button"
           >
-            Proceed to payment
+            Continuer vers le paiement
           </Button>
         </Box>
       ) : (
@@ -163,7 +163,7 @@ const Shipping: React.FC<ShippingProps> = ({
           {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
             <div className="flex flex-col p-4">
               <Text size="lg" className="text-basic-primary">
-                Delivery method
+                Méthode de livraison
               </Text>
               <Text className="text-secondary">
                 {selectedShippingMethod?.name},{' '}

@@ -73,7 +73,7 @@ export default async function BlogTemplate({
       <Container className="!py-8">
         <StoreBreadcrumbs breadcrumb="Blog" />
         <Heading as="h1" className="mt-4 text-4xl medium:text-5xl">
-          Blog
+          Articles
         </Heading>
         <Box className="mb-8 mt-6 grid grid-cols-12 medium:mb-16 medium:mt-12">
           <Box className="col-span-12 medium:col-span-3 medium:mb-10">
@@ -117,7 +117,7 @@ export default async function BlogTemplate({
         <ProductCarousel
           products={recommendedProducts}
           regionId={region.id}
-          title="Recommended products"
+          title="Produits recommandés"
         />
       </Suspense>
     </Container>

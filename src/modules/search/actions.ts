@@ -19,9 +19,24 @@ type SearchParams = {
   query?: string
 }
 
+/**
+ * Normalise a raw user query before sending to the backend.
+ *
+ * - Strips leading/trailing whitespace
+ * - Collapses multiple spaces
+ * - Preserves the original casing (unaccent + case-insensitivity handled server-side)
+ * - Keeps technical terms like "24V", "SMD 5050", "IP65" intact
+ */
+function normalizeQuery(raw: string): string {
+  return raw
+    .trim()
+    .replace(/\s+/g, ' ')   // collapse multiple spaces
+    .slice(0, 200)           // cap length (avoid abuse / too-long queries)
+}
+
 export async function search({
   currency_code,
-  page,
+  page = 1,
   order = 'relevance',
   category_id,
   collection,
@@ -70,27 +85,29 @@ export async function search({
 
   if (price && Array.isArray(price)) {
     price.forEach((range) => {
-      switch (range) {
-        case 'under-100':
-          searchParams.append('price_to', '100')
-          break
-        case '100-500':
-          searchParams.append('price_from', '100')
-          searchParams.append('price_to', '500')
-          break
-        case '501-1000':
-          searchParams.append('price_from', '501')
-          searchParams.append('price_to', '1000')
-          break
-        case 'more-than-1000':
-          searchParams.append('price_from', '1000')
-          break
+      if (range === '0-100') {
+        searchParams.append('price_to', '100')
+      } else if (range === '100-300') {
+        searchParams.append('price_from', '100')
+        searchParams.append('price_to', '300')
+      } else if (range === '300-500') {
+        searchParams.append('price_from', '300')
+        searchParams.append('price_to', '500')
+      } else if (range === '500-1000') {
+        searchParams.append('price_from', '500')
+        searchParams.append('price_to', '1000')
+      } else if (range === '1000-999999') {
+        searchParams.append('price_from', '1000')
       }
     })
   }
 
   if (query) {
-    searchParams.append('q', safeDecodeURIComponent(query))
+    const rawQ = safeDecodeURIComponent(query)
+    const cleanQ = normalizeQuery(rawQ)
+    if (cleanQ) {
+      searchParams.append('q', cleanQ)
+    }
   }
 
   const response = await fetch(
@@ -107,9 +124,8 @@ export async function search({
     let errorBody: string | undefined
     try {
       errorBody = await response.text()
-    } catch (_) {}
+    } catch (_) { }
     const message = `Response error. Status: ${response.status}${errorBody ? ` Body: ${errorBody}` : ''}`
-    // Silently propagate error to callers to decide handling/logging
     throw new Error(message)
   }
 

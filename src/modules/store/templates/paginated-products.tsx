@@ -26,7 +26,7 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid w-full grid-cols-2 gap-x-2 gap-y-6 small:grid-cols-2 large:grid-cols-4 "
+        className="grid w-full grid-cols-2 gap-x-2 gap-y-4 small:grid-cols-2 large:grid-cols-4 "
         data-testid="products-list"
       >
         {products.map((p) => {
@@ -52,8 +52,11 @@ export default async function PaginatedProducts({
                     currency_code: region.currency_code,
                   }),
                   salePrice: (p as any).sale_price,
+                  variants: (p as any).variants,
+                  options: (p as any).options,
                 }}
                 regionId={region.id}
+                layout="list"
               />
             </li>
           )

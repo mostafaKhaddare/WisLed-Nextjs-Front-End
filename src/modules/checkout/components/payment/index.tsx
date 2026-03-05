@@ -146,7 +146,7 @@ const Payment = ({
           ) : (
             <Stepper state="focussed">3</Stepper>
           )}
-          Payment
+          Paiement
         </Heading>
         {!isOpen && paymentReady && (
           <Button
@@ -155,7 +155,7 @@ const Payment = ({
             onClick={handleEdit}
             data-testid="edit-payment-button"
           >
-            Edit
+            modifier
           </Button>
         )}
       </Box>
@@ -185,7 +185,7 @@ const Payment = ({
               {isStripe && stripeReady && (
                 <div className="mt-5 transition-all duration-150 ease-in-out">
                   <Text className="mb-3 text-md text-basic-primary">
-                    Enter your card details:
+                    Saisissez les informations de votre carte:
                   </Text>
                   <CardElement
                     options={useOptions}
@@ -206,13 +206,13 @@ const Payment = ({
           {paidByGiftcard && (
             <div className="flex flex-col">
               <Text className="txt-medium-plus mb-1 text-ui-fg-base">
-                Payment method
+                Méthode de paiement
               </Text>
               <Text
                 className="txt-medium text-ui-fg-subtle"
                 data-testid="payment-method-summary"
               >
-                Gift card
+                Carte cadeau
               </Text>
             </div>
           )}
@@ -233,7 +233,7 @@ const Payment = ({
               }
               data-testid="submit-payment-button"
             >
-              Enter card details
+              Saisir les détails de la carte
             </Button>
           )}
         </Box>
@@ -243,7 +243,7 @@ const Payment = ({
             <Box className="flex flex-col items-start">
               <Box className="flex w-full flex-col p-4">
                 <Text size="lg" className="font-normal text-basic-primary">
-                  Payment method
+                  Méthode de paiement
                 </Text>
                 <Text
                   className="font-normal text-secondary"
@@ -255,7 +255,7 @@ const Payment = ({
               </Box>
               <Box className="flex w-full flex-col p-4">
                 <Text size="lg" className="font-normal text-basic-primary">
-                  Payment details
+                  Détails du paiement
                 </Text>
                 <div
                   className="flex items-center gap-2 text-md text-basic-primary"
@@ -277,13 +277,13 @@ const Payment = ({
           ) : paidByGiftcard ? (
             <Box className="flex w-full flex-col p-4">
               <Text size="lg" className="font-normal text-basic-primary">
-                Payment method
+                Méthode de paiement
               </Text>
               <Text
                 className="font-normal text-secondary"
                 data-testid="payment-method-summary"
               >
-                Gift card
+                Carte cadeau
               </Text>
             </Box>
           ) : null}

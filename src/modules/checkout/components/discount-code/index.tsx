@@ -77,7 +77,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     const code = formData.get('code')
 
     if (!code) {
-      setErrorMessage('Please enter code')
+      setErrorMessage('Veuillez entrer le code')
       return
     }
 
@@ -108,12 +108,12 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     if (codes.length < promotions.length) {
       toast(
         'success',
-        `The promotion "${codeChanged.code}" has been successfully applied!`
+        `La promotion "${codeChanged.code}" a été appliquée avec succès!`
       )
     } else if (codes.length > promotions.length) {
       toast(
         'success',
-        `The promotion "${codeChanged.code}" has been successfully removed.`
+        `La promotion "${codeChanged.code}" a été retirée avec succès.`
       )
     } else if (
       codes.length === promotions.length &&
@@ -124,10 +124,10 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     ) {
       toast(
         'error',
-        `The promotion "${codeChanged.code}" has been already applied`
+        `La promotion "${codeChanged.code}" a déjà été appliquée`
       )
     } else {
-      toast('error', `The promotion "${codeChanged.code}" was not found`)
+      toast('error', `La promotion "${codeChanged.code}" n'a pas été trouvée`)
     }
     setCodes(promotions)
     setCodeChanged((prev) => {
@@ -158,7 +158,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
               as="h3"
             >
               <DiscountIcon />
-              Have promo code?
+             avez-vous un code promo?
             </Heading>
             <div
               id="chevronDown"
@@ -220,7 +220,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                         data-testid="activate-promotion-code-button"
                         variant="tonal"
                       >
-                        Activate
+                        Appliquer
                       </SubmitButton>
                     </Box>
                   </Box>

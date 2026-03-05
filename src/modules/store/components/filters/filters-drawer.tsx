@@ -62,9 +62,9 @@ export default function ProductFiltersDrawer({ children }: PropsWithChildren) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
       <DialogTrigger asChild>
-        <Button size='sm'   variant="filled" className="flex !py-2 small:hidden">
+        <Button size='sm' variant="filled" className="flex !py-2 small:hidden">
           <FilterIcon />
-          Filters
+          Filtres
         </Button>
       </DialogTrigger>
       <DialogPortal>
@@ -74,18 +74,18 @@ export default function ProductFiltersDrawer({ children }: PropsWithChildren) {
           aria-describedby={undefined}
         >
           <DialogHeader className="flex items-center gap-4 text-xl text-basic-primary small:text-2xl">
-            Filters
+            Filtres
             <DialogClose className="right-4" />
           </DialogHeader>
           <VisuallyHidden.Root>
-            <DialogTitle>Filters Modal</DialogTitle>
+            <DialogTitle>Filtres</DialogTitle>
           </VisuallyHidden.Root>
           <DialogBody className="overflow-y-auto p-5">{children}</DialogBody>
           <DialogFooter className="grid grid-cols-2 gap-2">
             <Button variant="tonal" onClick={() => setIsOpen(false)} asChild>
-              <Link href={clearAllUrl}>Clear filters</Link>
+              <Link href={clearAllUrl}>Effacer les filtres</Link>
             </Button>
-            <Button onClick={() => setIsOpen(false)}>View products</Button>
+            <Button onClick={() => setIsOpen(false)}>Voir les produits</Button>
           </DialogFooter>
         </DialogContent>
       </DialogPortal>

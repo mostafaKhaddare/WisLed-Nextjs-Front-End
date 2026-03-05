@@ -9,7 +9,7 @@ import CheckoutSummary from '@modules/checkout/templates/checkout-summary'
 import { Container } from '@modules/common/components/container'
 
 export const metadata: Metadata = {
-  title: 'Checkout',
+  title: 'Paiement',
 }
 
 const fetchCart = async () => {

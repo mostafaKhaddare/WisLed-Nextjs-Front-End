@@ -61,25 +61,25 @@ export default function ProductFilters({
           </>
         )}
         <FilterWrapper
-          title="Product type"
+          title="Type de produit"
           content={<FilterItems items={typeOptions} param="type" />}
         />
         <Divider />
         <FilterWrapper
-          title="Material"
+          title="Matériau"
           content={<FilterItems items={materialOptions} param="material" />}
         />
         <Divider />
         <FilterWrapper
-          title="Price"
+          title="Prix"
           content={<FilterItems items={priceOptions} param="price" />}
         />
       </Box>
       <Box className="hidden items-center gap-2 small:flex">
         {!isCollection && collectionOptions && collectionOptions.length > 0 && (
-          <Select value={null} onValueChange={() => {}}>
+          <Select value={null} onValueChange={() => { }}>
             <SelectTrigger
-              aria-label="Choose collection/s"
+              aria-label="Choisir une ou plusieurs collections"
               data-testid="collection-filter"
             >
               Collections
@@ -90,12 +90,12 @@ export default function ProductFilters({
           </Select>
         )}
         {typeOptions && typeOptions.length > 0 && (
-          <Select value={null} onValueChange={() => {}}>
+          <Select value={null} onValueChange={() => { }}>
             <SelectTrigger
-              aria-label="Choose product type/s"
+              aria-label="Choisir un ou plusieurs types"
               data-testid="product-type-filter"
             >
-              Product type
+              Type de produit
             </SelectTrigger>
             <SelectContent className="w-full">
               <FilterItems items={typeOptions} param="type" />
@@ -103,21 +103,21 @@ export default function ProductFilters({
           </Select>
         )}
         {materialOptions && materialOptions.length > 0 && (
-          <Select value={null} onValueChange={() => {}}>
+          <Select value={null} onValueChange={() => { }}>
             <SelectTrigger
-              aria-label="Choose material/s"
+              aria-label="Choisir un ou plusieurs matériaux"
               data-testid="material-filter"
             >
-              Material
+              Matériau
             </SelectTrigger>
             <SelectContent className="w-full">
               <FilterItems items={materialOptions} param="material" />
             </SelectContent>
           </Select>
         )}
-        <Select value={null} onValueChange={() => {}}>
-          <SelectTrigger aria-label="Choose price" data-testid="price-filter">
-            Price
+        <Select value={null} onValueChange={() => { }}>
+          <SelectTrigger aria-label="Choisir un prix" data-testid="price-filter">
+            Prix
           </SelectTrigger>
           <SelectContent>
             <FilterItems items={priceOptions} param="price" />

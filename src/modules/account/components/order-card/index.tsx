@@ -60,6 +60,7 @@ export default async function OrderCard({
               href={`/${countryCode}/products/${item.product_handle}`}
               size="big"
               className="xl:hidden"
+              alt={item.product_title}
             />
           ))}
           {order.items.slice(0, 5).map((item, index) => (
@@ -68,6 +69,7 @@ export default async function OrderCard({
               thumbnail={item.thumbnail}
               href={`/${countryCode}/products/${item.product_handle}`}
               className="hidden xl:block"
+              alt={item.product_title}
             />
           ))}
           {order.items.length > 2 && (

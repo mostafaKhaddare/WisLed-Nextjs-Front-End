@@ -16,13 +16,8 @@ export const mdxComponents: MDXComponents = {
     )
   },
 
-  // TODO: Add image styling
-  //   img: ({ ...props }) => {
-  //     return (
-  //       <div>
-  //       </div>
-  //     )
-  //   },
+  // Image handling can be added here if needed
+  // img: ({ ...props }) => { ... }
 
   h2: ({ children, id, ...props }) => {
     return (
@@ -99,20 +94,6 @@ export const mdxComponents: MDXComponents = {
   pre: ({ children, ...props }) => {
     return <pre {...props}>{children}</pre>
   },
-  // TODO: Add table styling
-  //   table: ({ children }) => {
-  //     return (
-  //       <div>
-  //         <table>
-  //           {children}
-  //         </table>
-  //       </div>
-  //     )
-  //   },
-  //   td: ({ children }) => {
-  //     return <td>{children}</td>
-  //   },
-  //   th: ({ children }) => {
-  //     return <th >{children}</th>
-  //   },
+  // Table handling can be added here if needed
+  // table: ({ children }) => { ... }
 }

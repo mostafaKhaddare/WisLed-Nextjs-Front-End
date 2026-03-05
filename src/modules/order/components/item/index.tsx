@@ -12,7 +12,7 @@ const Item = ({ item }: ItemProps) => {
   return (
     <Box className="flex w-full bg-primary p-4" data-testid="product-row">
       <div className="flex h-[90px] w-[90px]">
-        <Thumbnail thumbnail={item.thumbnail} size="square" />
+        <Thumbnail thumbnail={item.thumbnail} size="square" alt={item.product_title} />
       </div>
       <Box className="px-4 medium:flex-grow">
         <Text size="base" className="text-secondary">

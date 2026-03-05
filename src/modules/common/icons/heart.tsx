@@ -10,7 +10,7 @@ export function HeartIcon({ className = '', filled = false }: HeartIconProps) {
     return (
       <svg
         className={className}
-        fill="#0f172a"
+        fill="currentColor"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -23,7 +23,7 @@ export function HeartIcon({ className = '', filled = false }: HeartIconProps) {
     <svg
       className={className}
       fill="none"
-      stroke="#0f172a"
+      stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >

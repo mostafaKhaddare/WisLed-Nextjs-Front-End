@@ -131,7 +131,7 @@ export default async function CollectionTemplate({
       <Container className="flex flex-col gap-8 !pb-8 !pt-4">
         <Box className="flex flex-col gap-4">
           <Text className="text-md text-secondary">
-            {count === 1 ? `${count} product` : `${count} products`}
+            {count === 1 ? `${count} produit` : `${count} produits`}
           </Text>
           <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap">
             <Box className="hidden small:flex">
@@ -161,7 +161,7 @@ export default async function CollectionTemplate({
             />
           ) : (
             <p className="py-10 text-center text-lg text-secondary">
-              No products.
+              Aucun produit.
             </p>
           )}
         </Suspense>
@@ -171,7 +171,7 @@ export default async function CollectionTemplate({
           <ProductCarousel
             products={recommendedProducts}
             regionId={region.id}
-            title="Recommended products"
+            title="Produits recommandés"
           />
         </Suspense>
       )}

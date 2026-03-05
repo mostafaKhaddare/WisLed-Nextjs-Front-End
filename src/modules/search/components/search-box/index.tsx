@@ -6,15 +6,18 @@ import { useRouter } from 'next/navigation'
 import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import { Input } from '@modules/common/components/input'
+import { SearchIcon } from '@modules/common/icons'
 
 export const ControlledSearchBox = ({
   countryCode,
   open,
   closeSearch,
+  onSearch,
 }: {
   countryCode: string
   open: boolean
   closeSearch: () => void
+  onSearch?: (query: string) => void
 }) => {
   const [query, setQuery] = useState<string | undefined>('')
   const router = useRouter()
@@ -44,6 +47,9 @@ export const ControlledSearchBox = ({
     event.preventDefault()
     event.stopPropagation()
     setQuery('')
+    if (onSearch) {
+      onSearch('')
+    }
     if (inputRef.current) {
       inputRef.current.focus()
     }
@@ -56,33 +62,38 @@ export const ControlledSearchBox = ({
   }, [open])
 
   const handleChange = (e) => {
-    setQuery(e.target.value)
+    const val = e.target.value
+    setQuery(val)
+    if (onSearch) {
+      onSearch(val)
+    }
   }
 
   return (
     <div className="relative w-full bg-primary large:mx-auto large:w-max">
       <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
-        <Box className="flex w-full items-center justify-between border border-action-primary large:relative large:w-[400px] xl:w-[600px]">
+        <Box className="flex w-full items-center gap-2 rounded-xl border border-transparent bg-secondary/30 px-2 transition-all duration-300 focus-within:border-action-primary/20 focus-within:bg-white focus-within:shadow-lg dark:bg-white/5 dark:focus-within:border-brand-400/30 dark:focus-within:bg-[#1a1d24] large:w-[280px] xl:w-[320px]">
           <Input
             ref={inputRef}
             data-testid="search-input"
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
-            placeholder={'Search products...'}
+            placeholder="Rechercher..."
+            aria-label="Rechercher un produit"
             spellCheck={false}
             type="search"
             value={query}
             onChange={handleChange}
-            className="w-full !border-none bg-transparent pr-5 text-lg placeholder:text-basic-primary focus:outline-none"
+            className="w-full !border-none bg-transparent py-2.5 text-sm font-medium placeholder:text-secondary/70 focus:outline-none dark:text-white dark:placeholder:text-white/40"
           />
           {query && (
             <button
               onClick={handleReset}
               type="button"
-              className="absolute right-0 flex items-center justify-center gap-x-2 px-4 text-lg text-basic-primary focus:outline-none"
+              className="group flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-secondary/50 dark:hover:bg-white/10"
             >
-              <XMarkMini />
+              <XMarkMini className="text-secondary transition-colors group-hover:text-action-primary dark:text-white/60 dark:group-hover:text-white" />
             </button>
           )}
         </Box>

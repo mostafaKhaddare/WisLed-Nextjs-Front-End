@@ -25,11 +25,13 @@ export default function CheckoutFooter() {
     >
       <Container className="flex flex-col gap-8 text-static">
         <Box className="flex flex-col gap-4 small:flex-row small:items-center">
-          <Heading className="text-lg text-static">Have questions?</Heading>
+          <Heading className="text-lg text-static">
+            Besoin d`&apos;aide?
+          </Heading>
           <Button size="sm" withIcon asChild className="w-max">
-            <LocalizedClientLink href="#">
+            <LocalizedClientLink href="tel:+212666650286">
               <HeadphonesIcon />
-              55 555 00 00
+                +212 648522511
             </LocalizedClientLink>
           </Button>
         </Box>

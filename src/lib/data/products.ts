@@ -20,7 +20,7 @@ export const getProductsById = async function ({
         id: ids,
         region_id: regionId,
         fields:
-          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*categories,+metadata',
+          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*categories,+metadata,*options',
       },
       { next: { tags: ['products'] } }
     )
@@ -37,7 +37,7 @@ export const getProductByHandle = async function (
         handle,
         region_id: regionId,
         fields:
-          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*categories,+metadata',
+          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*categories,+metadata,*options',
       },
       { next: { tags: ['products'] } }
     )
@@ -76,29 +76,20 @@ export const getProductsList = async function ({
         offset,
         region_id: region.id,
         fields:
-          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices',
+          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*options',
         ...queryParams,
       },
       { next: { tags: ['products'] } }
     )
-    .then(({ products, count: totalCount }) => {
-      const filteredProducts = products.filter((product) => {
-        if (product.variants.length === 1) {
-          return product.variants[0].inventory_quantity > 0
-        }
-        return product.variants.length > 1
-      })
-
-      // Use the total count from the API, not the filtered count
-      // The filtered products are just for the current page
-      const nextPage = filteredProducts.length === limit && (offset + limit) < totalCount ? pageParam + 1 : null
+    .then(({ products, count }) => {
+      const nextPage = count > offset + limit ? pageParam + 1 : null
 
       return {
         response: {
-          products: filteredProducts,
-          count: totalCount, // Use total count from API
+          products,
+          count,
         },
-        nextPage: nextPage,
+        nextPage,
         queryParams,
       }
     })
@@ -137,7 +128,7 @@ export const getProductsListByCollectionId = async function ({
         collection_id: [collectionId],
         region_id: region.id,
         fields:
-          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices',
+          '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*options',
       },
       { next: { tags: ['products'] } }
     )
@@ -172,4 +163,39 @@ export const getStoreFilters = async function () {
   ).then((res) => res.json())
 
   return filters
+}
+
+export const getBestSellers = async function ({
+  countryCode,
+  limit = 10,
+}: {
+  countryCode: string
+  limit?: number
+}) {
+  const region = await getRegion(countryCode)
+
+  if (!region) {
+    return []
+  }
+
+  // Fetch a larger batch to find best sellers
+  // Since standard API doesn't filter by metadata efficiently, we fetch 100 recent items and filter.
+  // Ideally, use a Collection for this, but this supports the metadata request.
+  const { products } = await sdk.store.product.list(
+    {
+      limit: 100,
+      region_id: region.id,
+      fields: '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,+metadata,*options',
+    },
+    { next: { tags: ['products'] } }
+  )
+
+  const bestSellers = products.filter((p) => {
+    // Check for "is_best_seller" metadata (string 'true' or boolean true)
+    const isBestSeller = p.metadata?.is_best_seller
+    return isBestSeller === 'true' || isBestSeller === true
+  })
+
+  // Return filtered best sellers, or fallback to top products if none found (optional, here we return specific matches)
+  return bestSellers.length > 0 ? bestSellers.slice(0, limit) : products.slice(0, limit)
 }

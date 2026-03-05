@@ -66,16 +66,24 @@ export default async function StoreTemplate({
     if (price) {
       const ranges = price.split(',')
       ranges.forEach((r) => {
-        if (r === 'under-100') queryParams.price_to = 100
-        if (r === '100-500') {
+        if (r === '0-100') {
+          queryParams.price_to = 100
+        }
+        if (r === '100-300') {
           queryParams.price_from = 100
+          queryParams.price_to = 300
+        }
+        if (r === '300-500') {
+          queryParams.price_from = 300
           queryParams.price_to = 500
         }
-        if (r === '501-1000') {
-          queryParams.price_from = 501
+        if (r === '500-1000') {
+          queryParams.price_from = 500
           queryParams.price_to = 1000
         }
-        if (r === 'more-than-1000') queryParams.price_from = 1000
+        if (r === '1000-999999') {
+          queryParams.price_from = 1000
+        }
       })
     }
 
@@ -101,6 +109,9 @@ export default async function StoreTemplate({
         calculated_price: cheapest?.calculated_price_number ?? 0,
         sale_price: cheapest?.original_price_number ?? 0,
         regular_price: cheapest?.original_price_number ?? 0,
+        // Include variants & options so ProductTile can render variant swatches
+        variants: product.variants ?? [],
+        options: product.options ?? [],
       }
     })
 
@@ -131,7 +142,7 @@ export default async function StoreTemplate({
       <Container className="flex flex-col gap-8 !pb-8 !pt-4">
         <Box className="flex flex-col gap-4">
           <Text className="text-md text-secondary">
-            {count === 1 ? `${count} product` : `${count} products`}
+            {count === 1 ? `${count} produit` : `${count} produits`}
           </Text>
 
           <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap">
@@ -151,14 +162,14 @@ export default async function StoreTemplate({
           {results.length > 0 ? (
             <PaginatedProducts products={results} page={pageNumber} total={count} countryCode={countryCode} />
           ) : (
-            <p className="py-10 text-center text-lg text-secondary">No products.</p>
+            <p className="py-10 text-center text-lg text-secondary">Aucun produit.</p>
           )}
         </Suspense>
       </Container>
 
       {recommendedProducts.length > 0 && (
         <Suspense fallback={<SkeletonProductsCarousel />}>
-          <ProductCarousel products={recommendedProducts} regionId={region.id} title="Recommended products" />
+          <ProductCarousel products={recommendedProducts} regionId={region.id} title="Produits recommandés" />
         </Suspense>
       )}
     </>

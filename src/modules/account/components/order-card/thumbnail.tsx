@@ -9,6 +9,7 @@ type ThumbnailProps<T extends React.ElementType = 'a'> = {
   thumbnail?: string | null
   size?: 'small' | 'big' | 'full'
   more?: string
+  alt?: string
 } & Omit<
   React.ComponentPropsWithoutRef<T>,
   'as' | 'thumbnail' | 'size' | 'more'
@@ -20,6 +21,7 @@ export default function OrderThumbnail<T extends React.ElementType = 'a'>({
   size = 'small',
   more,
   className,
+  alt = 'Thumbnail',
   ...props
 }: ThumbnailProps<T>) {
   const Component = as || 'a'
@@ -47,7 +49,7 @@ export default function OrderThumbnail<T extends React.ElementType = 'a'>({
           {more}
         </Text>
       ) : (
-        <ImageOrPlaceholder image={thumbnail} size={size} />
+        <ImageOrPlaceholder image={thumbnail} size={size} alt={alt} />
       )}
     </Component>
   )
@@ -55,11 +57,12 @@ export default function OrderThumbnail<T extends React.ElementType = 'a'>({
 
 const ImageOrPlaceholder = ({
   image,
-}: Pick<ThumbnailProps, 'size'> & { image?: string }) => {
+  alt,
+}: Pick<ThumbnailProps, 'size'> & { image?: string; alt: string }) => {
   return image ? (
     <Image
       src={image}
-      alt="Thumbnail"
+      alt={alt}
       className="absolute inset-0 h-full w-full object-cover object-center"
       draggable={false}
       sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"

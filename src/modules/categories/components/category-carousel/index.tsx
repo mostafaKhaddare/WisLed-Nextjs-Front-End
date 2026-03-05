@@ -14,7 +14,7 @@ interface CategoryCarouselProps {
   categories: StoreProductCategory[]
   title: string
 
-   viewAll?: ViewAllProps
+  viewAll?: ViewAllProps
   testId?: string
 }
 
@@ -64,7 +64,7 @@ export function CategoryCarousel({
               href={viewAll.link}
               className="mx-auto w-max !px-5 !py-3"
             >
-              {viewAll.text || 'View all'}
+              {viewAll.text || 'Voir tout'}
             </LocalizedClientLink>
           </Button>
         )}

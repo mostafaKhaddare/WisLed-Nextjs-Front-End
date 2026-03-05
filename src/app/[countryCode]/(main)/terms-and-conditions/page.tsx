@@ -16,9 +16,20 @@ export const metadata: Metadata = {
 }
 
 export default async function TermsAndConditionsPage() {
-  const {
-    data: { PageContent },
-  } = await getContentPage('terms-and-condition', 'terms-and-conditions')
+  const result = await getContentPage('terms-and-condition', 'terms-and-conditions')
+  const PageContent: string = result?.data?.PageContent ?? ''
+
+  if (!PageContent) {
+    return (
+      <Container className="min-h-screen max-w-full bg-secondary !p-0">
+        <Container className="!py-8">
+          <StoreBreadcrumbs breadcrumb="Terms & Conditions" />
+          <Heading as="h1" className="mt-4 text-4xl medium:text-5xl">Conditions Générales</Heading>
+          <p className="mt-8 text-secondary">Contenu temporairement indisponible. Veuillez réessayer plus tard.</p>
+        </Container>
+      </Container>
+    )
+  }
 
   const mdxSource = await serializeMdx(PageContent)
 

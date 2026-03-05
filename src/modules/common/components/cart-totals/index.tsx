@@ -34,7 +34,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
       <Box className="flex flex-col gap-2">
         <Box className="flex items-center justify-between">
           <span className="flex items-center gap-x-1">
-            Subtotal (excl. shipping and taxes)
+            Sous-total (excl. frais de livraison et taxes)
           </span>
           <span
             data-value={item_subtotal || 0}
@@ -45,7 +45,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
         </Box>
         {!!discount_total && (
           <Box className="flex items-center justify-between">
-            <span>Discount</span>
+            <span>Remise</span>
             <span
               className="text-secondary"
               data-testid="cart-discount"
@@ -57,7 +57,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
           </Box>
         )}
         <Box className="flex items-center justify-between">
-          <span>Delivery</span>
+          <span>Frais de livraison</span>
           <span
             className="text-lg text-basic-primary"
             data-value={shipping_total || 0}
@@ -66,7 +66,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
           </span>
         </Box>
         <Box className="flex items-center justify-between">
-          <span className="flex items-center gap-x-1">Taxes</span>
+          <span className="flex items-center gap-x-1">TVA</span>
           <span
             data-value={tax_total || 0}
             className="text-lg text-basic-primary"

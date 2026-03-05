@@ -28,10 +28,9 @@ export default function OrderCompletedTemplate({
               level="h1"
               className="text-xl font-normal text-basic-primary small:max-w-md medium:text-2xl"
             >
-              Thank you! Your order was placed successfully.
-            </Heading>
+Merci ! Votre commande a été passée avec succès.            </Heading>
             <Text size="md" className="text-secondary">
-              We have sent the order confirmation details to {order.email}.
+              Nous avons envoyé les détails de la confirmation de commande à {order.email}.
             </Text>
           </Box>
           <OrderDetails order={order} />

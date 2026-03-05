@@ -21,9 +21,9 @@ const BillingAddress = ({
 }) => {
   return (
     <>
-      <Box className="grid grid-cols-1 gap-2 small:gap-4 xl:grid-cols-2">
+     <Box className="grid grid-cols-1 gap-2 small:gap-4 xl:grid-cols-2">
         <Input
-          label="First name"
+          label="Prénom"
           name="billing_address.first_name"
           autoComplete="given-name"
           value={values.billing_address.first_name}
@@ -33,7 +33,7 @@ const BillingAddress = ({
           data-testid="billing-first-name-input"
         />
         <Input
-          label="Last name"
+          label="Nom"
           name="billing_address.last_name"
           autoComplete="family-name"
           value={values.billing_address.last_name}
@@ -43,7 +43,7 @@ const BillingAddress = ({
           data-testid="billing-last-name-input"
         />
         <Input
-          label="Company name (optional)"
+          label="Nom de l'entreprise (facultatif)"
           name="billing_address.company"
           value={values.billing_address.company}
           onChange={handleChange}
@@ -51,7 +51,7 @@ const BillingAddress = ({
           data-testid="billing-company-input"
         />
         <Input
-          label="Address"
+          label="Adresse"
           name="billing_address.address_1"
           autoComplete="address-line1"
           value={values.billing_address.address_1}
@@ -61,7 +61,7 @@ const BillingAddress = ({
           data-testid="billing-address-input"
         />
         <Input
-          label="Postal code"
+          label="Code postal"
           name="billing_address.postal_code"
           autoComplete="postal-code"
           value={values.billing_address.postal_code}
@@ -71,7 +71,7 @@ const BillingAddress = ({
           data-testid="billing-postal-input"
         />
         <Input
-          label="City"
+          label="Ville"
           name="billing_address.city"
           autoComplete="address-level2"
           value={values.billing_address.city}
@@ -81,7 +81,7 @@ const BillingAddress = ({
           data-testid="billing-city-input"
         />
         <CountrySelect
-          label="Country"
+          label="Pays"
           name="billing_address.country_code"
           autoComplete="country"
           region={cart?.region}
@@ -93,7 +93,7 @@ const BillingAddress = ({
           data-testid="billing-country-select"
         />
         <Input
-          label="State / Province (optional)"
+          label="État / Province (facultatif)"
           name="billing_address.province"
           autoComplete="address-level1"
           value={values.billing_address.province}
@@ -101,7 +101,7 @@ const BillingAddress = ({
           data-testid="billing-province-input"
         />
         <Input
-          label="Phone number"
+          label="Numéro de téléphone"
           name="billing_address.phone"
           autoComplete="tel"
           value={values.billing_address.phone}

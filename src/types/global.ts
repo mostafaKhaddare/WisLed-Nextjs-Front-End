@@ -49,6 +49,19 @@ export type SearchedProduct = {
   regular_price: string
   created_at: string
   updated_at: string
+  /** Variant data — present from both the search endpoint and Medusa fallback */
+  variants?: Array<{
+    id: string
+    thumbnail?: string | null
+    options?: Array<{ option_id: string; value: string }>
+    [key: string]: any
+  }>
+  /** Option definitions (name + id) — present from both paths */
+  options?: Array<{
+    id: string
+    title: string
+    [key: string]: any
+  }>
 }
 
 export type SearchedProducts = {

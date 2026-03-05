@@ -18,7 +18,7 @@ const Overview = ({ orders }: OverviewProps) => {
     >
       <Box className="flex items-center justify-between">
         <Heading as="h2" className="text-xl small:text-2xl">
-          Latest order updates
+          Dernières commandes
         </Heading>
         <Button
           variant="text"
@@ -28,7 +28,7 @@ const Overview = ({ orders }: OverviewProps) => {
           data-testid="view-all-orders-button"
         >
           <LocalizedClientLink href={`/account/orders`}>
-            View all
+            Voir tout
           </LocalizedClientLink>
         </Button>
       </Box>

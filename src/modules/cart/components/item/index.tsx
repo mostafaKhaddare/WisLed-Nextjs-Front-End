@@ -56,6 +56,7 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
             className="h-[92px] max-w-[92px] rounded-none small:h-full small:max-w-[146px]"
             thumbnail={item.variant?.product?.thumbnail}
             images={item.variant?.product?.images}
+            alt={item.product_title}
           />
         </LocalizedClientLink>
       </Box>

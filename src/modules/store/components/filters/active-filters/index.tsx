@@ -132,7 +132,7 @@ export default function ActiveProductFilters({
       )}
       {activeMaterials?.length > 0 && (
         <ActiveFilterItem
-          label="Material"
+          label="Matériau"
           filterKey={FILTER_KEYS.MATERIAL_KEY}
           options={activeMaterials}
           handleRemoveFilter={handleRemoveFilter}
@@ -140,14 +140,14 @@ export default function ActiveProductFilters({
       )}
       {activePrices?.length > 0 && (
         <ActiveFilterItem
-          label="Price"
+          label="Prix"
           filterKey={FILTER_KEYS.PRICE_KEY}
           options={activePrices}
           handleRemoveFilter={handleRemoveFilter}
         />
       )}
       <Button asChild variant="text" className="text-sm font-semibold text-gray-600 hover:text-red-600 transition-colors underline sm:ml-auto sm:shrink-02">
-        <Link href={finalClearAllUrl}>Clear filters</Link>
+        <Link href={finalClearAllUrl}>Effacer les filtres</Link>
       </Button>
     </Box>
   )

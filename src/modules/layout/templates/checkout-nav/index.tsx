@@ -17,7 +17,7 @@ export default function CheckoutNav() {
             <Box className="flex gap-2">
               <ArrowLeftIcon />
               <Text>
-                Back to{' '}
+                Retour à{' '}
                 <Text as="span" className="hidden small:inline">
                   shopping
                 </Text>{' '}
