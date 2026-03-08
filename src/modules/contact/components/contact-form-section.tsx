@@ -258,7 +258,7 @@ export const ContactFormSection = ({
 
                 {/* WhatsApp */}
                 <a
-                  href="https://wa.me/212648522511"
+                  href="https://wa.me/212710420420"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:border-green-500/40 hover:bg-white/10"
@@ -270,7 +270,7 @@ export const ContactFormSection = ({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-semibold uppercase tracking-wide text-white/40">WhatsApp</span>
-                    <span className="text-sm font-semibold text-white transition-colors group-hover:text-green-400">+212 648 522 511</span>
+                    <span className="text-sm font-semibold text-white transition-colors group-hover:text-green-400">+212 710 420 420</span>
                   </div>
                   <svg className="ml-auto h-4 w-4 text-white/20 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
@@ -492,7 +492,7 @@ export const ContactFormSection = ({
                   <div className="text-center text-[12px] text-secondary dark:text-white/30">
                     Ou contactez-nous directement sur{' '}
                     <a
-                      href="https://wa.me/212648522511"
+                      href="https://wa.me/212710420420"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-semibold text-green-600 hover:underline dark:text-green-400"

@@ -238,7 +238,7 @@ export const getContactUs = async () => {
         },
         ContactMethods: [
           { Title: 'Email', Text: 'info@wisled.ma', Link: 'mailto:info@wisled.ma' },
-          { Title: 'Téléphone / WhatsApp', Text: '+212 648 522 511', Link: 'https://wa.me/212648522511' },
+          { Title: 'Téléphone / WhatsApp', Text: '+212 710 420 420', Link: 'https://wa.me/212710420420' },
           { Title: 'Adresse', Text: 'Maroc', Link: null },
         ],
         FormIntro: {

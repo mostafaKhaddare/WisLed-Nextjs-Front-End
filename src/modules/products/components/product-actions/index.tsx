@@ -104,8 +104,8 @@ export default function ProductActions({
     const variantSuffix = selectedVariant?.title ? ` - ${selectedVariant.title}` : '';
     const fullProductTitle = `${product.title}${variantSuffix}`;
 
-    // 3. Phone number from env — NEXT_PUBLIC_WHATSAPP_PHONE in .env (e.g. 212648522511)
-    const phoneNumber = (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212648522511').replace(/\D/g, '')
+    // 3. Phone number from env — NEXT_PUBLIC_WHATSAPP_PHONE in .env (e.g. 212710420420)
+    const phoneNumber = (process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212710420420').replace(/\D/g, '')
 
     // 4. Create the message
     const message = `Bonjour, j'aimerais commander : ${fullProductTitle}.\n\nLien : ${productLink}\n\nMerci.`;

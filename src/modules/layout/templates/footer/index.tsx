@@ -55,7 +55,7 @@ function SocialMedia({ className }: { className?: string }) {
       {/* WhatsApp */}
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200">
         <LocalizedClientLink
-          href="https://wa.me/212666650286"
+          href="https://wa.me/212710420420"
           target="_blank"
           data-testid="whatsapp-link"
           className="text-static hover:text-[#25D366] transition-colors"

@@ -10,7 +10,7 @@ interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({
-  phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '1234567890',
+  phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212710420420',
   defaultMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || 'Hello! I would like more information.',
   className = '',
 }: WhatsAppButtonProps) {

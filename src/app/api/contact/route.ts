@@ -211,7 +211,7 @@ function buildEmailHtml({
                         </a>
                       </td>
                       <td width="52%" style="padding-left:8px;">
-                        <a href="https://wa.me/212648522511?text=${encodeURIComponent(`Bonjour ${name}, j'ai bien reçu votre message concernant "${subject}". `)}"
+                        <a href="https://wa.me/212710420420?text=${encodeURIComponent(`Bonjour ${name}, j'ai bien reçu votre message concernant "${subject}". `)}"
                            style="display:block;text-align:center;background:#25d366;color:#ffffff;padding:14px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;">
                           WhatsApp ${name} →
                         </a>
