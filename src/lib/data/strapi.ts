@@ -1,4 +1,12 @@
-export const STRAPI_API_URL = process.env.NEXT_PUBLIC_STRAPI_URL || process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
+const DEFAULT_STRAPI_API_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://wisled.ma'
+    : 'http://localhost:1337'
+
+export const STRAPI_API_URL =
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+  DEFAULT_STRAPI_API_URL
 
 export async function getStrapiData(path: string) {
     const url = `${STRAPI_API_URL}/api/${path}`;

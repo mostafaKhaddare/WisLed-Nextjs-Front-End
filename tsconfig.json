@@ -40,6 +40,7 @@
   "exclude": [
     "node_modules",
     ".next",
+    "e2e",
     ".nyc_output",
     "coverage",
     "jest-coverage"

@@ -12,36 +12,42 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const countryCodes = await listRegions().then(
-    (regions) =>
-      regions
-        ?.map((r) => r.countries?.map((c) => c.iso_2))
-        .flat()
-        .filter(Boolean) as string[]
-  )
+  try {
+    const countryCodes = await listRegions()
+      .then(
+        (regions) =>
+          regions
+            ?.map((r) => r.countries?.map((c) => c.iso_2))
+            .flat()
+            .filter(Boolean) as string[]
+      )
+      .catch(() => [])
 
-  if (!countryCodes) {
-    return null
-  }
+    if (!countryCodes?.length) {
+      return []
+    }
 
-  const products = await Promise.all(
-    countryCodes.map((countryCode) => {
-      return getProductsList({ countryCode })
-    })
-  ).then((responses) =>
-    responses.map(({ response }) => response.products).flat()
-  )
-
-  const staticParams = countryCodes
-    ?.map((countryCode) =>
-      products.map((product) => ({
-        countryCode,
-        handle: product.handle,
-      }))
+    const products = await Promise.all(
+      countryCodes.map((countryCode) => {
+        return getProductsList({ countryCode }).catch(() => ({ response: { products: [] }, nextPage: null }))
+      })
+    ).then((responses) =>
+      responses.map(({ response }) => response.products).flat()
     )
-    .flat()
 
-  return staticParams
+    const staticParams = countryCodes
+      ?.map((countryCode) =>
+        products.map((product) => ({
+          countryCode,
+          handle: product.handle,
+        }))
+      )
+      .flat()
+
+    return staticParams
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

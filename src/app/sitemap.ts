@@ -6,7 +6,7 @@ import { listRegions } from '@lib/data/regions'
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wisled.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const regions = await listRegions()
+    const regions = await listRegions().catch(() => [])
 
     if (!regions || regions.length === 0) {
         return []

@@ -43,7 +43,7 @@ const PowerCalculatorModal = ({ isOpen, close }: PowerCalculatorModalProps) => {
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900 dark:text-white flex items-center gap-x-2"
                                     >
-                                        <span>⚡</span> Calculateur d'Alimentation
+                                        <span>⚡</span> Calculateur d&apos;Alimentation
                                     </Dialog.Title>
                                     <button
                                         onClick={close}

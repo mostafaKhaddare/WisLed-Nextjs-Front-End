@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 import { useParams } from 'next/navigation'
 
 import { Popover, Transition } from '@headlessui/react'
@@ -97,7 +97,7 @@ const ProfileDropdown = ({ loggedIn }: { loggedIn: boolean }) => {
             <Box className="p-2">
               <ThemeSwitcher />
               <AccountNavLink href="#" icon={<HeadphonesIcon />}>
-                Centre d'aide
+                Centre d&apos;aide
               </AccountNavLink>
             </Box>
             {loggedIn && (

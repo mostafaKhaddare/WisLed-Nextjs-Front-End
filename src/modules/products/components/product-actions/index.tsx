@@ -240,7 +240,7 @@ export default function ProductActions({
 
         {maxQuantity === 0 && inStock && (
           <Text size="sm" className="text-negative">
-            Vous ne pouvez pas ajouter plus d'articles — vous avez déjà la
+            Vous ne pouvez pas ajouter plus d&apos;articles — vous avez déjà la
             quantité maximale dans votre panier.
           </Text>
         )}

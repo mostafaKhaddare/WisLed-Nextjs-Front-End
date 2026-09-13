@@ -1,11 +1,11 @@
 import Medusa from '@medusajs/js-sdk'
 
-// Defaults to standard port for Medusa server
-let MEDUSA_BACKEND_URL = 'http://localhost:9000'
+const DEFAULT_MEDUSA_BACKEND_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://your-medusa-backend-url.onrender.com'
+    : 'http://localhost:9000'
 
-if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
-  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
-}
+let MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || DEFAULT_MEDUSA_BACKEND_URL
 
 export const sdk = new Medusa({
   baseUrl: MEDUSA_BACKEND_URL,

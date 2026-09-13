@@ -122,7 +122,7 @@ export const SearchDialog = ({
                 ) : results.length > 0 ? (
                   <div className="grid gap-3">
                     <div className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-                      Résultats pour "{query}"
+                      Résultats pour &quot;{query}&quot;
                     </div>
                     {results.map((item) => (
                       <RecommendedItem
@@ -134,7 +134,7 @@ export const SearchDialog = ({
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <p className="text-basic-primary/60">Aucun résultat trouvé pour "{query}"</p>
+                    <p className="text-basic-primary/60">Aucun résultat trouvé pour &quot;{query}&quot;</p>
                   </div>
                 )}
               </div>

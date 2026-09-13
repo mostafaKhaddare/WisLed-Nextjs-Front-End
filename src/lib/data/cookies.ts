@@ -2,9 +2,7 @@
 
 import { cookies } from 'next/headers'
 
-export const getAuthHeaders = async (): Promise<
-  { authorization: string } | {}
-> => {
+export const getAuthHeaders = async (): Promise<{ authorization?: string }> => {
   const cookieStore = await cookies()
   const token = cookieStore.get('_medusa_jwt')?.value
 

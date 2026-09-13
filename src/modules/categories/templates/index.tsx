@@ -208,7 +208,7 @@ export default async function CategoryTemplate({
             <Box className="py-16 text-center">
               <Text className="text-lg font-semibold text-black dark:text-white/90">Aucun produit trouvé</Text>
               <Text className="text-sm text-secondary">
-                Essayez d'ajuster les filtres ou explorez une autre catégorie.
+                Essayez d&apos;ajuster les filtres ou explorez une autre catégorie.
               </Text>
             </Box>
           )}

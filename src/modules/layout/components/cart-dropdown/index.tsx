@@ -215,7 +215,7 @@ const CartDropdown = ({
                     Votre panier est vide.
                   </Heading>
                   <Text className="text-secondary">
-                    Besoin d'inspiration ?
+                    Besoin d&apos;inspiration ?
                   </Text>
                 </Box>
                 <Button onClick={closeCartDropdown} asChild className="w-full">

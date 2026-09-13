@@ -1,3 +1,9 @@
 export const getBaseURL = () => {
-  return process.env.NEXT_PUBLIC_BASE_URL || 'https://localhost:8000'
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL
+  }
+
+  return process.env.NODE_ENV === 'production'
+    ? 'https://wisled.ma'
+    : 'http://localhost:8000'
 }

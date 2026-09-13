@@ -55,7 +55,7 @@ const ColorGuideModal = ({ isOpen, close }: ColorGuideModalProps) => {
 
                                 <div className="mt-2 space-y-6 overflow-y-auto flex-1 pr-1 custom-scrollbar">
                                     <Text className="text-gray-500 text-sm">
-                                        La température de couleur détermine l'ambiance de votre pièce. Voici comment choisir :
+                                        La température de couleur détermine l&apos;ambiance de votre pièce. Voici comment choisir :
                                     </Text>
 
                                     {/* 2700K - Warm White */}
@@ -96,7 +96,7 @@ const ColorGuideModal = ({ isOpen, close }: ColorGuideModalProps) => {
                                             <div>
                                                 <span className="text-[10px] uppercase font-bold text-yellow-500 tracking-wider">Description</span>
                                                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mt-0.5">
-                                                    Une lumière blanche neutre, sans dominante jaune ni bleue. C'est l'équilibre parfait entre confort visuel et clarté, reproduisant la lumière du jour.
+                                                    Une lumière blanche neutre, sans dominante jaune ni bleue. C&apos;est l&apos;équilibre parfait entre confort visuel et clarté, reproduisant la lumière du jour.
                                                 </p>
                                             </div>
                                             <div>

@@ -39,7 +39,7 @@ const ManualPowerCalculator = () => {
         <div className="flex flex-col gap-y-4">
             <div className="rounded-lg bg-gray-50 p-4 border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700">
                 <Text className="text-sm text-gray-600 mb-4 dark:text-gray-300">
-                    Entrez la puissance de votre ruban et la longueur souhaitée pour calculer l'alimentation recommandée.
+                    Entrez la puissance de votre ruban et la longueur souhaitée pour calculer l&apos;alimentation recommandée.
                 </Text>
 
                 <div className="flex flex-col gap-y-4">
