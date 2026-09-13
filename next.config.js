@@ -5,45 +5,56 @@ checkEnvVariables()
 /**
  * @type {import('next').NextConfig}
  */
+const remotePatterns = [
+  {
+    protocol: 'http',
+    hostname: 'localhost',
+  },
+  {
+    protocol: 'http',
+    hostname: '127.0.0.1',
+    port: '1337',
+    pathname: '/uploads/**',
+  },
+  {
+    protocol: 'https',
+    hostname: 'medusa-public-images.s3.eu-west-1.amazonaws.com',
+  },
+  {
+    protocol: 'https',
+    hostname: 'medusa-server-testing.s3.amazonaws.com',
+  },
+  {
+    protocol: 'https',
+    hostname: 'medusa-server-testing.s3.us-east-1.amazonaws.com',
+  },
+]
+
+if (process.env.NEXT_PUBLIC_SPACE_DOMAIN) {
+  remotePatterns.push({
+    protocol: 'https',
+    hostname: process.env.NEXT_PUBLIC_SPACE_DOMAIN,
+  })
+}
+
+if (process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN) {
+  remotePatterns.push({
+    protocol: 'https',
+    hostname: process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN,
+  })
+}
+
+if (process.env.NEXT_PUBLIC_SPACE_ENDPOINT) {
+  remotePatterns.push({
+    protocol: 'https',
+    hostname: process.env.NEXT_PUBLIC_SPACE_ENDPOINT,
+  })
+}
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '1337',
-        pathname: '/uploads/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'medusa-public-images.s3.eu-west-1.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'medusa-server-testing.s3.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'medusa-server-testing.s3.us-east-1.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_SPACE_DOMAIN,
-      },
-      {
-        protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN,
-      },
-      {
-        protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_SPACE_ENDPOINT,
-      },
-    ],
+    remotePatterns,
   },
 }
 
