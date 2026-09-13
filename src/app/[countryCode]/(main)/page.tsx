@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 import { listCategories } from '@lib/data/categories'
 import { getCollectionsList } from '@lib/data/collections'
-import { getBestSellers, getProductsList } from '@lib/data/products'
+import { getBestSellers } from '@lib/data/products'
 import { getRegion } from '@lib/data/regions'
 import {
   getCollectionsData,

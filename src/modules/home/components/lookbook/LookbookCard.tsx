@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import React from 'react'
 import { StoreProduct } from '@medusajs/types'
 
@@ -28,12 +29,16 @@ const LookbookCard: React.FC<LookbookCardProps> = ({
 }) => {
     return (
         <div className="group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-            <img
-                src={image_url}
-                alt="Lookbook"
-                className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-            />
+            <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <Image
+                    src={image_url}
+                    alt="Lookbook"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                />
+            </div>
 
             {products.map((item, index) => (
                 <div
@@ -53,10 +58,12 @@ const LookbookCard: React.FC<LookbookCardProps> = ({
                             <div className="flex items-start gap-3">
                                 <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-ui-border-base bg-ui-bg-subtle">
                                     {item.product.thumbnail && (
-                                        <img
+                                        <Image
                                             src={item.product.thumbnail}
                                             alt={item.product.title}
-                                            className="h-full w-full object-cover"
+                                            fill
+                                            sizes="64px"
+                                            className="object-cover"
                                         />
                                     )}
                                 </div>

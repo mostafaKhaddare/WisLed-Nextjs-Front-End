@@ -7,8 +7,8 @@ type ProductJsonLdProps = {
     currencyCode: string
 }
 
-export default function ProductJsonLd({ product, region, currencyCode }: ProductJsonLdProps) {
-    const { cheapestPrice, variantPrice } = getProductPrice({
+export default function ProductJsonLd({ product, region: _region, currencyCode }: ProductJsonLdProps) {
+    const { cheapestPrice } = getProductPrice({
         product,
         variantId: product.variants?.[0]?.id
     })

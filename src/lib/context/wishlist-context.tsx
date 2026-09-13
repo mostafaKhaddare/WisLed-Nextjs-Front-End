@@ -112,7 +112,7 @@ export function WishlistProvider({
 }) {
     const [serverItems, setServerItems] = useState<WishlistItem[]>([])
     const [guestItems, setGuestItems] = useState<GuestWishlistItem[]>([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, _setIsLoading] = useState(false)
     const [isAuthenticated, setIsAuthenticated] = useState(initialAuthenticated)
     const hasMerged = useRef(false)
     const isFetching = useRef(false)

@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useRef } from 'react'
 import { cn } from '@lib/util/cn'
 import { StoreProduct } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
-import { Container } from '@modules/common/components/container'
 import { Text } from '@modules/common/components/text'
 
 import { ControlledSearchBox } from '../search-box'

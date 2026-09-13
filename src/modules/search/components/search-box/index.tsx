@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import { Input } from '@modules/common/components/input'
-import { SearchIcon } from '@modules/common/icons'
 
 export const ControlledSearchBox = ({
   countryCode,

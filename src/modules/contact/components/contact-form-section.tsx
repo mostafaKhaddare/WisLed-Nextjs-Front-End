@@ -2,7 +2,6 @@
 
 import { useState, FormEvent, useRef } from 'react'
 
-import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'
 import { Heading } from '@modules/common/components/heading'
 import { Text } from '@modules/common/components/text'

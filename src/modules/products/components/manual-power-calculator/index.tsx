@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Text } from '@modules/common/components/text'
 import { Button } from '@modules/common/components/button'
-import { Input } from '@modules/common/components/input'
 
 type CalculationResult = {
     totalPower: number

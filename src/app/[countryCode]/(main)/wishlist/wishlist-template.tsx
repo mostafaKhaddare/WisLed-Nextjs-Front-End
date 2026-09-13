@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { useWishlist } from '@lib/context/wishlist-context'
 import { addToCartCheapestVariant } from '@lib/data/cart'
@@ -53,10 +52,9 @@ function getThumbnailUrl(thumbnail?: string | null): string | null {
 
 export default function WishlistTemplate({
   regionId,
-  isAuthenticated: initialAuth,
+  isAuthenticated: _initialAuth,
   countryCode,
 }: WishlistTemplateProps) {
-  const router = useRouter()
   const { items, count, removeItem, isAuthenticated } = useWishlist()
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set())
   const [cartLoadingIds, setCartLoadingIds] = useState<Set<string>>(new Set())

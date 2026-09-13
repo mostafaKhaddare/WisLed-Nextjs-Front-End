@@ -2,7 +2,6 @@ import React, { Suspense } from 'react'
 
 import { storeSortOptions } from '@lib/constants'
 import { getProductsList, getStoreFilters } from '@lib/data/products'
-import { getProductPrice } from '@lib/util/get-product-price'
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { StoreRegion } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
