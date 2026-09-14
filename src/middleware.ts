@@ -155,12 +155,16 @@ export async function middleware(request: NextRequest) {
   }
 
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
+  const pathname = request.nextUrl.pathname
+  const isAlreadyDefaultLocale =
+    pathname === `/${DEFAULT_REGION}` || pathname.startsWith(`/${DEFAULT_REGION}/`)
 
   if (!countryCode) {
-    const fallbackPath =
-      request.nextUrl.pathname === '/'
-        ? ''
-        : request.nextUrl.pathname
+    if (isAlreadyDefaultLocale) {
+      return NextResponse.next()
+    }
+
+    const fallbackPath = pathname === '/' ? '' : pathname
     const redirectUrl = `${request.nextUrl.origin}/${DEFAULT_REGION}${fallbackPath}${request.nextUrl.search}`
     return NextResponse.redirect(redirectUrl, 307)
   }
