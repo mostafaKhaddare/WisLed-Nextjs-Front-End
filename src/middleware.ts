@@ -157,7 +157,12 @@ export async function middleware(request: NextRequest) {
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 
   if (!countryCode) {
-    return NextResponse.next()
+    const fallbackPath =
+      request.nextUrl.pathname === '/'
+        ? ''
+        : request.nextUrl.pathname
+    const redirectUrl = `${request.nextUrl.origin}/${DEFAULT_REGION}${fallbackPath}${request.nextUrl.search}`
+    return NextResponse.redirect(redirectUrl, 307)
   }
 
   const urlHasCountryCode =
