@@ -156,6 +156,10 @@ export async function middleware(request: NextRequest) {
 
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 
+  if (!countryCode) {
+    return NextResponse.next()
+  }
+
   const urlHasCountryCode =
     countryCode && request.nextUrl.pathname.split('/')[1].includes(countryCode)
 
