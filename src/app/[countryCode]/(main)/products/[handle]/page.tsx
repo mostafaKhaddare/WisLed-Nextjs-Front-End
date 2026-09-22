@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { getProductByHandle, getProductsList } from '@lib/data/products'
-import { getRegion, listRegions } from '@lib/data/regions'
+import { getProductByHandle } from '@lib/data/products'
+import { getRegion } from '@lib/data/regions'
 import ProductTemplate from '@modules/products/templates'
 import ProductJsonLd from '@modules/products/components/json-ld'
 import { getBaseURL } from '@lib/util/env'
@@ -11,44 +11,7 @@ type Props = {
   params: Promise<{ countryCode: string; handle: string }>
 }
 
-export async function generateStaticParams() {
-  try {
-    const countryCodes = await listRegions()
-      .then(
-        (regions) =>
-          regions
-            ?.map((r) => r.countries?.map((c) => c.iso_2))
-            .flat()
-            .filter(Boolean) as string[]
-      )
-      .catch(() => [])
-
-    if (!countryCodes?.length) {
-      return []
-    }
-
-    const products = await Promise.all(
-      countryCodes.map((countryCode) => {
-        return getProductsList({ countryCode }).catch(() => ({ response: { products: [] }, nextPage: null }))
-      })
-    ).then((responses) =>
-      responses.map(({ response }) => response.products).flat()
-    )
-
-    const staticParams = countryCodes
-      ?.map((countryCode) =>
-        products.map((product) => ({
-          countryCode,
-          handle: product.handle,
-        }))
-      )
-      .flat()
-
-    return staticParams
-  } catch {
-    return []
-  }
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params

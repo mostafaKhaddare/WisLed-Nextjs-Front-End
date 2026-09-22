@@ -14,6 +14,7 @@ export const getProductsById = async function ({
   ids: string[]
   regionId: string
 }) {
+  noStore()
   return sdk.store.product
     .list(
       {
@@ -31,6 +32,7 @@ export const getProductByHandle = async function (
   handle: string,
   regionId: string
 ) {
+  noStore()
   return sdk.store.product
     .list(
       {
@@ -111,6 +113,7 @@ export const getProductsListByCollectionId = async function ({
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
 }> {
+  noStore()
   const region = await getRegion(countryCode)
 
   if (!region) {
