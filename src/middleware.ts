@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { HttpTypes } from '@medusajs/types'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+import { getMedusaBackendUrl } from './lib/medusa-env'
+
+const BACKEND_URL = getMedusaBackendUrl(process.env)
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const DEFAULT_REGION = "ma"
 

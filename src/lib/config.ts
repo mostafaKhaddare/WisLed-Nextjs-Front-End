@@ -1,11 +1,8 @@
 import Medusa from '@medusajs/js-sdk'
 
-const DEFAULT_MEDUSA_BACKEND_URL =
-  process.env.NODE_ENV === 'production'
-    ? 'https://your-medusa-backend-url.onrender.com'
-    : 'http://localhost:9000'
+import { getMedusaBackendUrl } from './medusa-env'
 
-let MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || DEFAULT_MEDUSA_BACKEND_URL
+const MEDUSA_BACKEND_URL = getMedusaBackendUrl(process.env)
 
 export const sdk = new Medusa({
   baseUrl: MEDUSA_BACKEND_URL,

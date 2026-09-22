@@ -1,10 +1,12 @@
 'use server'
 
+import { getMedusaBackendUrl } from '@lib/medusa-env'
+
 import { getCustomer } from './customer'
 import { getAuthHeaders } from './cookies'
 
 // Get environment variables directly (server-side only)
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+const BACKEND_URL = getMedusaBackendUrl(process.env)
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
 export interface WishlistItem {

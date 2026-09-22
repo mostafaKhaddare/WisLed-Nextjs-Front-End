@@ -5,6 +5,7 @@ import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { sdk } from '@lib/config'
+import { getMedusaBackendUrl } from '@lib/medusa-env'
 
 import { getAuthHeaders, removeAuthToken, setAuthToken } from './cookies'
 
@@ -86,19 +87,18 @@ export async function forgotPassword(
 ) {
   const email = formData.get('email') as string
   try {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/auth/customer/emailpass/reset-password`,
-      {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          identifier: email,
-        }),
-      }
-    )
+    const backendUrl = getMedusaBackendUrl(process.env)
+
+    await fetch(`${backendUrl}/auth/customer/emailpass/reset-password`, {
+      credentials: 'include',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        identifier: email,
+      }),
+    })
   } catch (error: any) {
     return error.toString()
   }
@@ -113,20 +113,19 @@ export async function resetPassword(
   const password = formData.get('new_password') as string
 
   try {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/auth/customer/emailpass/update?token=${token}`,
-      {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }
-    )
+    const backendUrl = getMedusaBackendUrl(process.env)
+
+    await fetch(`${backendUrl}/auth/customer/emailpass/update?token=${token}`, {
+      credentials: 'include',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
   } catch (error: any) {
     return error.toString()
   }
