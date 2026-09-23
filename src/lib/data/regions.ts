@@ -2,13 +2,17 @@ import { cache } from 'react'
 
 import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
+import { logMedusaRequestError } from '@lib/util/medusa-request'
 import { HttpTypes } from '@medusajs/types'
 
 export const listRegions = cache(async function () {
   return sdk.store.region
     .list({}, { next: { tags: ['regions'] } })
     .then(({ regions }) => regions)
-    .catch(medusaError)
+    .catch((error) => {
+      logMedusaRequestError('/store/regions', error)
+      return medusaError(error)
+    })
 })
 
 export const retrieveRegion = cache(async function (id: string) {

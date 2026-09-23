@@ -3,6 +3,7 @@ import { unstable_noStore as noStore } from 'next/cache'
 import { sdk } from '@lib/config'
 import { HttpTypes } from '@medusajs/types'
 import { BACKEND_URL, PUBLISHABLE_API_KEY } from '@modules/search/actions'
+import { logMedusaRequestError } from '@lib/util/medusa-request'
 import { ProductFilters } from 'types/global'
 
 import { getRegion } from './regions'
@@ -184,14 +185,21 @@ export const getBestSellers = async function ({
   // Fetch a larger batch to find best sellers
   // Since standard API doesn't filter by metadata efficiently, we fetch 100 recent items and filter.
   // Ideally, use a Collection for this, but this supports the metadata request.
-  const { products } = await sdk.store.product.list(
-    {
-      limit: 100,
-      region_id: region.id,
-      fields: '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,+metadata,*options',
-    },
-    { next: { tags: ['products'] } }
-  )
+  let products: HttpTypes.StoreProduct[]
+  try {
+    const response = await sdk.store.product.list(
+      {
+        limit: 100,
+        region_id: region.id,
+        fields: '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,+metadata,*options',
+      },
+      { next: { tags: ['products'] } }
+    )
+    products = response.products
+  } catch (error) {
+    logMedusaRequestError('/store/products', error)
+    return []
+  }
 
   const bestSellers = products.filter((p) => {
     // Check for "is_best_seller" metadata (string 'true' or boolean true)

@@ -1,4 +1,5 @@
 import { sdk } from '@lib/config'
+import { logMedusaRequestError } from '@lib/util/medusa-request'
 
 export const listCategories = async function () {
   return sdk.store.category
@@ -10,6 +11,10 @@ export const listCategories = async function () {
       { next: { tags: ['categories'] } }
     )
     .then(({ product_categories }) => product_categories)
+    .catch((error) => {
+      logMedusaRequestError('/store/product-categories', error)
+      return []
+    })
 }
 
 export const getCategoriesList = async function (

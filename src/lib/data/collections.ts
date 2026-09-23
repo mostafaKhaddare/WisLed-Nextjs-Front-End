@@ -4,6 +4,7 @@ import { sdk } from '@lib/config'
 import { HttpTypes } from '@medusajs/types'
 
 import { getProductsList } from './products'
+import { logMedusaRequestError } from '@lib/util/medusa-request'
 
 export const retrieveCollection = cache(async function (id: string) {
   return sdk.store.collection
@@ -17,6 +18,10 @@ export const getCollectionsList = cache(async function (
   return sdk.store.collection
     .list({ limit, offset: 0 }, { next: { tags: ['collections'] } })
     .then(({ collections }) => ({ collections, count: collections.length }))
+    .catch((error) => {
+      logMedusaRequestError('/store/collections', error)
+      return { collections: [], count: 0 }
+    })
 })
 
 // src/lib/data/collections.ts
