@@ -30,21 +30,32 @@ const remotePatterns = [
   },
 ]
 
-if (process.env.NEXT_PUBLIC_SPACE_DOMAIN) {
+function isValidHostname(value) {
+  return Boolean(
+    value &&
+      !value.includes('YOUR_') &&
+      !value.includes('your_') &&
+      !value.includes('your-') &&
+      !value.includes('://') &&
+      !value.includes('/')
+  )
+}
+
+if (isValidHostname(process.env.NEXT_PUBLIC_SPACE_DOMAIN)) {
   remotePatterns.push({
     protocol: 'https',
     hostname: process.env.NEXT_PUBLIC_SPACE_DOMAIN,
   })
 }
 
-if (process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN) {
+if (isValidHostname(process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN)) {
   remotePatterns.push({
     protocol: 'https',
     hostname: process.env.NEXT_PUBLIC_CDN_SPACE_DOMAIN,
   })
 }
 
-if (process.env.NEXT_PUBLIC_SPACE_ENDPOINT) {
+if (isValidHostname(process.env.NEXT_PUBLIC_SPACE_ENDPOINT)) {
   remotePatterns.push({
     protocol: 'https',
     hostname: process.env.NEXT_PUBLIC_SPACE_ENDPOINT,
