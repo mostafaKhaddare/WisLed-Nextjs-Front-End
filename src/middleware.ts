@@ -158,8 +158,17 @@ export async function middleware(request: NextRequest) {
 
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
   const pathname = request.nextUrl.pathname
+  const firstPathSegment = pathname.split('/')[1]?.toLowerCase()
   const isAlreadyDefaultLocale =
     pathname === `/${DEFAULT_REGION}` || pathname.startsWith(`/${DEFAULT_REGION}/`)
+
+  // Keep the default storefront at `/` while resolving the existing
+  // country-scoped route internally.
+  if (!isAlreadyDefaultLocale && (!firstPathSegment || !regionMap.has(firstPathSegment))) {
+    const localizedUrl = request.nextUrl.clone()
+    localizedUrl.pathname = `/${DEFAULT_REGION}${pathname === '/' ? '' : pathname}`
+    return NextResponse.rewrite(localizedUrl)
+  }
 
   if (!countryCode) {
     if (isAlreadyDefaultLocale) {
