@@ -11,7 +11,7 @@ export const listRegions = cache(async function () {
     .then(({ regions }) => regions)
     .catch((error) => {
       logMedusaRequestError('/store/regions', error)
-      return medusaError(error)
+      return []
     })
 })
 
