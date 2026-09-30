@@ -11,7 +11,7 @@ import {
   getHeroBannerData,
   getMidBannerData,
   getInspirationsData,
-} from '@lib/data/fetch'
+} from '@lib/data/cms'
 import { CategoryCarousel } from '@modules/categories/components/category-carousel'
 import { Banner } from '@modules/home/components/banner'
 import Collections from '@modules/home/components/collections'

@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import { retrieveCart } from '@lib/data/cart'
-import { getProductVariantsColors } from '@lib/data/fetch'
+import { getProductVariantsColors } from '@lib/data/cms'
 import { getProductsListByCollectionId, getProductsById } from '@lib/data/products'
 import { HttpTypes } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'

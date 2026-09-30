@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getAboutUs, getExploreBlogData } from '@lib/data/fetch'
+import { getAboutUs, getExploreBlogData } from '@lib/data/cms'
 import { BasicContentSection } from '@modules/content/components/basic-content-section'
 import { FramedTextSection } from '@modules/content/components/framed-text-section'
 import { NumericalSection } from '@modules/content/components/numerical-section'

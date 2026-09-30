@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getFAQ } from '@lib/data/fetch'
+import { getFAQ } from '@lib/data/cms'
 import { FAQSection } from 'types/strapi'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'

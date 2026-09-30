@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import { blogSortOptions } from '@lib/constants'
-import { getBlogPosts } from '@lib/data/fetch'
+import { getBlogPosts } from '@lib/data/cms'
 import { getRegion } from '@lib/data/regions'
 import { cn } from '@lib/util/cn'
 import { StoreProduct } from '@medusajs/types'

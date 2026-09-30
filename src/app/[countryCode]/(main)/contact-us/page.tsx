@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getContactUs } from '@lib/data/fetch'
+import { getContactUs } from '@lib/data/cms'
 import { ContactHeaderSection } from '@modules/contact/components/contact-header-section'
 import { ContactInfoSection } from '@modules/contact/components/contact-info-section'
 import { ContactFormSection } from '@modules/contact/components/contact-form-section'

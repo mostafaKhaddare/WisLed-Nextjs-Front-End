@@ -18,7 +18,9 @@ type SidebarBookmarksProps = {
 
 const SidebarBookmarks = ({ data }: SidebarBookmarksProps) => {
   const [isOpen, setIsOpen] = useState(true)
-  const [activeSection, setActiveSection] = useState(data[0].id)
+  // The CMS can legitimately have no FAQ sections yet, and this page must still
+  // render rather than crash on `data[0]`.
+  const [activeSection, setActiveSection] = useState(data[0]?.id)
 
   useEffect(() => {
     const handleScroll = () => {

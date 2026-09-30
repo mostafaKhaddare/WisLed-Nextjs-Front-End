@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getContentPage } from '@lib/data/fetch'
+import { getContentPage } from '@lib/data/cms'
 import { serializeMdx } from '@lib/util/serializeMdx'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'

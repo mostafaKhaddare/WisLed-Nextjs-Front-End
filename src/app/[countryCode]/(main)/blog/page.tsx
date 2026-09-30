@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getBlogPostCategories } from '@lib/data/fetch'
+import { getBlogPostCategories } from '@lib/data/cms'
 import { getProductsList } from '@lib/data/products'
 import BlogTemplate from '@modules/blog/templates'
 
