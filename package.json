@@ -14,7 +14,9 @@
     "format": "prettier --check .",
     "analyze": "ANALYZE=true next build",
     "test-e2e": "playwright test e2e",
-    "test:serial": "playwright test --workers=1"
+    "test:serial": "playwright test --workers=1",
+    "payload:migrate:bundle": "esbuild src/scripts/migrate-strapi-to-payload.ts --bundle --platform=node --format=esm --packages=external --target=node20 --outfile=.payload-migrate.mjs",
+    "payload:migrate": "npm run payload:migrate:bundle && node .payload-migrate.mjs"
   },
   "resolutions": {
     "webpack": "5",

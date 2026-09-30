@@ -36,3 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Bundled Strapi->Payload migration script (rebuilt by npm run payload:migrate:bundle)
+.payload-migrate.mjs

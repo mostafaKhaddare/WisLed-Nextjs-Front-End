@@ -13,6 +13,7 @@ import { Collections } from './payload/collections/Collections'
 import { Inspirations } from './payload/collections/Inspirations'
 import { Media } from './payload/collections/Media'
 import { ProductVariantColors } from './payload/collections/ProductVariantColors'
+import { Users } from './payload/collections/Users'
 import { AboutUs } from './payload/globals/AboutUs'
 import { ContactUs } from './payload/globals/ContactUs'
 import { Faq } from './payload/globals/Faq'
@@ -45,6 +46,7 @@ export default buildConfig({
   },
   editor: lexicalEditor(),
   collections: [
+    Users,
     Media,
     Collections,
     Categories,
