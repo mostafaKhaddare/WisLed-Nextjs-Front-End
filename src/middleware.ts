@@ -159,19 +159,24 @@ export async function middleware(request: NextRequest) {
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
   const pathname = request.nextUrl.pathname
   const firstPathSegment = pathname.split('/')[1]?.toLowerCase()
+  const isCountryPath = Boolean(firstPathSegment && /^[a-z]{2}$/.test(firstPathSegment))
   const isAlreadyDefaultLocale =
     pathname === `/${DEFAULT_REGION}` || pathname.startsWith(`/${DEFAULT_REGION}/`)
 
   // Keep the default storefront at `/` while resolving the existing
   // country-scoped route internally.
-  if (!isAlreadyDefaultLocale && (!firstPathSegment || !regionMap.has(firstPathSegment))) {
+  if (
+    !isAlreadyDefaultLocale &&
+    !isCountryPath &&
+    (!firstPathSegment || !regionMap.has(firstPathSegment))
+  ) {
     const localizedUrl = request.nextUrl.clone()
     localizedUrl.pathname = `/${DEFAULT_REGION}${pathname === '/' ? '' : pathname}`
     return NextResponse.rewrite(localizedUrl)
   }
 
   if (!countryCode) {
-    if (isAlreadyDefaultLocale) {
+    if (isAlreadyDefaultLocale || isCountryPath) {
       return NextResponse.next()
     }
 
@@ -225,5 +230,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|favicon.ico).*)'],
+  // `payload` and `payload-admin` must stay out of the region middleware.
+  // Otherwise `/payload-admin` gets rewritten to `/ma/payload-admin` by the
+  // storefront locale logic below and the CMS admin cannot load.
+  matcher: ['/((?!api|payload|payload-admin|_next/static|favicon.ico).*)'],
 }

@@ -1,4 +1,5 @@
 const checkEnvVariables = require('./check-env-variables')
+const { withPayload } = require('@payloadcms/next/withPayload')
 
 checkEnvVariables()
 
@@ -69,4 +70,6 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+// `withPayload` registers the Payload admin + REST/GraphQL routes and wires
+// the `/media` static directory. It must wrap the exported config.
+module.exports = withPayload(nextConfig)
