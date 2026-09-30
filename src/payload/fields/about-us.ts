@@ -1,4 +1,4 @@
-import type { GroupField } from 'payload'
+import type { Field } from 'payload'
 
 /**
  * Strapi component: about-us.content-section
@@ -9,22 +9,18 @@ import type { GroupField } from 'payload'
  *   Text  : text    required
  *   Image : media   single, images only, required
  *
- * Used by: about-us.OurStory, about-us.OurCraftsmanship
+ * Used by: about-us.OurStory, about-us.OurCraftsmanship (both named)
  */
-export const contentSectionGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text', required: true },
-    { name: 'Text', type: 'textarea', required: true },
-    {
-      name: 'Image',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-    },
-  ],
-})
+export const contentSectionFields = (): Field[] => [
+  { name: 'Title', type: 'text', required: true },
+  { name: 'Text', type: 'textarea', required: true },
+  {
+    name: 'Image',
+    type: 'upload',
+    relationTo: 'media',
+    required: true,
+  },
+]
 
 /**
  * Strapi component: about-us.tile
@@ -36,20 +32,16 @@ export const contentSectionGroup = (name: string): GroupField => ({
  *
  * Used by: about-us.why-us.Tile (repeatable)
  */
-export const tileGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    {
-      name: 'Image',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-    },
-    { name: 'Title', type: 'text', required: true },
-    { name: 'Text', type: 'textarea', required: true },
-  ],
-})
+export const tileFields = (): Field[] => [
+  {
+    name: 'Image',
+    type: 'upload',
+    relationTo: 'media',
+    required: true,
+  },
+  { name: 'Title', type: 'text', required: true },
+  { name: 'Text', type: 'textarea', required: true },
+]
 
 /**
  * Strapi component: about-us.why-us
@@ -58,19 +50,17 @@ export const tileGroup = (name: string): GroupField => ({
  *
  *   Title : string              required
  *   Tile  : about-us.tile       repeatable
+ *
+ * Used by: about-us.WhyUs
  */
-export const whyUsGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text', required: true },
-    {
-      name: 'Tile',
-      type: 'array',
-      fields: [tileGroup('row')],
-    },
-  ],
-})
+export const whyUsFields = (): Field[] => [
+  { name: 'Title', type: 'text', required: true },
+  {
+    name: 'Tile',
+    type: 'array',
+    fields: tileFields(),
+  },
+]
 
 /**
  * Strapi component: about-us.numerical-content
@@ -82,11 +72,7 @@ export const whyUsGroup = (name: string): GroupField => ({
  *
  * Used by: about-us.Numbers (repeatable)
  */
-export const numericalContentGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text', required: true },
-    { name: 'Text', type: 'text', required: true },
-  ],
-})
+export const numericalContentFields = (): Field[] => [
+  { name: 'Title', type: 'text', required: true },
+  { name: 'Text', type: 'text', required: true },
+]

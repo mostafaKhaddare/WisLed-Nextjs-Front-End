@@ -6,6 +6,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
+import { AboutUs } from './payload/collections/AboutUs'
 import { BlogPostCategories } from './payload/collections/BlogPostCategories'
 import { Blogs } from './payload/collections/Blogs'
 import { Categories } from './payload/collections/Categories'
@@ -14,7 +15,6 @@ import { Inspirations } from './payload/collections/Inspirations'
 import { Media } from './payload/collections/Media'
 import { ProductVariantColors } from './payload/collections/ProductVariantColors'
 import { Users } from './payload/collections/Users'
-import { AboutUs } from './payload/globals/AboutUs'
 import { ContactUs } from './payload/globals/ContactUs'
 import { Faq } from './payload/globals/Faq'
 import { Homepage } from './payload/globals/Homepage'
@@ -54,10 +54,10 @@ export default buildConfig({
     BlogPostCategories,
     Inspirations,
     ProductVariantColors,
+    AboutUs,
   ],
   globals: [
     Homepage,
-    AboutUs,
     ContactUs,
     Faq,
     PrivacyPolicy,
@@ -67,6 +67,12 @@ export default buildConfig({
     pool: {
       connectionString: process.env.PAYLOAD_DATABASE_URI,
     },
+    // Dev-only convenience that syncs the schema straight from the config.
+    // Off by default because it is NOT idempotent (drizzle-kit's dev push
+    // re-issues DDL that can collide with constraints it just created) and
+    // because production must use versioned migrations instead.
+    // Set PAYLOAD_PUSH_SCHEMA=1 for a throwaway local database only.
+    push: process.env.PAYLOAD_PUSH_SCHEMA === '1',
   }),
   sharp,
   secret: process.env.PAYLOAD_SECRET,

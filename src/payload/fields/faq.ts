@@ -1,4 +1,4 @@
-import type { GroupField } from 'payload'
+import type { Field } from 'payload'
 
 /**
  * Strapi component: faq.faq-question
@@ -9,14 +9,10 @@ import type { GroupField } from 'payload'
  *
  * Used by: faq.faq.Question (repeatable)
  */
-export const faqQuestionGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text', required: true },
-    { name: 'Text', type: 'textarea', required: true },
-  ],
-})
+export const faqQuestionFields = (): Field[] => [
+  { name: 'Title', type: 'text', required: true },
+  { name: 'Text', type: 'textarea', required: true },
+]
 
 /**
  * Strapi component: faq.faq
@@ -28,16 +24,12 @@ export const faqQuestionGroup = (name: string): GroupField => ({
  *
  * Used by: faq.FAQSection (repeatable)
  */
-export const faqSectionGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text', required: true },
-    {
-      name: 'Question',
-      type: 'array',
-      fields: [faqQuestionGroup('row')],
-    },
-    { name: 'Bookmark', type: 'text', required: true },
-  ],
-})
+export const faqSectionFields = (): Field[] => [
+  { name: 'Title', type: 'text', required: true },
+  {
+    name: 'Question',
+    type: 'array',
+    fields: faqQuestionFields(),
+  },
+  { name: 'Bookmark', type: 'text', required: true },
+]

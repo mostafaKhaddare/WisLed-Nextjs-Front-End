@@ -1,8 +1,8 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
-import { ctaGroup } from '../fields/banners'
-import { contactGridGroup, headerSectionGroup } from '../fields/contact'
+import { ctaFields } from '../fields/banners'
+import { contactGridFields, headerSectionFields } from '../fields/contact'
 
 /**
  * Strapi: api::contact-us.contact-us  (singleType, collectionName "contact_uses")
@@ -23,8 +23,8 @@ export const ContactUs: GlobalConfig = {
   admin: { group: 'Content' },
   versions: { drafts: true },
   fields: [
-    { name: 'Header', type: 'array', fields: [headerSectionGroup('row')] },
-    { name: 'ContactMethods', type: 'array', fields: [contactGridGroup('row')] },
-    { name: 'FormIntro', type: 'array', fields: [ctaGroup('row')] },
+    { name: 'Header', type: 'array', fields: headerSectionFields() },
+    { name: 'ContactMethods', type: 'array', fields: contactGridFields() },
+    { name: 'FormIntro', type: 'array', fields: ctaFields() },
   ],
 }

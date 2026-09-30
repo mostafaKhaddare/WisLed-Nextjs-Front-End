@@ -1,11 +1,8 @@
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
-
-const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /**
  * Payload Media collection — replaces the Strapi `plugin::upload.file` library.
@@ -33,8 +30,18 @@ export const Media: CollectionConfig = {
     group: 'Media',
   },
   upload: {
-    // src/payload/collections/../../.. -> project root, then public/media
-    staticDir: path.resolve(dirname, '..', '..', '..', 'public', 'media'),
+    // Resolved from the working directory rather than from `import.meta.url`
+    // on purpose: the migration and admin scripts are bundled with esbuild
+    // before they run, which rewrites `import.meta.url` to the bundle's
+    // location. Resolving from the module path made the bundled migration
+    // write its uploads three directories above the project root. Both Next
+    // and the scripts run with the project root as the working directory, so
+    // cwd is the stable anchor; PAYLOAD_MEDIA_DIR overrides it where the
+    // process does not start in the project root (e.g. a deploy that mounts
+    // an upload volume elsewhere).
+    staticDir: path.resolve(
+      process.env.PAYLOAD_MEDIA_DIR ?? path.join(process.cwd(), 'public', 'media')
+    ),
     // Union of every `allowedTypes` used across the Strapi schemas:
     // images, files, videos, audios.
     mimeTypes: ['image/*', 'video/*', 'audio/*', 'application/pdf'],

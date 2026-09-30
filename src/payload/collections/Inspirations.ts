@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
-import { hotspotGroup } from '../fields/hotspot'
+import { hotspotFields } from '../fields/hotspot'
 
 /**
  * Strapi: api::inspiration.inspiration
@@ -62,7 +62,7 @@ export const Inspirations: CollectionConfig = {
     {
       name: 'hotspots',
       type: 'array',
-      fields: [hotspotGroup('row')],
+      fields: hotspotFields(),
     },
   ],
 }

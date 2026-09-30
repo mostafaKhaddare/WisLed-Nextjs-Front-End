@@ -1,4 +1,4 @@
-import type { GroupField } from 'payload'
+import type { Field } from 'payload'
 
 /**
  * Strapi component: contact.contact-card
@@ -11,20 +11,16 @@ import type { GroupField } from 'payload'
  *
  * Used by: sections.contact-grid.ContactMethods (repeatable)
  */
-export const contactCardGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    {
-      name: 'Icon',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    { name: 'Title', type: 'text' },
-    { name: 'Text', type: 'text' },
-    { name: 'Link', type: 'text' },
-  ],
-})
+export const contactCardFields = (): Field[] => [
+  {
+    name: 'Icon',
+    type: 'upload',
+    relationTo: 'media',
+  },
+  { name: 'Title', type: 'text' },
+  { name: 'Text', type: 'text' },
+  { name: 'Link', type: 'text' },
+]
 
 /**
  * Strapi component: sections.contact-grid
@@ -34,19 +30,21 @@ export const contactCardGroup = (name: string): GroupField => ({
  *   ContactMethods : contact.contact-card  repeatable
  *
  * Used by: contact-us.ContactMethods (repeatable)
+ *
+ * The inner repeatable is stored as `Cards`, not `ContactMethods`: it sits
+ * inside an array row that is itself called `ContactMethods`, and drizzle
+ * rejects two relations with the same name in one table ("There are multiple
+ * relations with name \"ContactMethods\""). getContactUs() in
+ * src/lib/data/cms.ts maps `Cards` back to `ContactMethods`.
  */
-export const contactGridGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text' },
-    {
-      name: 'ContactMethods',
-      type: 'array',
-      fields: [contactCardGroup('row')],
-    },
-  ],
-})
+export const contactGridFields = (): Field[] => [
+  { name: 'Title', type: 'text' },
+  {
+    name: 'Cards',
+    type: 'array',
+    fields: contactCardFields(),
+  },
+]
 
 /**
  * Strapi component: sections.h-eader
@@ -59,17 +57,13 @@ export const contactGridGroup = (name: string): GroupField => ({
  *
  * Used by: contact-us.Header (repeatable)
  */
-export const headerSectionGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  fields: [
-    { name: 'Title', type: 'text' },
-    { name: 'Text', type: 'textarea' },
-    {
-      name: 'Image',
-      type: 'upload',
-      relationTo: 'media',
-      hasMany: true,
-    },
-  ],
-})
+export const headerSectionFields = (): Field[] => [
+  { name: 'Title', type: 'text' },
+  { name: 'Text', type: 'textarea' },
+  {
+    name: 'Image',
+    type: 'upload',
+    relationTo: 'media',
+    hasMany: true,
+  },
+]

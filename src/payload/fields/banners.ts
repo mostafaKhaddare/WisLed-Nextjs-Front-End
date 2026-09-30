@@ -1,4 +1,4 @@
-import type { GroupField } from 'payload'
+import type { Field } from 'payload'
 
 /**
  * Strapi component: homepage.cta
@@ -7,14 +7,10 @@ import type { GroupField } from 'payload'
  *   BtnText : string
  *   BtnLink : string
  *
- * Used by: homepage.hero-banner (nested), contact-us.FormIntro (repeatable)
+ * Used by: homepage.hero-banner (nested, named), contact-us.FormIntro
+ * (repeatable, inlined)
  */
-export const ctaGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  admin: { description: 'Call to action button' },
-  fields: [
-    { name: 'BtnText', type: 'text' },
-    { name: 'BtnLink', type: 'text' },
-  ],
-})
+export const ctaFields = (): Field[] => [
+  { name: 'BtnText', type: 'text' },
+  { name: 'BtnLink', type: 'text' },
+]

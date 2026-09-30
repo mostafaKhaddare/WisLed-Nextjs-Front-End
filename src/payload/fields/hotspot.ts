@@ -1,4 +1,4 @@
-import type { GroupField } from 'payload'
+import type { Field } from 'payload'
 
 /**
  * Strapi component: sections.hotspot
@@ -16,16 +16,8 @@ import type { GroupField } from 'payload'
  * handle through the Medusa Store API.
  *   Payload (hotspot.product_handle) -> Medusa -> product
  */
-export const hotspotGroup = (name: string): GroupField => ({
-  name,
-  type: 'group',
-  admin: {
-    description:
-      'Pixel coordinates on the inspiration image. product_handle is a Medusa product handle, not a Payload record.',
-  },
-  fields: [
-    { name: 'product_handle', type: 'text', required: true },
-    { name: 'position_x', type: 'number' },
-    { name: 'position_y', type: 'number' },
-  ],
-})
+export const hotspotFields = (): Field[] => [
+  { name: 'product_handle', type: 'text', required: true },
+  { name: 'position_x', type: 'number' },
+  { name: 'position_y', type: 'number' },
+]

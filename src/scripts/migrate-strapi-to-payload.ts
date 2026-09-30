@@ -55,7 +55,6 @@ const UPLOADS_DIR = path.resolve(
 
 const DRY_RUN = process.env.DRY_RUN === '1'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type Any = any
 
 type Bucket = {
@@ -105,9 +104,6 @@ async function main(): Promise<void> {
         typeof v.sourceFile === 'string'
     )
 
-  /** Markdown columns that must become Lexical richText. */
-  const RICH_TEXT_FIELDS = new Set(['Content', 'PageContent'])
-
   const toRichText = (markdown: string): Any => {
     if (!markdown || typeof markdown !== 'string') return null
     try {
@@ -118,11 +114,19 @@ async function main(): Promise<void> {
     }
   }
 
-  const mediaIdByStrapiId = new Map<number, string>()
+  const mediaDocByStrapiId = new Map<number, Any>()
   const stagingDir = fs.mkdtempSync(path.join(os.tmpdir(), 'strapi-media-'))
 
-  const ensureMedia = async (descriptor: Any): Promise<string | null> => {
-    const cached = mediaIdByStrapiId.get(descriptor.strapiId)
+  /**
+   * Imports one Strapi file into Payload's media collection and returns the
+   * created document.
+   *
+   * Returns the whole doc rather than a bare id: Payload's upload field
+   * rejects a plain id string ("This relationship field has the following
+   * invalid relationships: <id> 0") but accepts the document itself.
+   */
+  const ensureMedia = async (descriptor: Any): Promise<Any | null> => {
+    const cached = mediaDocByStrapiId.get(descriptor.strapiId)
     if (cached) return cached
 
     const source = path.join(UPLOADS_DIR, descriptor.sourceFile)
@@ -141,60 +145,180 @@ async function main(): Promise<void> {
     fs.copyFileSync(source, staged)
 
     if (DRY_RUN) {
-      mediaIdByStrapiId.set(descriptor.strapiId, `dry-run-${descriptor.strapiId}`)
+      const stub = { id: `dry-run-${descriptor.strapiId}` }
+      mediaDocByStrapiId.set(descriptor.strapiId, stub)
       report.media.migrated += 1
-      return mediaIdByStrapiId.get(descriptor.strapiId)!
+      return stub
     }
 
     try {
-      const doc = await payload.create({
+      // The staged basename is derived from the Strapi media id, so it is a
+      // stable unique key: reuse an existing upload instead of duplicating it
+      // on every re-run.
+      const existing = await payload.find({
         collection: 'media',
-        filePath: staged,
-        data: {
-          alternativeText: descriptor.alternativeText ?? undefined,
-          caption: descriptor.caption ?? undefined,
-        },
+        where: { filename: { equals: path.basename(staged) } },
+        limit: 1,
+        depth: 0,
       })
-      mediaIdByStrapiId.set(descriptor.strapiId, String(doc.id))
+
+      const doc = existing.docs[0]
+        ? await payload.update({
+            collection: 'media',
+            id: existing.docs[0].id,
+            data: {
+              alternativeText: descriptor.alternativeText ?? undefined,
+              caption: descriptor.caption ?? undefined,
+            },
+          })
+        : await payload.create({
+            collection: 'media',
+            filePath: staged,
+            data: {
+              alternativeText: descriptor.alternativeText ?? undefined,
+              caption: descriptor.caption ?? undefined,
+            },
+          })
+
+      mediaDocByStrapiId.set(descriptor.strapiId, doc)
       report.media.migrated += 1
-      return mediaIdByStrapiId.get(descriptor.strapiId)!
+      return doc
     } catch (err) {
       report.media.failed += 1
       report.errors.push({
         scope: `media#${descriptor.strapiId}`,
-        message: (err as Error).message,
+        message: describeError(err),
       })
       return null
     }
   }
 
-  /**
-   * Recursively rewrite a Strapi value into a Payload value:
-   *  - media descriptors  -> media document id (or array of ids)
-   *  - rich text fields   -> Lexical editor state
-   *  - everything else    -> passed through untouched
-   */
-  const transform = async (value: Any, fieldName?: string): Promise<Any> => {
-    if (isMediaDescriptor(value)) return ensureMedia(value)
+  /* ─── Schema-aware transform ───────────────────────────────── */
 
-    if (fieldName && RICH_TEXT_FIELDS.has(fieldName) && typeof value === 'string') {
-      return toRichText(value)
+  const fieldIndex = (fields: Any[] | undefined): Map<string, Any> => {
+    const map = new Map<string, Any>()
+    for (const f of fields ?? []) if (f?.name) map.set(f.name, f)
+    return map
+  }
+
+  const collectionFields = (slug: string): Any[] | undefined =>
+    (payload.config.collections as Any[]).find((c) => c.slug === slug)?.fields
+
+  const globalFields = (slug: string): Any[] | undefined =>
+    (payload.config.globals as Any[]).find((g) => g.slug === slug)?.fields
+
+  /**
+   * Strapi field names that Payload cannot store verbatim. Keyed by the name of
+   * the field the value was read from (the collection/global slug at the top
+   * level). src/lib/data/cms.ts renames them back for the frontend.
+   *   - contact-grid.ContactMethods repeats its own parent array name, which
+   *     drizzle refuses to model ("There are multiple relations with name
+   *     \"ContactMethods\""), so the inner array is stored as `Cards`.
+   *   - about-us.Numbers would build the table `about_us_numbers`, which Payload
+   *     mistakes for its reserved `_numbers` localization table, so the field is
+   *     stored as `KeyFigures`.
+   */
+  const FIELD_RENAMES: Record<string, Record<string, string>> = {
+    ContactMethods: { ContactMethods: 'Cards' },
+    'about-us': { Numbers: 'KeyFigures' },
+  }
+
+  const walkObject = async (
+    value: Any,
+    fields: Any[] | undefined,
+    parentKey?: string
+  ): Promise<Any> => {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return value
+    const index = fieldIndex(fields)
+    const renames = parentKey ? FIELD_RENAMES[parentKey] : undefined
+    const out: Any = {}
+    for (const [key, val] of Object.entries(value)) {
+      const outKey = renames?.[key] ?? key
+      out[outKey] = await walkValue(val, index.get(outKey), outKey)
+    }
+    return out
+  }
+
+  /**
+   * Rewrites one Strapi value into its Payload equivalent using the real field
+   * definition, rather than guessing from the field name.
+   *
+   * The name-based approach was wrong in two ways that only surface as opaque
+   * validation errors:
+   *   - `hasMany` uploads (e.g. `inspirations.image`, `hero-banner.Image`) need
+   *     an ARRAY of ids, while single uploads need a bare id. The same field
+   *     name appears in both shapes across the schema, so the name alone
+   *     cannot decide it.
+   *   - The postgres adapter uses `serial`, so ids must be NUMBERS. Payload
+   *     rejects a string id with "invalid relationships: <id> 0".
+   */
+  const walkValue = async (
+    value: Any,
+    def: Any | undefined,
+    key?: string
+  ): Promise<Any> => {
+    if (value === null || value === undefined) return value
+
+    if (def?.type === 'upload') {
+      const docs: Any[] = []
+      const list = Array.isArray(value) ? value : [value]
+      for (const descriptor of list) {
+        if (!isMediaDescriptor(descriptor)) continue
+        const doc = await ensureMedia(descriptor)
+        if (doc) docs.push(doc.id)
+      }
+      return def.hasMany ? docs : (docs[0] ?? null)
     }
 
-    if (Array.isArray(value)) {
+    if (def?.type === 'richText') {
+      return typeof value === 'string' ? toRichText(value) : value
+    }
+
+    if (def?.type === 'array') {
+      if (!Array.isArray(value)) return value
       const out: Any[] = []
-      for (const item of value) out.push(await transform(item, fieldName))
+      for (const item of value) out.push(await walkObject(item, def.fields, def.name))
       return out
     }
 
-    if (value && typeof value === 'object') {
-      const out: Any = {}
-      for (const [key, val] of Object.entries(value)) {
-        out[key] = await transform(val, key)
+    if (def?.type === 'blocks') {
+      if (!Array.isArray(value)) return value
+      const out: Any[] = []
+      for (const block of value) {
+        const blockDef = (def.blocks ?? []).find(
+          (b: Any) => b.slug === block?.blockType
+        )
+        out.push(await walkObject(block, blockDef?.fields ?? def.fields))
       }
       return out
     }
 
+    if (def?.type === 'group') return walkObject(value, def.fields, def.name)
+
+    if (def?.type === 'relationship') {
+      // Strapi already stores raw ids here; only the numeric/text shape and
+      // hasMany wrapping need enforcing.
+      const list = (Array.isArray(value) ? value : [value]).filter(
+        (v: Any) => v !== null && v !== undefined
+      )
+      const ids = list.map((v: Any) =>
+        typeof v === 'object' && v !== null ? v.id : v
+      )
+      return def.hasMany ? ids : (ids[0] ?? null)
+    }
+
+    // Leaf field: nothing to rewrite, but a media descriptor can still appear
+    // if the Strapi export nested one under an unlisted key.
+    if (isMediaDescriptor(value)) {
+      const doc = await ensureMedia(value)
+      return doc?.id ?? null
+    }
+    if (Array.isArray(value)) {
+      const out: Any[] = []
+      for (const item of value) out.push(await walkValue(item, undefined))
+      return out
+    }
+    if (typeof value === 'object') return walkObject(value, undefined, key)
     return value
   }
 
@@ -207,11 +331,18 @@ async function main(): Promise<void> {
     'updatedAt',
   ])
 
-  const buildData = async (row: Any): Promise<Any> => {
+  const buildData = async (
+    row: Any,
+    fields: Any[] | undefined,
+    slug: string
+  ): Promise<Any> => {
+    const index = fieldIndex(fields)
+    const renames = FIELD_RENAMES[slug]
     const data: Any = {}
     for (const [key, value] of Object.entries(row)) {
       if (META_KEYS.has(key)) continue
-      data[key] = await transform(value, key)
+      const outKey = renames?.[key] ?? key
+      data[outKey] = await walkValue(value, index.get(outKey), outKey)
     }
     return data
   }
@@ -244,6 +375,21 @@ async function main(): Promise<void> {
     return data
   }
 
+  /**
+   * Payload's top-level `message` is only "The following field is invalid: X";
+   * the useful detail (which relationship, which nested path) lives in
+   * `err.data.errors`, so fold it into one readable line.
+   */
+  const describeError = (err: Any): string => {
+    const fieldErrors: Any[] = err?.data?.errors
+    if (!Array.isArray(fieldErrors) || fieldErrors.length === 0) {
+      return err?.message ?? String(err)
+    }
+    return fieldErrors
+      .map((e: Any) => `${e.path ?? e.label ?? '?'} -> ${e.message}`)
+      .join(' | ')
+  }
+
   /* ─── Collection migration ────────────────────────────────── */
 
   /** Group Strapi draft/published row pairs by documentId. */
@@ -274,6 +420,7 @@ async function main(): Promise<void> {
   const migrateCollection = async (
     slug: string,
     rows: Any[],
+    /** Field to match an existing document on; '' for a singleton. */
     keyField: string,
     extraData?: (row: Any, data: Any) => Promise<Any> | Any
   ) => {
@@ -295,14 +442,15 @@ async function main(): Promise<void> {
       }
 
       try {
-        let data = stripNullIds(await buildData(primary))
+        let data = stripNullIds(
+          await buildData(primary, collectionFields(slug), slug)
+        )
         if (slug === 'product-variants-colors') data = addBlockTypes(data)
         if (extraData) data = await extraData(primary, data)
 
-        const keyValue = primary[keyField]
-        const where = keyValue
-          ? { [keyField]: { equals: keyValue } }
-          : { id: { equals: primary._strapiId } }
+        // A singleton has no natural key, so match on the first record.
+        const keyValue = keyField ? primary[keyField] : undefined
+        const where = keyValue ? { [keyField]: { equals: keyValue } } : {}
 
         const existing = await findExisting(slug, where)
 
@@ -321,7 +469,9 @@ async function main(): Promise<void> {
 
         // Preserve the draft version when Strapi kept one that differs.
         if (draft && draft._strapiId !== primary._strapiId) {
-          let draftData = stripNullIds(await buildData(draft))
+          let draftData = stripNullIds(
+            await buildData(draft, collectionFields(slug), slug)
+          )
           if (slug === 'product-variants-colors') draftData = addBlockTypes(draftData)
           const target = await findExisting(slug, where)
           if (target) {
@@ -337,7 +487,7 @@ async function main(): Promise<void> {
         bucket.failed += 1
         report.errors.push({
           scope: `${slug}#${primary._strapiId}`,
-          message: (err as Error).message,
+          message: describeError(err),
         })
       }
     }
@@ -362,7 +512,9 @@ async function main(): Promise<void> {
     }
 
     try {
-      const data = stripNullIds(await buildData(published))
+      const data = stripNullIds(
+        await buildData(published, globalFields(slug), slug)
+      )
       if (!DRY_RUN) {
         await payload.updateGlobal({ slug, data })
       }
@@ -370,12 +522,14 @@ async function main(): Promise<void> {
 
       const draft = rows.find((r) => r._status === 'draft')
       if (draft && draft._strapiId !== published._strapiId && !DRY_RUN) {
-        const draftData = stripNullIds(await buildData(draft))
+        const draftData = stripNullIds(
+          await buildData(draft, globalFields(slug), slug)
+        )
         await payload.updateGlobal({ slug, data: draftData, draft: true })
       }
     } catch (err) {
       bucket.failed += 1
-      report.errors.push({ scope: `global:${slug}`, message: (err as Error).message })
+      report.errors.push({ scope: `global:${slug}`, message: describeError(err) })
     }
 
     console.log(`[migrate] global ${slug.padEnd(18)} ${JSON.stringify(bucket)}`)
@@ -424,20 +578,21 @@ async function main(): Promise<void> {
   }
   // Library entries not referenced anywhere are still migrated.
   for (const m of strapi.media) {
-    if (!mediaIdByStrapiId.has(m.strapiId)) await ensureMedia(m)
+    if (!mediaDocByStrapiId.has(m.strapiId)) await ensureMedia(m)
   }
   console.log(`[migrate] media done: ${JSON.stringify(report.media)}`)
 
   // 2. blog post categories first — blogs reference them.
   await migrateCollection('blog-post-categories', strapi.blogPostCategories, 'Slug')
 
-  const categoryIdByStrapiRowId = new Map<number, string>()
+  const categoryIdByStrapiRowId = new Map<number, Any>()
   for (const row of strapi.blogPostCategories) {
-    const where = row.slug
-      ? { Slug: { equals: row.slug } }
+    // The export capitalises attribute names, so the lookup key is `Slug`.
+    const where = row.Slug
+      ? { Slug: { equals: row.Slug } }
       : { id: { equals: row._strapiId } }
     const doc = await findExisting('blog-post-categories', where)
-    if (doc) categoryIdByStrapiRowId.set(row._strapiId, String(doc.id))
+    if (doc) categoryIdByStrapiRowId.set(row._strapiId, doc.id)
   }
 
   // 3. blogs, with their category relation
@@ -447,7 +602,7 @@ async function main(): Promise<void> {
     )
     const ids = links
       .map((l: Any) => categoryIdByStrapiRowId.get(l.blog_post_category_id))
-      .filter(Boolean) as string[]
+      .filter(Boolean) as Any[]
 
     if (ids.length) {
       data.Categories = ids
@@ -462,7 +617,8 @@ async function main(): Promise<void> {
     return data
   })
 
-  // 4. remaining collections
+  // 4. remaining collections. about-us is a Strapi single type modelled as a
+  // singleton Payload collection (see src/payload/collections/AboutUs.ts).
   await migrateCollection('collections', strapi.collections, 'Handle')
   await migrateCollection('categories', strapi.categories, 'handle')
   await migrateCollection('inspirations', strapi.inspirations, 'title')
@@ -471,10 +627,10 @@ async function main(): Promise<void> {
     strapi.productVariantColors,
     'Name'
   )
+  await migrateCollection('about-us', strapi.globals.aboutUs, '')
 
   // 5. globals
   await migrateGlobal('homepage', strapi.globals.homepage)
-  await migrateGlobal('about-us', strapi.globals.aboutUs)
   await migrateGlobal('contact-us', strapi.globals.contactUs)
   await migrateGlobal('faq', strapi.globals.faq)
   await migrateGlobal('privacy-policy', strapi.globals.privacyPolicy)

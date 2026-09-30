@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
-import { faqSectionGroup } from '../fields/faq'
+import { faqSectionFields } from '../fields/faq'
 
 /**
  * Strapi: api::faq.faq  (singleType, collectionName "faqs")
@@ -17,6 +17,6 @@ export const Faq: GlobalConfig = {
   admin: { group: 'Content' },
   versions: { drafts: true },
   fields: [
-    { name: 'FAQSection', type: 'array', fields: [faqSectionGroup('row')] },
+    { name: 'FAQSection', type: 'array', fields: faqSectionFields() },
   ],
 }

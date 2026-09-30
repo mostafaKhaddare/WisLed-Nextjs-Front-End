@@ -39,3 +39,16 @@ next-env.d.ts
 
 # Bundled Strapi->Payload migration script (rebuilt by npm run payload:migrate:bundle)
 .payload-migrate.mjs
+
+# Other bundled Payload scripts (schema init/migrate, admin user, verification)
+.payload-init.mjs
+.payload-migrate-schema.mjs
+.create-admin.mjs
+.verify.mjs
+.verify2.mjs
+
+# Payload uploads. Runtime data written by the migration and the admin media
+# library, not source. Committing 72+ files and their generated image sizes
+# would bloat the repo and conflict on every content change.
+# In production point PAYLOAD_MEDIA_DIR at object storage or a mounted volume.
+/public/media/
