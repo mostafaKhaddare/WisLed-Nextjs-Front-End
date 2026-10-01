@@ -28,13 +28,39 @@ import { s3Storage } from '@payloadcms/storage-s3'
 const bucket = process.env.S3_BUCKET
 const accessKeyId = process.env.S3_ACCESS_KEY_ID
 const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY
+const region = process.env.S3_REGION
 
 /**
  * Never throw at import time. The Payload config is imported by the Next.js
  * build, by the migration scripts and by the admin — all of which must keep
  * working on a machine (or a CI runner) that has no S3 credentials.
  */
-export const isObjectStorageEnabled = Boolean(bucket && accessKeyId && secretAccessKey)
+export const isObjectStorageEnabled = Boolean(
+  bucket && accessKeyId && secretAccessKey && region,
+)
+
+/**
+ * `S3_REGION` is part of the enabled check on purpose.
+ *
+ * The AWS SDK throws `Region is missing` when a client is constructed without
+ * one, and for Backblaze that surfaces as a 500 on *every* media request: the
+ * S3 static handler signs the download URL per request, the throw is caught by
+ * its generic `catch`, and the client gets a bare `text/plain` "Internal Server
+ * Error" with no detail. Uploads fail the same way, from the admin.
+ *
+ * Omitting region from this check looks harmless — the plugin still enables,
+ * `adapters` still reports `['s3']`, the admin renders normally — and the
+ * breakage only appears as an unexplainable 500 in production, long after the
+ * deploy that caused it. A missing region is now treated as "not configured".
+ */
+if (bucket && !region) {
+  console.warn(
+    '[storage] S3_BUCKET is set but S3_REGION is not. Object storage is ' +
+      'disabled and uploads will fall back to the local disk. Set S3_REGION ' +
+      '(for Backblaze B2 this looks like eu-central-003).',
+  )
+}
+
 
 export const mediaStorage = s3Storage({
   enabled: isObjectStorageEnabled,
@@ -65,7 +91,7 @@ export const mediaStorage = s3Storage({
   },
 
   config: {
-    region: process.env.S3_REGION,
+    region,
     // R2 and other S3-compatible providers require an explicit endpoint.
     ...(process.env.S3_ENDPOINT ? { endpoint: process.env.S3_ENDPOINT } : {}),
     ...(process.env.S3_FORCE_PATH_STYLE === '1' ? { forcePathStyle: true } : {}),
