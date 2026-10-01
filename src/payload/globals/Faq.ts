@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
 import { faqSectionFields } from '../fields/faq'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::faq.faq  (singleType, collectionName "faqs")
@@ -16,6 +17,8 @@ export const Faq: GlobalConfig = {
   access: { read: () => true, update: authenticated },
   admin: { group: 'Content' },
   versions: { drafts: true },
+  hooks: revalidateHooks('faq'),
+
   fields: [
     { name: 'FAQSection', type: 'array', fields: faqSectionFields() },
   ],

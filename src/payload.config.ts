@@ -20,6 +20,7 @@ import { Faq } from './payload/globals/Faq'
 import { Homepage } from './payload/globals/Homepage'
 import { PrivacyPolicy } from './payload/globals/PrivacyPolicy'
 import { TermsAndCondition } from './payload/globals/TermsAndCondition'
+import { mediaStorage } from './payload/storage'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -55,6 +56,9 @@ export default buildConfig({
     },
   },
   editor: lexicalEditor(),
+  // Sends Media uploads to S3/R2 when the S3_* variables are present, so files
+  // survive a Vercel redeploy. Inactive locally — see src/payload/storage.ts.
+  plugins: [mediaStorage],
   collections: [
     Users,
     Media,

@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::privacy-policy.privacy-policy
@@ -16,5 +17,7 @@ export const PrivacyPolicy: GlobalConfig = {
   access: { read: () => true, update: authenticated },
   admin: { group: 'Content' },
   versions: { drafts: true },
+  hooks: revalidateHooks('privacy-policy'),
+
   fields: [{ name: 'PageContent', type: 'richText' }],
 }

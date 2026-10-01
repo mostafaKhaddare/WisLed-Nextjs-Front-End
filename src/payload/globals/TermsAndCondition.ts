@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::terms-and-condition.terms-and-condition
@@ -19,5 +20,7 @@ export const TermsAndCondition: GlobalConfig = {
   access: { read: () => true, update: authenticated },
   admin: { group: 'Content' },
   versions: { drafts: true },
+  hooks: revalidateHooks('terms-and-condition'),
+
   fields: [{ name: 'PageContent', type: 'richText' }],
 }

@@ -7,6 +7,7 @@ import {
   whyUsFields,
 } from '../fields/about-us'
 import { namedGroup } from '../fields/group'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::about-us.about-us  (singleType, collectionName "about_uses")
@@ -55,6 +56,8 @@ export const AboutUs: CollectionConfig = {
     description: 'Single record — the About Us page content.',
   },
   versions: { drafts: true },
+  hooks: revalidateHooks('about-us'),
+
   fields: [
     { name: 'Banner', type: 'upload', relationTo: 'media', hasMany: true },
     namedGroup('OurStory', contentSectionFields()),

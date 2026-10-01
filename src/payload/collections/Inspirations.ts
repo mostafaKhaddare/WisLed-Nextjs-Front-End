@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
 import { hotspotFields } from '../fields/hotspot'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::inspiration.inspiration
@@ -45,6 +46,8 @@ export const Inspirations: CollectionConfig = {
     group: 'Content',
   },
   versions: { drafts: true },
+  hooks: revalidateHooks('inspirations'),
+
   fields: [
     { name: 'title', type: 'text' },
     {

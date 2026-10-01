@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::blog-post-category.blog-post-category
@@ -26,6 +27,8 @@ export const BlogPostCategories: CollectionConfig = {
     group: 'Content',
   },
   versions: { drafts: true },
+  hooks: revalidateHooks('blog-post-categories'),
+
   fields: [
     { name: 'Title', type: 'text' },
     { name: 'Slug', type: 'text', unique: true, index: true },

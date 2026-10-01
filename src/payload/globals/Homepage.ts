@@ -3,6 +3,7 @@ import type { GlobalConfig } from 'payload'
 import { authenticated } from '../access'
 import { namedGroup } from '../fields/group'
 import { heroBannerFields } from '../fields/hero-banner'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::homepage.homepage  (singleType, collectionName "homepages")
@@ -19,6 +20,8 @@ export const Homepage: GlobalConfig = {
   access: { read: () => true, update: authenticated },
   admin: { group: 'Content' },
   versions: false,
+  hooks: revalidateHooks('homepage'),
+
   fields: [
     namedGroup('HeroBanner', heroBannerFields()),
     namedGroup('MidBanner', heroBannerFields()),

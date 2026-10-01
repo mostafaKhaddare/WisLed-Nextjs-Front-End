@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::collection.collection
@@ -33,6 +34,8 @@ export const Collections: CollectionConfig = {
     group: 'Content',
   },
   versions: { drafts: true },
+  hooks: revalidateHooks('collections'),
+
   fields: [
     { name: 'Title', type: 'text', required: true },
     { name: 'Handle', type: 'text', required: true, unique: true, index: true },

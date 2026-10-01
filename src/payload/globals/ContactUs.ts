@@ -3,6 +3,7 @@ import type { GlobalConfig } from 'payload'
 import { authenticated } from '../access'
 import { ctaFields } from '../fields/banners'
 import { contactGridFields, headerSectionFields } from '../fields/contact'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::contact-us.contact-us  (singleType, collectionName "contact_uses")
@@ -22,6 +23,8 @@ export const ContactUs: GlobalConfig = {
   access: { read: () => true, update: authenticated },
   admin: { group: 'Content' },
   versions: { drafts: true },
+  hooks: revalidateHooks('contact-us'),
+
   fields: [
     { name: 'Header', type: 'array', fields: headerSectionFields() },
     { name: 'ContactMethods', type: 'array', fields: contactGridFields() },

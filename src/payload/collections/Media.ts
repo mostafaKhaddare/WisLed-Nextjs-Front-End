@@ -3,6 +3,7 @@ import path from 'path'
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Payload Media collection — replaces the Strapi `plugin::upload.file` library.
@@ -10,8 +11,9 @@ import { authenticated } from '../access'
  * Storage:
  *   Local disk under `public/media` in development, so files are served by
  *   Next.js from the existing public directory with no extra config.
- *   Production object storage is intentionally NOT configured here; adding
- *   @payloadcms/storage-s3 is a separate decision (see notes in payload.config.ts).
+ *   In production the `mediaStorage` plugin in `src/payload/storage.ts`
+ *   redirects uploads to S3/R2, because `public/` is read-only and wiped on
+ *   every Vercel redeploy. The `staticDir` below is only a local fallback.
  */
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -52,6 +54,8 @@ export const Media: CollectionConfig = {
     ],
     adminThumbnail: 'thumbnail',
   },
+  hooks: revalidateHooks('media'),
+
   fields: [
     {
       name: 'alternativeText',

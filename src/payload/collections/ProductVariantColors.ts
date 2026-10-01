@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access'
 import { variantColorBlocks } from '../fields/color'
+import { revalidateHooks } from '../revalidate'
 
 /**
  * Strapi: api::product-variant-color.product-variant-color
@@ -32,6 +33,8 @@ export const ProductVariantColors: CollectionConfig = {
     group: 'Catalogue',
   },
   versions: false,
+  hooks: revalidateHooks('product-variants-colors'),
+
   fields: [
     { name: 'Name', type: 'text', required: true },
     variantColorBlocks,
