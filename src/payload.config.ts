@@ -25,6 +25,52 @@ import { mediaStorage } from './payload/storage'
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /**
+ * The origin the admin's browser bundle uses to reach the API.
+ *
+ * Why this needs care
+ * -------------------
+ * Payload's own default is a bare `serverURL: ''` (payload defaults.js) and,
+ * unlike several third-party starters, core Payload does NOT fall back to
+ * NEXT_PUBLIC_SERVER_URL. Both failure modes are deceptive:
+ *
+ *   - Empty: the server-rendered shell still returns 200 with a valid document
+ *     and every asset loads, but the client bundle never mounts and the browser
+ *     shows a blank page.
+ *   - Wrong host: pages render fine, so it *looks* healthy, but every
+ *     client-side fetch is aimed elsewhere. In production that meant
+ *     `http://localhost:8000/api/...` being requested from
+ *     https://www.wisled.ma, which the browser blocks as a CORS violation to
+ *     loopback. Saves then fail with a bare "Failed to fetch" and a Server
+ *     Action 500 carrying only an opaque `{"digest":"..."}`.
+ *
+ * So the production value is never guessed. A localhost default applies in
+ * development only, where it is correct; in production a missing variable is
+ * reported loudly instead of silently producing a half-working admin.
+ *
+ * It must be the exact origin the browser uses, including the `www` host,
+ * because the admin sets its auth cookie on that host. It must NOT carry a
+ * trailing slash.
+ */
+const resolveServerURL = (): string => {
+  const fromEnv = process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/+$/, '')
+
+  if (fromEnv) return fromEnv
+
+  if (process.env.NODE_ENV === 'production') {
+    // Deliberately not thrown: the Next build, the migration scripts and the
+    // admin all import this config, and an import-time throw would take the
+    // deployment down with a stack trace instead of a diagnosable 500.
+    console.warn(
+      '[payload] NEXT_PUBLIC_SERVER_URL is not set. The admin panel will not be ' +
+        'able to reach the API. Set it to the public origin, e.g. https://www.wisled.ma',
+    )
+    return ''
+  }
+
+  return 'http://localhost:8000'
+}
+
+/**
  * Payload CMS configuration for WISLED.
  *
  * Responsibility split — Payload is CMS only. It never holds catalogue data.
@@ -62,7 +108,7 @@ export default buildConfig({
    * host, because the admin calls the API relative to it. Must NOT carry a
    * trailing slash.
    */
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:8000',
+  serverURL: resolveServerURL(),
   admin: {
     user: 'users',
     importMap: { baseDir: path.resolve(dirname) },
