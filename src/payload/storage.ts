@@ -61,6 +61,38 @@ if (bucket && !region) {
   )
 }
 
+/**
+ * Report which S3 variables this build can actually see — presence only, never
+ * values.
+ *
+ * Env configuration on Vercel fails quietly. Variables land in the wrong
+ * environment scope, or a row is edited and never committed, and the dashboard
+ * can look identical to a working setup. The only symptom used to be a bare
+ * 500 on every media request, with no way to tell "unset" from "set wrong".
+ *
+ * This prints once per cold start into the function logs, so a single deploy
+ * plus one log read answers the question. It deliberately reports only whether
+ * each name resolved: no keys, endpoints or secrets reach the log.
+ */
+if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+  const required = ['S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const
+  const optional = ['S3_ENDPOINT', 'S3_FORCE_PATH_STYLE'] as const
+
+  const present = required.filter((k) => Boolean(process.env[k]))
+  const missing = required.filter((k) => !process.env[k])
+  const optionalState = optional
+    .map((k) => `${k}=${process.env[k] ? 'set' : 'unset'}`)
+    .join(' ')
+
+  console.log(
+    `[storage] S3 config -> enabled=${isObjectStorageEnabled} ` +
+      `present=[${present.join(',') || 'none'}] ` +
+      `missing=[${missing.join(',') || 'none'}] ` +
+      `${optionalState}`,
+  )
+}
+
+
 
 export const mediaStorage = s3Storage({
   enabled: isObjectStorageEnabled,
