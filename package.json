@@ -6,7 +6,7 @@
     "solace-medusa-starter"
   ],
   "scripts": {
-    "dev": "next dev --turbopack -p 8000",
+    "dev": "next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "next lint",
@@ -40,6 +40,7 @@
     "@payloadcms/db-postgres": "^3.43.0",
     "@payloadcms/next": "^3.43.0",
     "@payloadcms/richtext-lexical": "^3.43.0",
+    "@payloadcms/storage-s3": "^3.43.0",
     "@payloadcms/translations": "^3.43.0",
     "@payloadcms/ui": "^3.43.0",
     "@paypal/paypal-js": "8.1.3",

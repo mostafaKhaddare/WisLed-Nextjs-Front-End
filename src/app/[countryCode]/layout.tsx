@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     template: '%s | WisLed',
     default: 'WisLed - Éclairage LED Moderne & Design',
   },
-  description: 'Découvrez notre collection exclusive de luminaires LED modernes. Qualité premium, design innovant et économie d\'énergie pour sublimer votre intérieur.',
-  keywords: ['LED', 'Éclairage', 'Design', 'Luminaire', 'Intérieur', 'Décoration'],
+  description: 'Découvrez notre collection exclusive de luminaires LED modernes. Qualité premium, design innovative et économie d\'énergie pour sublimer votre intérieur.',
+  keywords: ['LED', 'Éclairage', 'Design', 'Luminaires', 'Intérieur', 'Décoration'],
   openGraph: {
     title: 'WisLed - Éclairage LED Moderne & Design',
     description: 'Découvrez notre collection exclusive de luminaires LED modernes.',
@@ -45,16 +45,27 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+/**
+ * Root layout for the storefront branch.
+ *
+ * This file intentionally owns `<html>`/`<body>` for every route under
+ * `[countryCode]`. Payload's admin is a *sibling* top-level branch that brings
+ * its own `<html>` via `@payloadcms/next/layouts`'s `RootLayout`, and Next.js
+ * applies a root layout to every route. Keeping the document markup here — one
+ * level below `src/app` — means neither branch nests an `<html>` inside the
+ * other's `<body>`, which React rejects as invalid DOM nesting and which
+ * manifests as the panel rendering and then vanishing.
+ *
+ * Do not reintroduce a `src/app/layout.tsx` that emits `<html>`: it would wrap
+ * the Payload admin again.
+ */
+export default function StorefrontRootLayout(props: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="fr" suppressHydrationWarning className={montserrat.variable}>
       <body className="text-basic-primary font-sans">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        // disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <WishlistProvider>
             <ProgressBar />
             <Toaster position="bottom-right" offset={65} closeButton />

@@ -37,6 +37,16 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
  * DATABASE_URL — the two systems share no schema and no migration history.
  */
 export default buildConfig({
+  // Must match the mounted route group `src/app/(payload)/payload-admin`.
+  // These live at the TOP level of the config, not under `admin.routes`:
+  // `config.routes` is built only from `config.routes` (payload defaults.js),
+  // so an `admin.routes.admin` value is silently ignored. Left at the default
+  // `/admin`, every sidebar link, redirect and the post-login callback point at
+  // a path that does not exist (404) and the panel is unusable.
+  routes: {
+    admin: '/payload-admin',
+    api: '/api',
+  },
   admin: {
     user: 'users',
     importMap: { baseDir: path.resolve(dirname) },
