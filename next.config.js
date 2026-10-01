@@ -78,6 +78,33 @@ if (isValidHostname(s3EndpointHost)) {
   })
 }
 
+/**
+ * Payload's own origin has to be allowlisted as well.
+ *
+ * Once NEXT_PUBLIC_SERVER_URL is set — which it must be, or the admin panel
+ * cannot reach the API — Payload hands out *absolute* media URLs on this site's
+ * own host, e.g. https://www.wisled.ma/api/media/file/s60-8.png.
+ *
+ * `next/image` classifies any absolute URL as remote and 400s every one whose
+ * host is absent from `remotePatterns`. Because the CMS image URL is also the
+ * site origin, the failure is invisible in dev (localhost is already listed)
+ * and takes out every CMS image in production at once, with a bare 400 and no
+ * server-side log line.
+ *
+ * Derived from the env var rather than hardcoded so it tracks whichever host
+ * the deployment actually uses.
+ */
+for (const candidate of [process.env.NEXT_PUBLIC_SERVER_URL, 'https://www.wisled.ma', 'https://wisled.ma']) {
+  const host = (candidate || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+  if (isValidHostname(host) && !remotePatterns.some((p) => p.hostname === host)) {
+    remotePatterns.push({
+      protocol: 'https',
+      hostname: host,
+    })
+  }
+}
+
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
