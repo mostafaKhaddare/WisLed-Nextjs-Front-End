@@ -48,6 +48,21 @@ export default buildConfig({
     admin: '/payload-admin',
     api: '/api',
   },
+  /**
+   * The admin panel is useless without this.
+   *
+   * Payload's own default is a bare `serverURL: ''` (payload defaults.js) and,
+   * unlike several third-party starters, core Payload does NOT fall back to
+   * NEXT_PUBLIC_SERVER_URL. With it empty the server-rendered shell still
+   * returns 200 and the title resolves, but the client bundle has no API origin
+   * to talk to, fails to mount, and the browser shows a blank page. The 200 is
+   * genuinely misleading here: assets all load and the DOM is well formed.
+   *
+   * It must be the same origin the browser actually uses, including the `www`
+   * host, because the admin calls the API relative to it. Must NOT carry a
+   * trailing slash.
+   */
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:8000',
   admin: {
     user: 'users',
     importMap: { baseDir: path.resolve(dirname) },
