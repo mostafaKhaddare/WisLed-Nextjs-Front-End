@@ -129,8 +129,6 @@ const Hero = ({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [emblaApi, hasMultipleImages, scrollPrev, scrollNext])
 
-  const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || ''
-
   return (
     <>
       <Box className="relative h-[360px] max-h-screen w-full overflow-hidden small:h-[400px] large:h-[600px] 2xl:h-screen 2xl:max-h-[600px]">
@@ -153,7 +151,7 @@ const Hero = ({
                   aria-label={`${index + 1} of ${images.length}`}
                 >
                   <Image
-                    src={`${strapiUrl}${image.url}`}
+                    src={image.url}
                     alt={image.alternativeText || `Hero banner ${index + 1}`}
                     className="h-full w-full object-cover"
                     fill

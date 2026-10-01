@@ -63,6 +63,21 @@ if (isValidHostname(process.env.NEXT_PUBLIC_SPACE_ENDPOINT)) {
   })
 }
 
+/**
+ * Payload media in production is served from the object-storage bucket.
+ * `next/image` refuses to optimize any host absent from `remotePatterns`, so
+ * without this every CMS image 400s once the S3 adapter is active.
+ *
+ * S3_ENDPOINT is a URL, so strip the scheme before reusing the helper above.
+ */
+const s3EndpointHost = (process.env.S3_ENDPOINT || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+if (isValidHostname(s3EndpointHost)) {
+  remotePatterns.push({
+    protocol: 'https',
+    hostname: s3EndpointHost,
+  })
+}
+
 const nextConfig = {
   reactStrictMode: true,
   images: {

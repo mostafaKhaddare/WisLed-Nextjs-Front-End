@@ -85,7 +85,7 @@ export default async function BlogPostTemplate({
           {/* Featured Image */}
           <Box className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-lg medium:h-[450px]">
             <Image
-              src={process.env.NEXT_PUBLIC_STRAPI_URL + article.FeaturedImage.url}
+              src={article.FeaturedImage.url}
               alt={`${article.FeaturedImage.alternativeText ? article.FeaturedImage.alternativeText : article.Title}`}
               fill
               className="w-full object-cover transition-transform duration-500 hover:scale-105"

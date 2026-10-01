@@ -17,7 +17,7 @@ export const Banner = ({ data }: { data: HeroBanner }) => {
     <Container>
       <Box className="relative h-[440px] medium:h-[478]">
         <Image
-          src={process.env.NEXT_PUBLIC_STRAPI_URL + image.url}
+          src={image.url}
           alt={image.alternativeText ?? 'Banner image'}
           fill
           className="object-cover object-right-top"

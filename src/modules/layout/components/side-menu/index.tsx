@@ -99,7 +99,7 @@ const SideMenu = ({
             onClick={handleClose}
           >
             <Image
-              src={process.env.NEXT_PUBLIC_STRAPI_URL + strapiCollection.Image.url}
+              src={strapiCollection.Image.url}
               alt={strapiCollection.Title}
               width={600}
               height={160}

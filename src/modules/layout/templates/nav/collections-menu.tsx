@@ -103,7 +103,7 @@ const CollectionTile = ({
       <Box className="relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl" style={{ height: '260px' }}>
         {/* Image */}
         <Image
-          src={process.env.NEXT_PUBLIC_STRAPI_URL + imgSrc}
+          src={imgSrc}
           alt={`${title} collection image`}
           fill
           sizes="(max-width: 1280px) 33vw, 400px"

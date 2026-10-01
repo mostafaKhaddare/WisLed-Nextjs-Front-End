@@ -134,7 +134,7 @@ export const ContactInfoSection = ({ data }: { data: ContactInfoData }) => {
                 <Box className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${iconStyle.bg} ${iconStyle.darkBg} shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md`}>
                   {method.Icon?.url ? (
                     <Image
-                      src={process.env.NEXT_PUBLIC_STRAPI_URL + method.Icon.url}
+                      src={method.Icon.url}
                       height={26}
                       width={26}
                       alt={method.Icon.alternativeText ?? 'Contact icon'}

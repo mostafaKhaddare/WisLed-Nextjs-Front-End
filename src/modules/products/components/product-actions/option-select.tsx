@@ -98,7 +98,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
                 data-testid="option-button"
               >
                 <Image
-                  src={process.env.NEXT_PUBLIC_STRAPI_URL + image.url}
+                  src={image.url}
                   alt={image.alternativeText ?? 'Variant color'}
                   width={80}
                   height={80}

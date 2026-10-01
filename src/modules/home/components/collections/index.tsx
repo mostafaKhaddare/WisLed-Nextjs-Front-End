@@ -132,7 +132,7 @@ const Collections = ({
             key={id}
             title={element.Title}
             handle={element.Handle}
-            imgSrc={process.env.NEXT_PUBLIC_STRAPI_URL + element.Image.url}
+            imgSrc={element.Image.url}
             description={element.Description}
           />
         ))}

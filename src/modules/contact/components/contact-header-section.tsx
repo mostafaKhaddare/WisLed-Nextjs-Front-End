@@ -70,7 +70,7 @@ export const ContactHeaderSection = ({ data }: { data: ContentAttributes }) => {
         {data.Image ? (
           <Box className="relative h-[280px] w-full max-w-[480px] shrink-0 overflow-hidden rounded-3xl border border-white/15 shadow-2xl large:h-[380px] large:w-[520px]">
             <Image
-              src={process.env.NEXT_PUBLIC_STRAPI_URL + data.Image.url}
+              src={data.Image.url}
               alt={data.Image.alternativeText ?? 'Contact WisLed'}
               fill
               sizes="(max-width: 768px) 100vw, 520px"
