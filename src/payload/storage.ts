@@ -42,10 +42,25 @@ export const mediaStorage = s3Storage({
 
   collections: {
     media: {
-      // The storefront reads images directly from a URL, so serve them
-      // publicly rather than issuing short-lived signed URLs. Set this to
-      // `true` (or a `{ expiresIn }` object) if the bucket must stay private.
-      signedDownloads: false,
+      /**
+       * Signed downloads are required, not optional.
+       *
+       * The S3 adapter builds URLs from the S3 API endpoint
+       * (s3.<region>.backblazeb2.com). Backblaze authenticates *every* request
+       * to that endpoint, including for buckets set to Public — public read
+       * only works through the separate CDN URLs (f2.dev / f00X.backblazeb2.com
+       * /file/<bucket>/...), which this adapter does not generate. Setting
+       * signedDownloads to false would therefore 403 every image regardless of
+       * the bucket's visibility setting.
+       *
+       * Signing sidesteps that entirely and keeps the bucket private, which is
+       * the safer default for a bucket holding unpublished catalogue imagery.
+       *
+       * URLs expire, but Next.js' image optimizer fetches each file once and
+       * serves the optimized result from its own cache, so expiry only matters
+       * on a cache miss.
+       */
+      signedDownloads: true,
     },
   },
 
