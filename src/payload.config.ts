@@ -79,7 +79,18 @@ export default buildConfig({
   ],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.PAYLOAD_DATABASE_URI,
+      /**
+       * The Neon Vercel integration injects DATABASE_URL / DATABASE_URL_UNPOOLED,
+       * not PAYLOAD_DATABASE_URI, so accept both and let an explicit Payload
+       * variable win.
+       *
+       * The *unpooled* (direct) connection is preferred: it bypasses PgBouncer,
+       * which Payload's postgres adapter does not work reliably with.
+       */
+      connectionString:
+        process.env.PAYLOAD_DATABASE_URI ??
+        process.env.DATABASE_URL_UNPOOLED ??
+        process.env.DATABASE_URL,
     },
     // Dev-only convenience that syncs the schema straight from the config.
     // Off by default because it is NOT idempotent (drizzle-kit's dev push
