@@ -29,7 +29,7 @@ export default async function PaginatedProducts({
         className="grid w-full grid-cols-2 gap-x-2 gap-y-4 small:grid-cols-2 large:grid-cols-4 "
         data-testid="products-list"
       >
-        {products.map((p) => {
+        {products.map((p, index) => {
           return (
             <li key={p.id}>
               <ProductTile
@@ -57,6 +57,7 @@ export default async function PaginatedProducts({
                 }}
                 regionId={region.id}
                 layout="list"
+                priority={index < 4}
               />
             </li>
           )

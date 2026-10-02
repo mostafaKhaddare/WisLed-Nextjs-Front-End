@@ -109,6 +109,14 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns,
+    // AVIF is roughly 30% lighter than WebP at the same perceived quality.
+    // Next only negotiates it for browsers that advertise support via Accept,
+    // so older clients keep getting WebP.
+    formats: ['image/avif', 'image/webp'],
+    // Product images are immutable in the CMS. The 60s default re-runs the
+    // optimizer on nearly every cold request, which is the slowest path on a
+    // catalogue page.
+    minimumCacheTTL: 60 * 60 * 24,
   },
 }
 

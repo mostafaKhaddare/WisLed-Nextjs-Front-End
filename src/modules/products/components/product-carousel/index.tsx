@@ -33,7 +33,7 @@ export function ProductCarousel({
       <Box className="flex flex-col gap-6 small:gap-12">
         <CarouselWrapper title={title} productsCount={products.length}>
           <Box className="flex gap-2">
-            {products.map((item) => {
+            {products.map((item, index) => {
               const cheapestVariant = getProductPrice({
                 product: item,
               })
@@ -60,6 +60,7 @@ export function ProductCarousel({
                     }}
                     regionId={regionId}
                     layout="carousel"
+                    priority={index < 2}
                   />
                 </Box>
               )

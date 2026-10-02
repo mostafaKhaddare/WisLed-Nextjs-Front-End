@@ -12,14 +12,31 @@ export default function ProductPrice({
     return null
   }
 
+  const hasDiscount = Boolean(salePrice && salePrice !== calculatedPrice)
+
   return (
-    <Box className="flex items-center justify-start gap-2">
-      {salePrice && (
-        <Text className="text-md text-action-primary  order-2 line-through" size="md">
+    <Box
+      className="flex items-center justify-start gap-2"
+      aria-label={
+        hasDiscount
+          ? `Prix ${calculatedPrice}, prix barré ${salePrice}`
+          : `Prix ${calculatedPrice}`
+      }
+    >
+      {hasDiscount && (
+        <Text
+          className="order-2 text-md text-action-primary line-through"
+          size="md"
+          aria-hidden="true"
+        >
           {salePrice}
         </Text>
       )}
-      <Text className="font-bold text-lg order-1 text-action-primary  " size="lg">
+      <Text
+        className="order-1 text-lg font-bold text-action-primary"
+        size="lg"
+        aria-hidden="true"
+      >
         {calculatedPrice}
       </Text>
     </Box>
