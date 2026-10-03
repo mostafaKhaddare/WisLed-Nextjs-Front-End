@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { useWishlist } from '@lib/context/wishlist-context'
 import { addToCartCheapestVariant } from '@lib/data/cart'
+import { getMedusaBackendUrl } from '@lib/medusa-env'
 import type { WishlistItem } from '@lib/data/wishlist'
 import { cn } from '@lib/util/cn'
 import { toast } from '@modules/common/components/toast'
@@ -27,8 +28,10 @@ function getThumbnailUrl(thumbnail?: string | null): string | null {
   if (!thumbnail) return null
 
   let url = thumbnail
-  const backendUrl =
-    process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'
+  // Routed through getMedusaBackendUrl so a production build without
+  // NEXT_PUBLIC_MEDUSA_BACKEND_URL resolves to the deployed backend instead of
+  // localhost, which the browser refuses as a mixed/private-network request.
+  const backendUrl = getMedusaBackendUrl()
 
   // If it's a relative URL, prepend Medusa backend URL
   if (url.startsWith('/')) {

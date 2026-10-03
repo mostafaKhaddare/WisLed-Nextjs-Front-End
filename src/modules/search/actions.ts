@@ -1,7 +1,13 @@
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
+import { getMedusaBackendUrl } from '@lib/medusa-env'
 import { SearchedProducts } from 'types/global'
 
-export const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+// Resolved through getMedusaBackendUrl rather than read directly. Reading
+// process.env here bypassed the production fallback, so a build without
+// NEXT_PUBLIC_MEDUSA_BACKEND_URL sent requests to localhost and the storefront
+// failed with ERR_CONNECTION_REFUSED. Every caller that imports BACKEND_URL,
+// including lib/data/products.ts, inherits the fix from this one line.
+export const BACKEND_URL = getMedusaBackendUrl()
 export const PUBLISHABLE_API_KEY =
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
