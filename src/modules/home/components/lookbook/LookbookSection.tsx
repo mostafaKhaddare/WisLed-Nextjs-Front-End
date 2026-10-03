@@ -7,8 +7,8 @@ import { sdk } from '@lib/config'
 import { useRouter } from 'next/navigation'
 import { Container } from '@modules/common/components/container'
 
-import MasonryGrid from './MasonryGrid'
 import LookbookCard from './LookbookCard'
+import LookbookCarousel from './LookbookCarousel'
 import LookbookTabs from './LookbookTabs'
 
 const INITIAL_LIMIT = 6
@@ -127,34 +127,17 @@ const LookbookSection = ({
     if (!inspirations?.length) return null
 
     return (
-        <section className="bg-white dark:bg-gray-900 transition-colors duration-300">
+        <section className="bg-primary transition-colors duration-300">
             <Container>
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-                        Inspirations
-                    </h2>
-                    <div className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                        Inspirez-vous de nos réalisations et trouvez les produits exacts utilisés pour créer
-                        ces ambiances uniques.
-                    </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex justify-center mb-10">
-                    <LookbookTabs tabs={tabs} activeTab={activeTab} onTabClick={handleTabChange} />
-                </div>
-
-                {/* Grid wrapper — handles the smooth exit fade */}
-                <div
-                    style={{
-                        transition: 'opacity 220ms ease, transform 220ms ease',
-                        opacity: isVisible ? 1 : 0,
-                        transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
-                        willChange: 'opacity, transform',
-                    }}
+                <LookbookCarousel
+                    title="Inspirations"
+                    description="Inspirez-vous de nos réalisations et trouvez les produits exacts utilisés pour créer ces ambiances uniques."
+                    headerAside={<LookbookTabs tabs={tabs} activeTab={activeTab} onTabClick={handleTabChange} />}
+                    slideCount={visibleInspirations.length}
+                    visible={isVisible}
                 >
-                    <MasonryGrid key={gridKey}>
+                    {/* Basis stays under 100%/n so the next card always peeks in. */}
+                    <div className="embla__container flex gap-3 small:gap-4">
                         {visibleInspirations.map((item: any, index) => {
                             const attrs = getAttributes(item)
                             if (!attrs) return null
@@ -169,13 +152,17 @@ const LookbookSection = ({
 
                             return (
                                 <div
-                                    key={item.id}
-                                    className="mb-6 break-inside-avoid lookbook-card-animate"
+                                    // Re-keying replays the entrance stagger on tab switch. Embla
+                                    // holds a reference to the track itself, so the key must stay
+                                    // on the slides, never on the track.
+                                    key={`${gridKey}-${item.id}`}
+                                    className="lookbook-card-animate min-w-0 flex-[0_0_76%] small:flex-[0_0_45%] medium:flex-[0_0_36%] large:flex-[0_0_29%] xl:flex-[0_0_25%] 2xl:flex-[0_0_21%]"
                                     style={{ animationDelay: `${index * 60}ms` }}
                                 >
                                     <LookbookCard
                                         image_url={imageUrl}
                                         title={attrs.title}
+                                        subtitle={attrs.room_type}
                                         regionId={regionId}
                                         onProductClick={(handle) => router.push(`/products/${handle}`)}
                                         products={(attrs.hotspots || []).map((h: any) => ({
@@ -187,42 +174,36 @@ const LookbookSection = ({
                                             product: productsData[h.product_handle],
                                         }))}
                                     />
-                                    <h3 className="mt-3 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                                        {attrs.title}
-                                    </h3>
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        {attrs.room_type}
-                                    </div>
                                 </div>
                             )
                         })}
-                    </MasonryGrid>
+                    </div>
+                </LookbookCarousel>
 
-                    {/* Show more / show less */}
-                    {filteredInspirations.length > INITIAL_LIMIT && (
-                        <div className="mt-10 flex justify-center">
-                            <button
-                                onClick={() =>
-                                    hasMore
-                                        ? setVisibleCount((c) => c + 6)
-                                        : setVisibleCount(INITIAL_LIMIT)
-                                }
-                                className="px-8 py-3 rounded-full border border-gray-300 dark:border-white/20 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-white/5 shadow-sm hover:shadow-md hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all duration-300"
-                            >
-                                {hasMore
-                                    ? `Voir plus · ${filteredInspirations.length - visibleCount} restants`
-                                    : 'Voir moins'}
-                            </button>
-                        </div>
-                    )}
+                {/* Show more / show less */}
+                {filteredInspirations.length > INITIAL_LIMIT && (
+                    <div className="mt-10 flex justify-center">
+                        <button
+                            onClick={() =>
+                                hasMore
+                                    ? setVisibleCount((c) => c + 6)
+                                    : setVisibleCount(INITIAL_LIMIT)
+                            }
+                            className="px-8 py-3 rounded-full border border-gray-300 dark:border-white/20 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-white/5 shadow-sm hover:shadow-md hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all duration-300"
+                        >
+                            {hasMore
+                                ? `Voir plus · ${filteredInspirations.length - visibleCount} restants`
+                                : 'Voir moins'}
+                        </button>
+                    </div>
+                )}
 
-                    {/* Empty state */}
-                    {filteredInspirations.length === 0 && (
-                        <div className="py-20 text-center text-gray-400 dark:text-gray-500">
-                            Aucune inspiration disponible pour ce type d&apos;espace.
-                        </div>
-                    )}
-                </div>
+                {/* Empty state */}
+                {filteredInspirations.length === 0 && (
+                    <div className="py-20 text-center text-gray-400 dark:text-gray-500">
+                        Aucune inspiration disponible pour ce type d&apos;espace.
+                    </div>
+                )}
             </Container>
         </section>
     )

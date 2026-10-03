@@ -17,6 +17,8 @@ interface LookbookProductData {
 interface LookbookCardProps {
     image_url: string
     title: string
+    /** Optional secondary line, rendered above the title inside the overlay. */
+    subtitle?: string
     products: LookbookProductData[]
     regionId: string
     onProductClick: (productHandle: string) => void
@@ -24,20 +26,44 @@ interface LookbookCardProps {
 
 const LookbookCard: React.FC<LookbookCardProps> = ({
     image_url,
+    title,
+    subtitle,
     products,
     onProductClick,
 }) => {
     return (
-        <div className="group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-            <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="group relative aspect-[3/4] w-full rounded-[32px] bg-secondary/10">
+            {/*
+                Only the media layer is clipped. The hotspot markers sit outside
+                it so a marker placed near an edge is not cut off by the large
+                corner radius.
+            */}
+            <div className="absolute inset-0 overflow-hidden rounded-[32px]">
                 <Image
                     src={image_url}
-                    alt="Lookbook"
+                    alt={title || 'Lookbook'}
                     fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 76vw, (max-width: 768px) 45vw, (max-width: 900px) 36vw, (max-width: 1100px) 29vw, 21vw"
+                    className="object-cover transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.06]"
                     loading="lazy"
                 />
+
+                {/* Keeps white overlay text legible on light product shots. */}
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"
+                />
+            </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 small:p-7">
+                {subtitle && (
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/75">
+                        {subtitle}
+                    </p>
+                )}
+                <h3 className="mt-2 text-lg font-bold leading-tight text-white small:text-xl large:text-2xl">
+                    {title}
+                </h3>
             </div>
 
             {products.map((item, index) => (
