@@ -7,10 +7,10 @@ const SkeletonCategoriesCarousel = () => {
     <Container className="flex flex-col gap-10">
       <div className="h-12 w-[250px] animate-pulse bg-skeleton-primary" />
       <ul
-        className="grid w-full grid-cols-1 gap-x-2 gap-y-6 small:grid-cols-2 large:grid-cols-3"
+        className="grid w-full grid-cols-2 gap-x-4 gap-y-8 small:grid-cols-3 small:gap-x-6 small:gap-y-10 large:grid-cols-4"
         data-testid="products-list"
       >
-        {repeat(3).map((index) => (
+        {repeat(8).map((index) => (
           <li key={index}>
             <SkeletonCategoryPreview />
           </li>

@@ -18,16 +18,22 @@ export function CategoryTile({
 }) {
   return (
     <Box
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-basic-primary/[0.12] shadow-lg bg-primary transition-all duration-300 hover:border-basic-primary/[0.12] hover:shadow-lg dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-white/[0.1] dark:hover:shadow-xl dark:hover:shadow-black/20"
+      className="group flex h-full w-full flex-col"
       data-testid={formatNameForTestId(`${category.title}-product-tile`)}
     >
-      <Box className="relative aspect-square overflow-hidden">
-        <LocalizedClientLink href={`/categories/${category.handle}`}>
+      {/* Product shot on a light neutral plate — `contain` keeps the whole
+          fixture visible instead of cropping it to a square. */}
+      <Box className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-fg-secondary">
+        <LocalizedClientLink
+          href={`/categories/${category.handle}`}
+          className="block h-full w-full"
+        >
           <LoadingImage
             src={category.thumbnail}
             alt={category.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            sizes="(min-width: 900px) 25vw, (min-width: 640px) 33vw, 50vw"
+            className="h-full w-full object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-[1.03] small:p-5"
           />
         </LocalizedClientLink>
       </Box>
@@ -47,18 +53,17 @@ function CategoryInfo({
   categoryTitle: string
 }) {
   return (
-    <Box className="flex flex-col gap-2 p-3 small:gap-3 small:p-4">
-      <div className="flex flex-1 flex-col justify-between gap-4">
-        <LocalizedClientLink href={`/categories/${categoryHandle}`}>
-          <Text
-            title={categoryTitle}
-            as="span"
-            className="line-clamp-2 text-center text-lg font-bold capitalize text-basic-primary transition-colors group-hover:text-action-primary dark:text-white/90 dark:group-hover:text-brand-400 small:text-xl"
-          >
-            {categoryTitle}
-          </Text>
-        </LocalizedClientLink>
-      </div>
-    </Box>
+    <LocalizedClientLink
+      href={`/categories/${categoryHandle}`}
+      className="mt-3 block w-full"
+    >
+      <Text
+        title={categoryTitle}
+        as="span"
+        className="block truncate text-left text-sm font-medium capitalize text-basic-primary transition-colors group-hover:text-action-primary small:text-base"
+      >
+        {categoryTitle}
+      </Text>
+    </LocalizedClientLink>
   )
 }
