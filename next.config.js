@@ -105,6 +105,29 @@ for (const candidate of [process.env.NEXT_PUBLIC_SERVER_URL, 'https://www.wisled
 }
 
 
+/**
+ * Cloudinary delivery host.
+ *
+ * Product and category images are hosted on Cloudinary and referenced by their
+ * public HTTPS url, e.g.
+ * https://res.cloudinary.com/<cloud-name>/image/upload/v1699999999/profile-led.jpg
+ *
+ * `next/image` 400s any absolute url whose host is missing from `remotePatterns`,
+ * so without this every externally hosted catalogue image fails to render — with
+ * a bare 400 and no server-side log line, which is why it is declared here rather
+ * than left to be discovered.
+ *
+ * `res.cloudinary.com` is the same hostname for every Cloudinary account, so
+ * unlike the bucket hosts above it is not derived from an env var: the cloud name
+ * is a path segment, not a subdomain.
+ */
+remotePatterns.push({
+  protocol: 'https',
+  hostname: 'res.cloudinary.com',
+  pathname: '/**',
+})
+
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
