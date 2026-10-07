@@ -138,12 +138,14 @@ remotePatterns.push({
  * server-side log line — the same class of failure the bucket hosts above guard
  * against.
  *
- * The host is project-specific, so it is derived from S3_FILE_URL rather than
- * hardcoded: the public URL and the upload endpoint share the same project host,
- * just under different path prefixes. If the variable is absent or points at a
- * non-Supabase provider, nothing is added and the existing patterns apply.
+ * The host is project-specific, so it is derived from an env var rather than
+ * hardcoded. The variable is named NEXT_PUBLIC_MEDUSA_STORAGE_URL, not
+ * S3_FILE_URL: the S3_* names in this repo belong to Payload's Backblaze
+ * storage, so reusing them here would silently point the allowlist at the wrong
+ * bucket. If the variable is absent or points at a non-Supabase provider,
+ * nothing is added and the existing patterns apply.
  */
-const supabasePublicHost = (process.env.S3_FILE_URL || '')
+const supabasePublicHost = (process.env.NEXT_PUBLIC_MEDUSA_STORAGE_URL || '')
   .replace(/^https?:\/\//, '')
   .replace(/\/.*$/, '')
 if (supabasePublicHost && supabasePublicHost.endsWith('.supabase.co')) {
