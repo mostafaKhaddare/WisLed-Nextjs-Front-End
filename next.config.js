@@ -127,6 +127,33 @@ remotePatterns.push({
   pathname: '/**',
 })
 
+/**
+ * Supabase Storage public download host.
+ *
+ * Product and category images are served from Supabase Storage, whose public
+ * URL is https://PROJECT_ID.supabase.co/storage/v1/object/public/BUCKET/...
+ *
+ * `next/image` 400s any absolute url whose host is missing from `remotePatterns`,
+ * so without this every Medusa image would fail to render with a bare 400 and no
+ * server-side log line — the same class of failure the bucket hosts above guard
+ * against.
+ *
+ * The host is project-specific, so it is derived from S3_FILE_URL rather than
+ * hardcoded: the public URL and the upload endpoint share the same project host,
+ * just under different path prefixes. If the variable is absent or points at a
+ * non-Supabase provider, nothing is added and the existing patterns apply.
+ */
+const supabasePublicHost = (process.env.S3_FILE_URL || '')
+  .replace(/^https?:\/\//, '')
+  .replace(/\/.*$/, '')
+if (supabasePublicHost && supabasePublicHost.endsWith('.supabase.co')) {
+  remotePatterns.push({
+    protocol: 'https',
+    hostname: supabasePublicHost,
+    pathname: '/storage/v1/object/public/**',
+  })
+}
+
 
 const nextConfig = {
   reactStrictMode: true,
