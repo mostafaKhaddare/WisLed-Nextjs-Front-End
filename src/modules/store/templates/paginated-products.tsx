@@ -51,7 +51,16 @@ export default async function PaginatedProducts({
                     })(),
                     currency_code: region.currency_code,
                   }),
-                  salePrice: (p as any).sale_price,
+                  salePrice: (() => {
+                    const raw = (p as any).sale_price
+                    if (raw === undefined || raw === null || raw === '') return undefined
+                    if (typeof raw === 'number') return convertToLocale({ amount: raw, currency_code: region.currency_code })
+                    if (typeof raw === 'string') {
+                      const parsed = Number(raw.replace(/[^0-9.\-]/g, ''))
+                      return isNaN(parsed) ? undefined : convertToLocale({ amount: parsed, currency_code: region.currency_code })
+                    }
+                    return undefined
+                  })(),
                   variants: (p as any).variants,
                   options: (p as any).options,
                 }}

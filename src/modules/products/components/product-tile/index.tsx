@@ -49,10 +49,15 @@ function hasSalePrice(product: { calculatedPrice: string; salePrice?: string }) 
   return Boolean(product.salePrice && product.salePrice !== product.calculatedPrice)
 }
 
+function parsePrice(price: string | undefined): number {
+  if (!price) return 0
+  return parseFloat(price.replace(/[^\d.,]/g, '').replace(',', '.'))
+}
+
 function getDiscountPercentage(product: { calculatedPrice: string; salePrice?: string }) {
   if (!hasSalePrice(product)) return 0
-  const current = parseFloat(product.calculatedPrice.replace(/[^\d.,]/g, '').replace(',', '.'))
-  const original = parseFloat(product.salePrice.replace(/[^\d.,]/g, '').replace(',', '.'))
+  const current = parsePrice(product.calculatedPrice)
+  const original = parsePrice(product.salePrice)
   if (!current || !original || original <= current) return 0
   return Math.round(((original - current) / original) * 100)
 }
