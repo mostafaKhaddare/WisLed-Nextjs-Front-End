@@ -266,10 +266,10 @@ export const ProductTile = memo(function ProductTile({
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            onOptionSelect(opt.id, val)
+                            handleOptionSelect(opt.id, val)
                           }}
-                          onPointerEnter={() => warmImage(onOptionHover(opt.id, val))}
-                          onFocus={() => warmImage(onOptionHover(opt.id, val))}
+                          onPointerEnter={() => warmImage(findVariantImage(opt.id, val))}
+                          onFocus={() => warmImage(findVariantImage(opt.id, val))}
                           title={val}
                           className={cn(
                             'flex h-6 min-w-[24px] items-center justify-center rounded-full border px-2 text-[10px] font-medium shadow-sm transition-all duration-200',
