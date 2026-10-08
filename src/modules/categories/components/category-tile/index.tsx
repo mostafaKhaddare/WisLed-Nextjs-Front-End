@@ -23,7 +23,7 @@ export function CategoryTile({
     >
       {/* Product shot on a light neutral plate — `contain` keeps the whole
           fixture visible instead of cropping it to a square. */}
-      <Box className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-fg-secondary">
+      <Box className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-category-image-tile">
         <LocalizedClientLink
           href={`/categories/${category.handle}`}
           className="block h-full w-full"

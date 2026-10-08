@@ -3,6 +3,7 @@ export const rootColors = {
   '--bg-static': '0 0 0',              // Pure Black (Static elements like tooltips)
   '--bg-primary': '255 255 255',       // White
   '--bg-secondary': '245 248 250',     // Extra Extra Light Gray (Twitter Background)
+  '--bg-category-image-tile': '248 249 250', // Light neutral off-white for category image tiles (ByLED style)
   '--bg-brand': '232 245 254',         // Very Light Blue (Brand tint)
   '--bg-hover': '20 23 26',         // Hover Gray
   '--bg-pressed': '225 232 237',       // Pressed Gray
@@ -58,6 +59,7 @@ export const darkMode = {
   '--bg-static': '21 32 43',           // Dim Background
   '--bg-primary': '20 23 26',          // Twitter Black (Dark Mode Base)
   '--bg-secondary': '25 39 52',        // Slightly lighter dark
+  '--bg-category-image-tile': '30 35 40', // Dark mode: subtle dark surface for category image tiles
   '--bg-brand': '29 161 242',          // Twitter Blue
   '--bg-hover': '30 41 59',
   '--bg-pressed': '51 65 85',

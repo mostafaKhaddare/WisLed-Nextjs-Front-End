@@ -77,6 +77,7 @@ export const colors = {
     static: 'rgb(var(--bg-static) / <alpha-value>)',
     primary: 'rgb(var(--bg-primary) / <alpha-value>)',
     secondary: 'rgb(var(--bg-secondary) / <alpha-value>)',
+    'category-image-tile': 'rgb(var(--bg-category-image-tile) / <alpha-value>)',
     brand: 'rgb(var(--bg-brand) / <alpha-value>)',
     hover: 'rgb(var(--bg-hover) / <alpha-value>)',
     pressed: 'rgb(var(--bg-pressed) / <alpha-value>)',
