@@ -55,7 +55,7 @@ function CategoryInfo({
   return (
     <LocalizedClientLink
       href={`/categories/${categoryHandle}`}
-      className=" bg-primary p-1 block w-full rounded-b-lg"
+      className=" bg-fg-primary p-1 block w-full rounded-b-lg"
     >
       <Text
         title={categoryTitle}
