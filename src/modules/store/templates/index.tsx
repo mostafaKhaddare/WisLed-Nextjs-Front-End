@@ -29,7 +29,19 @@ export default async function StoreTemplate({
   params?: { countryCode?: string }
 }) {
   const { countryCode } = params ?? {}
-  const { sortBy, page, collection, type, material, price } = searchParams
+  const {
+    sortBy,
+    page,
+    collection,
+    type,
+    material,
+    price,
+    color_temperature,
+    wattage,
+    ip_rating,
+    voltage,
+    product_type,
+  } = searchParams
   const region = await getRegion(countryCode)
 
   if (!region) return notFound()
@@ -50,6 +62,11 @@ export default async function StoreTemplate({
       type: type?.split(','),
       material: material?.split(','),
       price: price?.split(','),
+      color_temperature: color_temperature?.split(','),
+      wattage: wattage?.split(','),
+      ip_rating: ip_rating?.split(','),
+      voltage: voltage?.split(','),
+      product_type: product_type?.split(','),
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -62,6 +79,13 @@ export default async function StoreTemplate({
     if (collection) queryParams.collection_id = collection.split(',')
     if (type) queryParams.type_id = type.split(',')
     if (material) queryParams.materials = material.split(',')
+
+    // New filter parameters for fallback
+    if (color_temperature) queryParams.color_temperature = color_temperature.split(',')
+    if (wattage) queryParams.wattage = wattage.split(',')
+    if (ip_rating) queryParams.ip_rating = ip_rating.split(',')
+    if (voltage) queryParams.voltage = voltage.split(',')
+    if (product_type) queryParams.product_type = product_type.split(',')
 
     if (price) {
       const ranges = price.split(',')

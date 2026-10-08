@@ -64,11 +64,51 @@ export default function ActiveProductFilters({
     return activePricesHandles?.includes(price.id)
   })
 
-  const clearAllUrl = useClearFiltersUrl();
+  // Temperature de couleur
+  const activeColorTempIds = useActiveFilterHandles({
+    key: FILTER_KEYS.COLOR_TEMPERATURE_KEY,
+  })
+  const activeColorTemps = filters.color_temperature?.filter((ct) => {
+    return activeColorTempIds?.includes(ct.id)
+  })
+
+  // Puissance (Wattage)
+  const activeWattageIds = useActiveFilterHandles({
+    key: FILTER_KEYS.WATTAGE_KEY,
+  })
+  const activeWattages = filters.wattage?.filter((w) => {
+    return activeWattageIds?.includes(w.id)
+  })
+
+  // Indice de protection (IP Rating)
+  const activeIpRatingIds = useActiveFilterHandles({
+    key: FILTER_KEYS.IP_RATING_KEY,
+  })
+  const activeIpRatings = filters.ip_rating?.filter((ip) => {
+    return activeIpRatingIds?.includes(ip.id)
+  })
+
+  // Tension (Voltage)
+  const activeVoltageIds = useActiveFilterHandles({
+    key: FILTER_KEYS.VOLTAGE_KEY,
+  })
+  const activeVoltages = filters.voltage?.filter((v) => {
+    return activeVoltageIds?.includes(v.id)
+  })
+
+  // Type de bande LED
+  const activeProductTypeIds = useActiveFilterHandles({
+    key: FILTER_KEYS.PRODUCT_TYPE_KEY,
+  })
+  const activeProductTypes = filters.product_type?.filter((pt) => {
+    return activeProductTypeIds?.includes(pt.id)
+  })
+
+  const clearAllUrl = useClearFiltersUrl()
 
   // Preserve sortBy when clearing all filters
-  const currentSortBy = searchParams.get("sortBy");
-  const finalClearAllUrl = currentSortBy ? `${clearAllUrl}?sortBy=${currentSortBy}` : clearAllUrl;
+  const currentSortBy = searchParams.get("sortBy")
+  const finalClearAllUrl = currentSortBy ? `${clearAllUrl}?sortBy=${currentSortBy}` : clearAllUrl
 
   const handleRemoveFilter = (key: string, id: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -90,22 +130,28 @@ export default function ActiveProductFilters({
           : `/${countryCode}/shop`
 
     // Preserve sortBy when removing other filters
-    const currentSortBy = searchParams.get("sortBy");
+    const currentSortBy = searchParams.get("sortBy")
     if (currentSortBy) {
-      params.set("sortBy", currentSortBy);
+      params.set("sortBy", currentSortBy)
     }
 
     router.push(
       params.toString() ? `${basePath}?${params.toString()}` : basePath
-    );
+    )
   }
 
-  if (
-    activeCollections?.length === 0 &&
-    activeTypes?.length === 0 &&
-    activeMaterials?.length === 0 &&
-    activePrices?.length === 0
-  ) {
+  const hasActiveFilters =
+    activeCollections?.length > 0 ||
+    activeTypes?.length > 0 ||
+    activeMaterials?.length > 0 ||
+    activePrices?.length > 0 ||
+    activeColorTemps?.length > 0 ||
+    activeWattages?.length > 0 ||
+    activeIpRatings?.length > 0 ||
+    activeVoltages?.length > 0 ||
+    activeProductTypes?.length > 0
+
+  if (!hasActiveFilters) {
     return null
   }
 
@@ -135,6 +181,46 @@ export default function ActiveProductFilters({
           label="Matériau"
           filterKey={FILTER_KEYS.MATERIAL_KEY}
           options={activeMaterials}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeColorTemps?.length > 0 && (
+        <ActiveFilterItem
+          label="Température"
+          filterKey={FILTER_KEYS.COLOR_TEMPERATURE_KEY}
+          options={activeColorTemps?.map((ct) => ({ value: ct.value, id: ct.id }))}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeWattages?.length > 0 && (
+        <ActiveFilterItem
+          label="Puissance"
+          filterKey={FILTER_KEYS.WATTAGE_KEY}
+          options={activeWattages?.map((w) => ({ value: w.value, id: w.id }))}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeIpRatings?.length > 0 && (
+        <ActiveFilterItem
+          label="IP Rating"
+          filterKey={FILTER_KEYS.IP_RATING_KEY}
+          options={activeIpRatings?.map((ip) => ({ value: ip.value, id: ip.id }))}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeVoltages?.length > 0 && (
+        <ActiveFilterItem
+          label="Tension"
+          filterKey={FILTER_KEYS.VOLTAGE_KEY}
+          options={activeVoltages?.map((v) => ({ value: v.value, id: v.id }))}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeProductTypes?.length > 0 && (
+        <ActiveFilterItem
+          label="Type de bande"
+          filterKey={FILTER_KEYS.PRODUCT_TYPE_KEY}
+          options={activeProductTypes?.map((pt) => ({ value: pt.value, id: pt.id }))}
           handleRemoveFilter={handleRemoveFilter}
         />
       )}

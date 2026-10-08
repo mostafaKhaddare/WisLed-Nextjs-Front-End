@@ -12,6 +12,7 @@ import {
 } from '@modules/common/components/select'
 import { PRICING_OPTIONS } from '@modules/search/const'
 import { ProductFilters as ProductFiltersType } from 'types/global'
+import { FILTER_KEYS } from '@lib/constants'
 
 import FilterWrapper from './filter-wrapper'
 import { FilterItems } from './filter-wrapper/filter-item'
@@ -41,6 +42,32 @@ export default function ProductFilters({
     value: material.value,
   }))
 
+  // New filter options for LED lighting
+  const colorTemperatureOptions = filters.color_temperature?.map((ct) => ({
+    id: ct.id,
+    value: ct.value,
+  })) ?? []
+
+  const wattageOptions = filters.wattage?.map((w) => ({
+    id: w.id,
+    value: w.value,
+  })) ?? []
+
+  const ipRatingOptions = filters.ip_rating?.map((ip) => ({
+    id: ip.id,
+    value: ip.value,
+  })) ?? []
+
+  const voltageOptions = filters.voltage?.map((v) => ({
+    id: v.id,
+    value: v.value,
+  })) ?? []
+
+  const productTypeOptions = filters.product_type?.map((pt) => ({
+    id: pt.id,
+    value: pt.value,
+  })) ?? []
+
   const priceOptions = PRICING_OPTIONS.map((po) => ({
     ...po,
     disabled: currentPrice !== null && currentPrice !== po.id,
@@ -48,6 +75,7 @@ export default function ProductFilters({
 
   return (
     <>
+      {/* Desktop Sidebar Filters */}
       <Box className="flex flex-col gap-4 small:hidden">
         {!isCollection && (
           <>
@@ -60,22 +88,107 @@ export default function ProductFilters({
             <Divider />
           </>
         )}
+
         <FilterWrapper
           title="Type de produit"
           content={<FilterItems items={typeOptions} param="type" />}
         />
         <Divider />
+
         <FilterWrapper
           title="Matériau"
           content={<FilterItems items={materialOptions} param="material" />}
         />
         <Divider />
+
+        {/* Temperature de couleur */}
+        {colorTemperatureOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Température de couleur"
+              content={
+                <FilterItems
+                  items={colorTemperatureOptions}
+                  param={FILTER_KEYS.COLOR_TEMPERATURE_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Puissance (Wattage) */}
+        {wattageOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Puissance (W/m)"
+              content={
+                <FilterItems
+                  items={wattageOptions}
+                  param={FILTER_KEYS.WATTAGE_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Indice de protection (IP Rating) */}
+        {ipRatingOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Indice de protection (IP)"
+              content={
+                <FilterItems
+                  items={ipRatingOptions}
+                  param={FILTER_KEYS.IP_RATING_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Tension (Voltage) */}
+        {voltageOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Tension"
+              content={
+                <FilterItems
+                  items={voltageOptions}
+                  param={FILTER_KEYS.VOLTAGE_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Type de bande LED */}
+        {productTypeOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Type de bande LED"
+              content={
+                <FilterItems
+                  items={productTypeOptions}
+                  param={FILTER_KEYS.PRODUCT_TYPE_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
         <FilterWrapper
           title="Prix"
           content={<FilterItems items={priceOptions} param="price" />}
         />
       </Box>
-      <Box className="hidden items-center gap-2 small:flex">
+
+      {/* Mobile Select Dropdowns */}
+      <Box className="hidden items-center gap-2 small:flex flex-wrap">
         {!isCollection && collectionOptions && collectionOptions.length > 0 && (
           <Select value={null} onValueChange={() => { }}>
             <SelectTrigger
@@ -112,6 +225,86 @@ export default function ProductFilters({
             </SelectTrigger>
             <SelectContent className="w-full">
               <FilterItems items={materialOptions} param="material" />
+            </SelectContent>
+          </Select>
+        )}
+        {colorTemperatureOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir une température de couleur"
+              data-testid="color-temperature-filter"
+            >
+              Température
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={colorTemperatureOptions}
+                param={FILTER_KEYS.COLOR_TEMPERATURE_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {wattageOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir une puissance"
+              data-testid="wattage-filter"
+            >
+              Puissance
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={wattageOptions}
+                param={FILTER_KEYS.WATTAGE_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {ipRatingOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir un indice de protection"
+              data-testid="ip-rating-filter"
+            >
+              IP Rating
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={ipRatingOptions}
+                param={FILTER_KEYS.IP_RATING_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {voltageOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir une tension"
+              data-testid="voltage-filter"
+            >
+              Tension
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={voltageOptions}
+                param={FILTER_KEYS.VOLTAGE_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {productTypeOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir un type de bande"
+              data-testid="product-type-filter"
+            >
+              Type de bande
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={productTypeOptions}
+                param={FILTER_KEYS.PRODUCT_TYPE_KEY}
+              />
             </SelectContent>
           </Select>
         )}

@@ -1,28 +1,37 @@
-interface ViewAllProps {
-  link: string
-  text?: string
-}
+'use client'
+
+import { useState } from 'react'
 import { StoreProductCategory } from '@medusajs/types'
 import { Container } from '@modules/common/components/container'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Button } from '@modules/common/components/button'
-import { Heading } from '@modules/common/components/heading'
+import { SectionHeading } from '@modules/common/components/heading'
 import { CategoryTile } from '../category-tile'
+
+interface ViewAllProps {
+  link: string
+  text?: string
+}
 
 interface CategoryCarouselProps {
   categories: StoreProductCategory[]
   title: string
-
   viewAll?: ViewAllProps
   testId?: string
+  initialLimit?: number
 }
+
+const DEFAULT_LIMIT = 10
 
 export function CategoryCarousel({
   categories,
   title,
   viewAll,
   testId,
+  initialLimit = DEFAULT_LIMIT,
 }: CategoryCarouselProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const displayCategories = categories
     .filter((item) => !item.parent_category)
     .map((item) => {
@@ -37,30 +46,24 @@ export function CategoryCarousel({
     })
     .filter((it) => Boolean(it.thumbnail))
 
+  const hasMore = displayCategories.length > initialLimit
+  const visibleCategories = isExpanded ? displayCategories : displayCategories.slice(0, initialLimit)
+
   return (
     <Container className="flex flex-col gap-8 small:gap-12" data-testid={testId}>
       <div>
-        <Heading
-          as="h2"
-          className="text-2xl font-bold text-basic-primary small:text-3xl large:text-4xl"
-        >
+        <SectionHeading as="h2" accent>
           {title}
-        </Heading>
-
-        {/* Angled accent bar — drawn with CSS, no image asset. */}
-        <div
-          aria-hidden="true"
-          className="relative mt-5 h-1.5 w-24 overflow-hidden rounded-full bg-fg-secondary"
-        >
-          <span className="absolute inset-y-0 left-0 w-2/3 origin-left rounded-full bg-gradient-to-r from-wisled-500 to-wisled-400 [transform:skewX(-20deg)]" />
-        </div>
+        </SectionHeading>
       </div>
 
-      {/* Always a grid, never a carousel: 2 columns on mobile (360px / 390px),
-          3 on tablet, 4 from large screens up. minmax(0, 1fr) keeps the tracks
-          from being widened by long words in a category name. */}
-      <ul className="grid w-full grid-cols-2 gap-x-4 gap-y-8 small:grid-cols-3 small:gap-x-6 small:gap-y-10 large:grid-cols-4">
-        {displayCategories.map((item) => {
+      {/* Category Grid */}
+      <ul
+        className="grid w-full grid-cols-2 gap-x-4 gap-y-8 small:grid-cols-3 small:gap-x-6 small:gap-y-10 large:grid-cols-4"
+        role="list"
+        aria-label={title}
+      >
+        {visibleCategories.map((item) => {
           return (
             <li key={item.id} className="min-w-0">
               <CategoryTile category={item} />
@@ -69,15 +72,50 @@ export function CategoryCarousel({
         })}
       </ul>
 
-      {viewAll && (
-        <Button asChild>
-          <LocalizedClientLink
-            href={viewAll.link}
-            className="mx-auto w-max !px-5 !py-3"
+      {/* Expand/Collapse Button */}
+      {hasMore && (
+        <div className="flex justify-center pt-4">
+          <Button
+            variant="tonal"
+            size="sm"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="w-auto min-w-[160px] transition-all duration-300"
+            aria-expanded={isExpanded}
+            aria-controls={`${testId}-category-list`}
           >
-            {viewAll.text || 'Voir tout'}
-          </LocalizedClientLink>
-        </Button>
+            {isExpanded ? 'Afficher moins' : 'Afficher tout'}
+            <svg
+              className={`ml-2 h-4 w-4 transition-transform duration-300 ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
+            </svg>
+          </Button>
+        </div>
+      )}
+
+      {/* Original ViewAll link (navigates to full category page) */}
+      {viewAll && !hasMore && (
+        <div className="flex justify-center pt-4">
+          <Button asChild>
+            <LocalizedClientLink
+              href={viewAll.link}
+              className="mx-auto w-max !px-5 !py-3"
+            >
+              {viewAll.text || 'Voir tout'}
+            </LocalizedClientLink>
+          </Button>
+        </div>
       )}
     </Container>
   )

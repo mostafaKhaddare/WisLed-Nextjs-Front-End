@@ -18,6 +18,12 @@ export const FILTER_KEYS = {
   MATERIAL_KEY: 'material',
   TYPE_KEY: 'type',
   COLLECTION_KEY: 'collection',
+  // New filter keys for LED lighting attributes
+  COLOR_TEMPERATURE_KEY: 'color_temperature',
+  WATTAGE_KEY: 'wattage',
+  IP_RATING_KEY: 'ip_rating',
+  VOLTAGE_KEY: 'voltage',
+  PRODUCT_TYPE_KEY: 'product_type',
 }
 
 export const PRODUCT_LIST_PATHNAMES = {

@@ -28,6 +28,27 @@ export type ProductFilters = {
     id: string
     value: string
   }[]
+  // New filter attributes for LED lighting e-commerce
+  color_temperature: {
+    id: string
+    value: string
+  }[]
+  wattage: {
+    id: string
+    value: string
+  }[]
+  ip_rating: {
+    id: string
+    value: string
+  }[]
+  voltage: {
+    id: string
+    value: string
+  }[]
+  product_type: {
+    id: string
+    value: string
+  }[]
 }
 export type CategoryImage = {
   id?: string

@@ -30,6 +30,11 @@ type SearchResultsTemplateProps = {
   type?: string[]
   material?: string[]
   price?: string[]
+  color_temperature?: string[]
+  wattage?: string[]
+  ip_rating?: string[]
+  voltage?: string[]
+  product_type?: string[]
   region: StoreRegion
   countryCode: string
 }
@@ -42,6 +47,11 @@ export default async function SearchResultsTemplate({
   type,
   material,
   price,
+  color_temperature,
+  wattage,
+  ip_rating,
+  voltage,
+  product_type,
   region,
   countryCode,
 }: SearchResultsTemplateProps) {
@@ -60,6 +70,11 @@ export default async function SearchResultsTemplate({
       type,
       material,
       price,
+      color_temperature,
+      wattage,
+      ip_rating,
+      voltage,
+      product_type,
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -80,6 +95,13 @@ export default async function SearchResultsTemplate({
     if (collection) queryParams.collection_id = collection
     if (type) queryParams.type_id = type
     if (material) queryParams.materials = material
+
+    // New filter parameters for fallback
+    if (color_temperature) queryParams.color_temperature = color_temperature
+    if (wattage) queryParams.wattage = wattage
+    if (ip_rating) queryParams.ip_rating = ip_rating
+    if (voltage) queryParams.voltage = voltage
+    if (product_type) queryParams.product_type = product_type
 
     if (price) {
       const ranges = price
@@ -135,7 +157,7 @@ export default async function SearchResultsTemplate({
                 as="h1"
                 className="text-4xl text-basic-primary small:text-5xl"
               >
-                &quot;{safeDecodeURIComponent(query)}&quot;
+                {`"${safeDecodeURIComponent(query)}"`}
               </Heading>
               <Text className="text-md text-secondary">
                 {count === 1 ? `${count} produit` : `${count} produits`}
@@ -172,7 +194,7 @@ export default async function SearchResultsTemplate({
             <SearchResultsIcon />
             <Box className="flex flex-col items-center gap-2">
               <Heading as="h3" className="text-xl small:text-2xl">
-                Aucun résultat pour &quot;{safeDecodeURIComponent(query)}&quot;
+                Aucun résultat pour {`"${safeDecodeURIComponent(query)}"`}
               </Heading>
               <p className="text-center text-md text-secondary">
                 Veuillez réessayer avec une orthographe ou une expression différente

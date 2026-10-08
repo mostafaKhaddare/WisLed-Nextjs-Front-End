@@ -14,3 +14,6 @@ export function Heading<T extends HeadingLevel>({
   const Component = as ?? 'h1'
   return <Component {...props}>{children}</Component>
 }
+
+export { SectionHeading } from './SectionHeading'
+export type { SectionHeadingLevel, SectionHeadingProps } from './SectionHeading'

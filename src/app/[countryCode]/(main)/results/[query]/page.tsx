@@ -18,13 +18,18 @@ type Params = {
     type?: string
     material?: string
     price?: string
+    color_temperature?: string
+    wattage?: string
+    ip_rating?: string
+    voltage?: string
+    product_type?: string
   }>
 }
 
 export default async function SearchResults(props: Params) {
   const searchParams = await props.searchParams
   const params = await props.params
-  const { sortBy, page, collection, type, material, price } = searchParams
+  const { sortBy, page, collection, type, material, price, color_temperature, wattage, ip_rating, voltage, product_type } = searchParams
   const { query, countryCode } = params
   const decodedQuery = safeDecodeURIComponent(query)
 
@@ -39,6 +44,11 @@ export default async function SearchResults(props: Params) {
       type={type?.split(',')}
       material={material?.split(',')}
       price={price?.split(',')}
+      color_temperature={color_temperature?.split(',')}
+      wattage={wattage?.split(',')}
+      ip_rating={ip_rating?.split(',')}
+      voltage={voltage?.split(',')}
+      product_type={product_type?.split(',')}
       region={region}
       countryCode={params.countryCode}
     />

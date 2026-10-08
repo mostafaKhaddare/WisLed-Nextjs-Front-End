@@ -19,6 +19,7 @@ import ProductFilters from '@modules/store/components/filters'
 import ActiveProductFilters from '@modules/store/components/filters/active-filters'
 import ProductFiltersDrawer from '@modules/store/components/filters/filters-drawer'
 import PaginatedProducts from '@modules/store/templates/paginated-products'
+import { SubcategoryCards } from '../components/subcategory-cards'
 
 export const runtime = 'edge'
 
@@ -29,7 +30,19 @@ export default async function CategoryTemplate({
   searchParams: Record<string, string>
   params: { countryCode: string; category: string[] }
 }) {
-  const { sortBy, page, collection, type, material, price } = searchParams
+  const {
+    sortBy,
+    page,
+    collection,
+    type,
+    material,
+    price,
+    color_temperature,
+    wattage,
+    ip_rating,
+    voltage,
+    product_type,
+  } = searchParams
   const { countryCode, category } = params
 
   const region = await getRegion(countryCode)
@@ -56,6 +69,11 @@ export default async function CategoryTemplate({
       type: type?.split(','),
       material: material?.split(','),
       price: price?.split(','),
+      color_temperature: color_temperature?.split(','),
+      wattage: wattage?.split(','),
+      ip_rating: ip_rating?.split(','),
+      voltage: voltage?.split(','),
+      product_type: product_type?.split(','),
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -69,6 +87,13 @@ export default async function CategoryTemplate({
     if (collection) queryParams.collection_id = collection.split(',')
     if (type) queryParams.type_id = type.split(',')
     if (material) queryParams.materials = material.split(',')
+
+    // New filter parameters for fallback
+    if (color_temperature) queryParams.color_temperature = color_temperature.split(',')
+    if (wattage) queryParams.wattage = wattage.split(',')
+    if (ip_rating) queryParams.ip_rating = ip_rating.split(',')
+    if (voltage) queryParams.voltage = voltage.split(',')
+    if (product_type) queryParams.product_type = product_type.split(',')
 
     if (price) {
       const ranges = price.split(',')
@@ -157,24 +182,15 @@ export default async function CategoryTemplate({
 
         {/* Subcategories */}
         {currentCategory.category_children?.length > 0 && (
-          <Box className="w-full">
-            <Box className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-              <Box className="flex flex-row items-center gap-2 min-w-max">
-                {currentCategory.category_children.map((subcat) => (
-                  <Box
-                    key={subcat.id}
-                    as="a"
-                    href={`/${countryCode}/categories/${subcat.handle}`}
-                    className="group flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-gray-200 shadow-sm cursor-pointer transition-colors hover:border-gray-400 dark:bg-white/[0.04] dark:border-white/[0.08] dark:hover:border-white/[0.15]"
-                  >
-                    <Text className="font-medium text-sm text-gray-700 whitespace-nowrap group-hover:text-black dark:text-white/70 dark:group-hover:text-white">
-                      {subcat.name}
-                    </Text>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </Box>
+          <SubcategoryCards
+            subcategories={currentCategory.category_children.map((subcat) => ({
+              id: subcat.id,
+              name: subcat.name,
+              handle: subcat.handle,
+              image: (subcat as any).product_category_image?.[0] || null,
+            }))}
+            countryCode={countryCode}
+          />
         )}
 
         <Box className="flex flex-col gap-4 mb-2">

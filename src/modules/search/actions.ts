@@ -23,6 +23,12 @@ type SearchParams = {
   material?: string[]
   price?: string[]
   query?: string
+  // New filter parameters for LED lighting
+  color_temperature?: string[]
+  wattage?: string[]
+  ip_rating?: string[]
+  voltage?: string[]
+  product_type?: string[]
 }
 
 /**
@@ -50,6 +56,11 @@ export async function search({
   material,
   price,
   query,
+  color_temperature,
+  wattage,
+  ip_rating,
+  voltage,
+  product_type,
 }: SearchParams): Promise<SearchedProducts> {
   const sortBy =
     order === 'price_asc'
@@ -105,6 +116,37 @@ export async function search({
       } else if (range === '1000-999999') {
         searchParams.append('price_from', '1000')
       }
+    })
+  }
+
+  // New filter parameters
+  if (color_temperature && Array.isArray(color_temperature)) {
+    color_temperature.forEach((id) => {
+      searchParams.append('color_temperature[]', id)
+    })
+  }
+
+  if (wattage && Array.isArray(wattage)) {
+    wattage.forEach((id) => {
+      searchParams.append('wattage[]', id)
+    })
+  }
+
+  if (ip_rating && Array.isArray(ip_rating)) {
+    ip_rating.forEach((id) => {
+      searchParams.append('ip_rating[]', id)
+    })
+  }
+
+  if (voltage && Array.isArray(voltage)) {
+    voltage.forEach((id) => {
+      searchParams.append('voltage[]', id)
+    })
+  }
+
+  if (product_type && Array.isArray(product_type)) {
+    product_type.forEach((id) => {
+      searchParams.append('product_type[]', id)
     })
   }
 
