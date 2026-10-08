@@ -19,6 +19,7 @@ interface CategoryCarouselProps {
   viewAll?: ViewAllProps
   testId?: string
   initialLimit?: number
+  headingDescription?: React.ReactNode
 }
 
 const DEFAULT_LIMIT = 10
@@ -29,6 +30,7 @@ export function CategoryCarousel({
   viewAll,
   testId,
   initialLimit = DEFAULT_LIMIT,
+  headingDescription,
 }: CategoryCarouselProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -55,6 +57,11 @@ export function CategoryCarousel({
         <SectionHeading as="h2" accent>
           {title}
         </SectionHeading>
+        {headingDescription && (
+          <div className="mt-2 text-secondary text-sm">
+            {headingDescription}
+          </div>
+        )}
       </div>
 
       {/* Category Grid */}

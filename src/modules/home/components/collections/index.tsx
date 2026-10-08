@@ -8,7 +8,7 @@ import { StoreCollection } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { Button } from '@modules/common/components/button'
 import { Container } from '@modules/common/components/container'
-import { Heading } from '@modules/common/components/heading'
+import { Heading, SectionHeading } from '@modules/common/components/heading'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Text } from '@modules/common/components/text'
 import { CollectionsData } from 'types/strapi'
@@ -85,9 +85,11 @@ const CollectionTile = ({
 const Collections = ({
   cmsCollections,
   medusaCollections,
+  headingDescription,
 }: {
   cmsCollections: CollectionsData
   medusaCollections: StoreCollection[]
+  headingDescription?: React.ReactNode
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -112,12 +114,14 @@ const Collections = ({
   return (
     <Container>
       {/* 1. Place the Heading here, above the grid */}
-      <Heading
-        as="h2"
-        className="mb-8 text-2xl font-bold text-basic-primary small:text-3xl"
-      >
+      <SectionHeading as="h2" accent>
         Acheter par application
-      </Heading>
+      </SectionHeading>
+      {headingDescription && (
+        <div className="mt-2 text-secondary text-sm">
+          {headingDescription}
+        </div>
+      )}
 
       {/* 2. Flexible Grid */}
       <div className="grid grid-cols-1 gap-4 small:grid-cols-2 large:grid-cols-2 xl:grid-cols-2">

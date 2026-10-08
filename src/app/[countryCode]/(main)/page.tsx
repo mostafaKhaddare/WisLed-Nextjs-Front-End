@@ -85,6 +85,7 @@ export default async function Home(props: {
           testId="our-bestsellers-section"
           categories={categories}
           title="Achetez par catégorie"
+          headingDescription="Trouvez les solutions d'éclairage LED adaptées à votre projet"
           viewAll={{
             link: '/categories',
             text: 'Afficher tout',
@@ -97,6 +98,7 @@ export default async function Home(props: {
         <Collections
           cmsCollections={strapiCollections}
           medusaCollections={collectionsList}
+          headingDescription="Explorez nos collections thématiques pour chaque besoin d'éclairage"
         />
       )}
       {/* SHOP THE LOOK SECTION */}
