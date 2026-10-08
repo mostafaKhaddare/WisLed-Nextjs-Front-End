@@ -60,7 +60,7 @@ function CategoryInfo({
       <Text
         title={categoryTitle}
         as="span"
-        className="block truncate text-center text-md font-medium capitalize text-basic-primary transition-colors  small:text-md"
+        className="block truncate text-center text-md font-medium capitalize text-wisled-50 transition-colors  small:text-md"
       >
         {categoryTitle}
       </Text>

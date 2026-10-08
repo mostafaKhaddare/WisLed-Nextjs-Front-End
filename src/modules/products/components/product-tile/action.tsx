@@ -105,21 +105,21 @@ export function ProductActions({
 
   return (
     <>
-      <Box className="absolute right-3 top-3 z-10 flex flex-col gap-2.5 small:right-4 small:top-4">
-        {/* Wishlist Button */}
+      {/* Wishlist Button - Top Right */}
+      <Box className="absolute right-2 top-2 z-10 small:right-3 small:top-3">
         <Button
           variant="icon"
           onClick={handleWishlist}
           disabled={isLoadingWishlist}
           withIcon
           className={cn(
-            '!rounded-lg !p-2.5 !h-auto !w-auto',
+            '!rounded-full !p-2 !h-auto !w-auto',
             'backdrop-blur-sm shadow-md transition-all duration-200',
-            'focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary',
             isLoadingWishlist && 'opacity-60 cursor-not-allowed',
             wishlisted
               ? 'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60'
-              : 'bg-primary/90 hover:bg-fg-primary hover:shadow-lg dark:bg-white/10 dark:hover:bg-white/20'
+              : 'bg-primary/90 hover:bg-wisled-50 hover:shadow-lg dark:bg-white/10 dark:hover:bg-white/20'
           )}
           aria-label={
             wishlisted
@@ -135,7 +135,7 @@ export function ProductActions({
                 'h-4 w-4 transition-all duration-300',
                 wishlisted
                   ? 'text-red-500 fill-red-500 scale-110'
-                  : 'text-basic-primary/70 hover:text-red-400 scale-100'
+                  : 'text-wisled-600 hover:text-red-400 dark:text-wisled-300 dark:hover:text-red-400 scale-100'
               )}
               filled={wishlisted}
             />
@@ -143,28 +143,32 @@ export function ProductActions({
         </Button>
       </Box>
 
-      <Box className="absolute right-3 bottom-3 z-10 flex flex-col gap-2.5 small:right-4 small:bottom-4">
-        {/* Add to Cart Button */}
+      {/* Add to Cart Button - Bottom Center */}
+      <Box className="absolute left-1/2 bottom-3 z-10 -translate-x-1/2 small:bottom-4">
         <Button
-          variant="icon"
+          variant="filled"
+          size="sm"
           onClick={handleAddToCart}
           disabled={isAddingToCart}
-          withIcon
           className={cn(
-            '!rounded-full !p-2.5 !h-auto !w-auto',
-            'bg-primary/90 backdrop-blur-sm shadow-md',
-            'hover:bg-fg-primary hover:shadow-lg',
-            'active:bg-fg-primary-pressed',
-            'dark:bg-white/10 dark:hover:bg-white/20 dark:active:bg-white/15',
+            'rounded-full px-4 py-2 gap-2',
+            'bg-wisled-500 text-white',
+            'hover:bg-wisled-600 active:bg-wisled-700',
+            'shadow-lg shadow-wisled-500/30',
+            'hover:shadow-xl hover:shadow-wisled-500/40',
             'transition-all duration-200',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary',
             isAddingToCart && 'opacity-60 cursor-not-allowed'
           )}
           aria-label="Ajouter au panier"
         >
           {isAddingToCart ? (
-            <Spinner className="h-6 w-6 text-action-primary dark:text-white" />
+            <Spinner className="h-4 w-4 text-white" />
           ) : (
-            <BagIcon className="h-6 w-6 text-action-primary dark:text-white" />
+            <>
+              <BagIcon className="h-4 w-4" />
+              <span className="hidden small:inline font-medium text-sm">Ajouter</span>
+            </>
           )}
         </Button>
       </Box>

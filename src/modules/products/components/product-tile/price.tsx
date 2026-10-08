@@ -16,24 +16,24 @@ export default function ProductPrice({
 
   return (
     <Box
-      className="flex items-center justify-start gap-2"
+      className="flex items-baseline justify-start gap-2"
       aria-label={
         hasDiscount
-          ? `Prix ${calculatedPrice}, prix barré ${salePrice}`
+          ? `Prix actuel ${calculatedPrice}, ancien prix ${salePrice}`
           : `Prix ${calculatedPrice}`
       }
     >
       {hasDiscount && (
         <Text
-          className="order-2 text-md text-action-primary line-through"
-          size="md"
+          className="text-sm font-medium text-basic-primary/50 line-through"
+          size="sm"
           aria-hidden="true"
         >
           {salePrice}
         </Text>
       )}
       <Text
-        className="order-1 text-lg font-bold text-action-primary"
+        className="text-lg font-bold text-wisled-700 dark:text-wisled-200"
         size="lg"
         aria-hidden="true"
       >
