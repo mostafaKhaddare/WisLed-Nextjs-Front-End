@@ -71,7 +71,7 @@ export const ControlledSearchBox = ({
   return (
     <div className="relative w-full bg-primary large:mx-auto large:w-max">
       <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
-        <Box className="flex w-full items-center gap-2 rounded-xl border border-transparent bg-secondary/30 px-2 transition-all duration-300 focus-within:border-action-primary/20 focus-within:bg-white focus-within:shadow-lg dark:bg-white/5 dark:focus-within:border-brand-400/30 dark:focus-within:bg-[#1a1d24] large:w-[280px] xl:w-[320px]">
+        <Box className="flex w-full items-center gap-2 rounded-xl border border-transparent bg-secondary/30 px-2 transition-all duration-300 focus-within:border-action-primary/20 focus-within:bg-white focus-within:shadow-lg dark:bg-white/5 dark:focus-within:border-wisled-400/30 dark:focus-within:bg-[#1a1d24] large:w-[280px] xl:w-[320px]">
           <Input
             ref={inputRef}
             data-testid="search-input"

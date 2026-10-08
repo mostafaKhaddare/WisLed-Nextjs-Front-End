@@ -1,54 +1,63 @@
 export const rootColors = {
   /* BACKGROUND (Light Mode) */
-  '--bg-static': '0 0 0',              // Pure Black (Static elements like tooltips)
-  '--bg-primary': '255 255 255',       // White
-  '--bg-secondary': '245 248 250',     // Extra Extra Light Gray (Twitter Background)
-  '--bg-category-image-tile': '248 249 250', // Light neutral off-white for category image tiles (ByLED style)
-  '--bg-brand': '232 245 254',         // Very Light Blue (Brand tint)
-  '--bg-hover': '20 23 26',         // Hover Gray
-  '--bg-pressed': '225 232 237',       // Pressed Gray
-  '--bg-disabled': '225 232 237',      // Extra Light Gray
-  '--bg-skeleton-primary': '245 248 250',
-  '--bg-skeleton-secondary': '225 232 237',
+  '--bg-static': '0 0 0',
+  '--bg-primary': '255 255 255',
+  '--bg-secondary': '248 250 252',
+  '--bg-category-image-tile': '248 249 250',
+  '--bg-hover': '226 232 240',
+  '--bg-pressed': '203 213 225',
+  '--bg-disabled': '226 232 240',
+  '--bg-skeleton-primary': '248 250 252',
+  '--bg-skeleton-secondary': '226 232 240',
+
+  /* WISLED Blue Backgrounds */
+  '--wisled-50': '239 246 255',
+  '--wisled-100': '219 234 254',
+  '--wisled-200': '190 219 255',
+  '--wisled-500': '43 127 255',
+  '--wisled-600': '21 93 252',
+  '--wisled-700': '20 71 230',
+  '--wisled-900': '28 57 142',
+  '--wisled-950': '22 36 86',
 
   /* FOREGROUND (Light Mode) */
-  '--fg-primary': '29 161 242',          // Twitter Black (Main Text)
-  '--fg-primary-hover': '60 70 80',
-  '--fg-primary-pressed': '29 161 242',
-  '--fg-secondary': '20 23 26 0.1',
-  '--fg-secondary-hover': '20 23 26 0.2',
-  '--fg-secondary-pressed': '20 23 26 0.3',
-  '--fg-tertiary': '255 255 255 0.4',
-  '--fg-tertiary-hover': '255 255 255 0.2',
-  '--fg-tertiary-pressed': '29 161 242',
-  '--fg-primary-negative': '224 36 94',  // Twitter Red
+  '--fg-primary': '43 127 255',
+  '--fg-primary-hover': '21 93 252',
+  '--fg-primary-pressed': '20 71 230',
+  '--fg-secondary': '226 232 240',
+  '--fg-secondary-hover': '203 213 225',
+  '--fg-secondary-pressed': '148 163 184',
+  '--fg-tertiary': '148 163 184',
+  '--fg-tertiary-hover': '100 116 139',
+  '--fg-tertiary-pressed': '71 85 105',
+  '--fg-primary-negative': '224 36 94',
   '--fg-primary-negative-hover': '190 30 80',
   '--fg-primary-negative-pressed': '150 25 65',
-  '--fg-secondary-negative': '224 36 94 0.1',
-  '--fg-positive': '23 191 99 0.1',
+  '--fg-secondary-negative': '253 235 240',
+  '--fg-positive': '235 250 242',
 
   /* CONTENT (Light Mode) */
   '--content-static': '255 255 255',
-  '--content-basic-primary': '20 23 26', // Twitter Black
+  '--content-basic-primary': '15 23 42',
   '--content-inverse-primary': '255 255 255',
-  '--content-secondary': '101 119 134',  // Twitter Dark Gray
-  '--content-disabled': '170 184 194',   // Twitter Light Gray
-  '--content-action-primary': '29 161 242', // Twitter Blue
-  '--content-action-primary-hover': '26 145 218',
-  '--content-action-primary-pressed': '23 120 180',
-  '--content-negative': '224 36 94',     // Twitter Red
-  '--content-positive': '23 191 99',     // Twitter Green
-  '--content-warning': '255 173 31',     // Twitter Yellow/Gold
+  '--content-secondary': '100 116 139',
+  '--content-disabled': '148 163 184',
+  '--content-action-primary': '43 127 255',
+  '--content-action-primary-hover': '21 93 252',
+  '--content-action-primary-pressed': '20 71 230',
+  '--content-negative': '224 36 94',
+  '--content-positive': '23 191 99',
+  '--content-warning': '255 173 31',
   '--content-yellow': '255 173 31',
 
   /* BORDER (Light Mode) */
-  '--border-basic-primary': '225 232 237', // Extra Light Gray
-  '--border-secondary': '20 23 26 0.05',
-  '--border-disabled': '235 240 245',
-  '--border-action-primary': '29 161 242', // Twitter Blue
+  '--border-basic-primary': '226 232 240',
+  '--border-secondary': '226 232 240',
+  '--border-disabled': '226 232 240',
+  '--border-action-primary': '43 127 255',
   '--border-action-primary-inverse': '255 255 255',
-  '--border-action-primary-hover': '26 145 218',
-  '--border-action-primary-pressed': '23 120 180',
+  '--border-action-primary-hover': '21 93 252',
+  '--border-action-primary-pressed': '20 71 230',
   '--border-negative': '224 36 94',
   '--border-positive': '23 191 99',
   '--border-warning': '255 173 31',
@@ -56,56 +65,65 @@ export const rootColors = {
 
 export const darkMode = {
   /* BACKGROUND (Dark Mode) */
-  '--bg-static': '21 32 43',           // Dim Background
-  '--bg-primary': '20 23 26',          // Twitter Black (Dark Mode Base)
-  '--bg-secondary': '25 39 52',        // Slightly lighter dark
-  '--bg-category-image-tile': '30 35 40', // Dark mode: subtle dark surface for category image tiles
-  '--bg-brand': '29 161 242',          // Twitter Blue
-  '--bg-hover': '30 41 59',
-  '--bg-pressed': '51 65 85',
-  '--bg-disabled': '37 51 65',
-  '--bg-skeleton-primary': '25 39 52',
-  '--bg-skeleton-secondary': '20 23 26',
+  '--bg-static': '2 6 23',
+  '--bg-primary': '15 23 42',
+  '--bg-secondary': '30 41 59',
+  '--bg-category-image-tile': '30 41 59',
+  '--bg-hover': '51 65 85',
+  '--bg-pressed': '71 85 105',
+  '--bg-disabled': '51 65 85',
+  '--bg-skeleton-primary': '30 41 59',
+  '--bg-skeleton-secondary': '15 23 42',
+
+  /* WISLED Blue Backgrounds (Dark) */
+  '--wisled-50': '239 246 255',
+  '--wisled-100': '219 234 254',
+  '--wisled-200': '190 219 255',
+  '--wisled-500': '43 127 255',
+  '--wisled-600': '81 162 255',
+  '--wisled-700': '142 197 255',
+  '--wisled-900': '28 57 142',
+  '--wisled-950': '2 6 23',
 
   /* FOREGROUND (Dark Mode) */
-  '--fg-primary': '255 255 255',       // White Text
-  '--fg-primary-hover': '245 248 250',
-  '--fg-primary-pressed': '225 232 237',
-  '--fg-secondary': '255 255 255 0.1',
-  '--fg-secondary-hover': '255 255 255 0.2',
-  '--fg-secondary-pressed': '255 255 255 0.3',
-  '--fg-tertiary': '255 255 255 0.1',
-  '--fg-tertiary-hover': '255 255 255 0.2',
-  '--fg-tertiary-pressed': '255 255 255 0.3',
-  '--fg-primary-negative': '224 36 94',
-  '--fg-primary-negative-hover': '244 56 114',
-  '--fg-primary-negative-pressed': '255 86 144',
-  '--fg-secondary-negative': '224 36 94 0.2',
-  '--fg-positive': '23 191 99 0.2',
+  '--fg-primary': '255 255 255',
+  '--fg-primary-hover': '248 250 252',
+  '--fg-primary-pressed': '241 245 249',
+  '--fg-secondary': '51 65 85',
+  '--fg-secondary-hover': '71 85 105',
+  '--fg-secondary-pressed': '100 116 139',
+  '--fg-tertiary': '148 163 184',
+  '--fg-tertiary-hover': '100 116 139',
+  '--fg-tertiary-pressed': '71 85 105',
+  '--fg-primary-negative': '244 56 114',
+  '--fg-primary-negative-hover': '255 86 144',
+  '--fg-primary-negative-pressed': '255 116 164',
+  '--fg-secondary-negative': '253 235 240',
+  '--fg-positive': '235 250 242',
 
   /* CONTENT (Dark Mode) */
   '--content-static': '255 255 255',
   '--content-basic-primary': '255 255 255',
-  '--content-inverse-primary': '20 23 26',
-  '--content-secondary': '136 153 166', // Twitter Medium Gray (Dark mode secondary text)
-  '--content-disabled': '101 119 134',
-  '--content-action-primary': '29 161 242', // Twitter Blue
-  '--content-action-primary-hover': '118 201 249',
-  '--content-action-primary-pressed': '160 219 251',
-  '--content-negative': '224 36 94',
-  '--content-positive': '23 191 99',
+  '--content-inverse-primary': '15 23 42',
+  '--content-secondary': '148 163 184',
+  '--content-disabled': '100 116 139',
+  '--content-action-primary': '81 162 255',
+  '--content-action-primary-hover': '142 197 255',
+  '--content-action-primary-pressed': '190 219 255',
+  '--content-negative': '244 56 114',
+  '--content-positive': '74 222 128',
   '--content-warning': '255 173 31',
   '--content-yellow': '255 173 31',
 
   /* BORDER (Dark Mode) */
-  '--border-basic-primary': '56 68 77', // Twitter Dark Divider
-  '--border-secondary': '255 255 255 0.1',
-  '--border-disabled': '101 119 134',
-  '--border-action-primary': '29 161 242',
-  '--border-action-primary-inverse': '20 23 26',
-  '--border-action-primary-hover': '26 145 218',
-  '--border-action-primary-pressed': '23 120 180',
-  '--border-negative': '224 36 94',
-  '--border-positive': '23 191 99',
+  '--border-basic-primary': '51 65 85',
+  '--border-secondary': '51 65 85',
+  '--border-disabled': '71 85 105',
+  '--border-action-primary': '81 162 255',
+  '--border-action-primary-inverse': '15 23 42',
+  '--border-action-primary-hover': '142 197 255',
+  '--border-action-primary-pressed': '190 219 255',
+  '--border-negative': '244 56 114',
+  '--border-positive': '74 222 128',
   '--border-warning': '255 173 31',
 }

@@ -125,9 +125,9 @@ export default function Navigation({
                   'relative flex items-center gap-1.5 !py-2 px-3.5 text-[13.5px] font-medium tracking-[0.01em] transition-all duration-200',
                   'hover:text-basic-primary dark:hover:text-white',
                   {
-                    'text-action-primary font-semibold dark:text-brand-400':
+                    'text-action-primary font-semibold dark:text-wisled-400':
                       active || isCategories,
-                    'text-action-primary dark:text-brand-400': isDropdownOpen,
+                    'text-action-primary dark:text-wisled-400': isDropdownOpen,
                   }
                 )}
               >
@@ -143,7 +143,7 @@ export default function Navigation({
                 {/* Active indicator */}
                 <span
                   className={cn(
-                    'absolute bottom-[-1px] left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-gradient-to-r from-action-primary to-action-primary/70 transition-all duration-300 dark:from-brand-400 dark:to-brand-400/70',
+                    'absolute bottom-[-1px] left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-gradient-to-r from-action-primary to-action-primary/70 transition-all duration-300 dark:from-wisled-400 dark:to-wisled-400/70',
                     active || isCategories || isDropdownOpen ? 'w-4/5' : 'w-0'
                   )}
                 />

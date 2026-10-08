@@ -247,7 +247,7 @@ function ProductInfo({
           <Text
             title={product.title}
             as="span"
-            className="line-clamp-2 text-left text-sm font-bold text-basic-primary transition-colors group-hover:text-action-primary dark:text-white/90 dark:group-hover:text-brand-400 small:text-base"
+            className="line-clamp-2 text-left text-sm font-bold text-basic-primary transition-colors group-hover:text-action-primary dark:text-white/90 dark:group-hover:text-wisled-400 small:text-base"
           >
             {product.title}
           </Text>

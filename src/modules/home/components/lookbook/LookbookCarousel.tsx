@@ -80,7 +80,7 @@ const LookbookCarousel = ({
                         aria-hidden="true"
                         className="relative mt-6 h-1.5 w-24 overflow-hidden rounded-full bg-fg-secondary"
                     >
-                        <span className="absolute inset-y-0 left-0 w-2/3 origin-left rounded-full bg-gradient-to-r from-action-primary to-brand-400 [transform:skewX(-20deg)]" />
+                        <span className="absolute inset-y-0 left-0 w-2/3 origin-left rounded-full bg-gradient-to-r from-action-primary to-wisled-400 [transform:skewX(-20deg)]" />
                     </div>
                 </div>
 

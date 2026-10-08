@@ -162,7 +162,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
           {/* Sidebar header */}
           <div className="flex items-center gap-2 border-b border-basic-primary/[0.07] px-6 py-4 dark:border-white/[0.05] shrink-0">
-            <div className="h-1.5 w-1.5 rounded-full bg-action-primary dark:bg-brand-400" />
+            <div className="h-1.5 w-1.5 rounded-full bg-action-primary dark:bg-wisled-400" />
             <span className="text-[10.5px] font-black uppercase tracking-[0.22em] text-secondary dark:text-white/40">
               Catégories
             </span>
@@ -179,14 +179,14 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 className={cn(
                   'group/sb relative flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-[13px] font-semibold tracking-wide transition-all duration-200',
                   index === activeSidebarIndex
-                    ? 'bg-primary text-action-primary shadow-sm dark:bg-white/[0.09] dark:text-brand-400'
+                    ? 'bg-primary text-action-primary shadow-sm dark:bg-white/[0.09] dark:text-wisled-400'
                     : 'text-basic-primary/75 hover:bg-primary/70 hover:text-basic-primary dark:text-white/60 dark:hover:bg-white/[0.05] dark:hover:text-white/90'
                 )}
                 data-testid={formatNameForTestId(`sidebar-${cat.name}`)}
               >
                 {/* Active indicator strip */}
                 {index === activeSidebarIndex && (
-                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-action-primary dark:bg-brand-400" />
+                  <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-action-primary dark:bg-wisled-400" />
                 )}
 
                 {/* Category thumbnail */}
@@ -205,7 +205,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <span className={cn(
                     'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[13px] font-black',
                     index === activeSidebarIndex
-                      ? 'bg-action-primary/10 text-action-primary dark:bg-brand-400/10 dark:text-brand-400'
+                      ? 'bg-action-primary/10 text-action-primary dark:bg-wisled-400/10 dark:text-wisled-400'
                       : 'bg-secondary/60 text-secondary dark:bg-white/[0.05] dark:text-white/30'
                   )}>
                     {cat.name.charAt(0).toUpperCase()}
@@ -271,14 +271,14 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 {activeCategory?.name}
               </h3>
               {activeChildren.length > 0 && (
-                <span className="rounded-full bg-action-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-action-primary dark:bg-brand-400/10 dark:text-brand-400">
+                <span className="rounded-full bg-action-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-action-primary dark:bg-wisled-400/10 dark:text-wisled-400">
                   {activeChildren.length}
                 </span>
               )}
             </div>
             <LocalizedClientLink
               href={activeCategory?.handle ?? '/shop'}
-              className="group inline-flex items-center gap-1.5 rounded-full border border-basic-primary/10 px-4 py-1.5 text-xs font-bold text-basic-primary/70 transition-all duration-200 hover:border-action-primary/30 hover:bg-action-primary/5 hover:text-action-primary dark:border-white/10 dark:text-white/50 dark:hover:border-brand-400/30 dark:hover:text-brand-400"
+              className="group inline-flex items-center gap-1.5 rounded-full border border-basic-primary/10 px-4 py-1.5 text-xs font-bold text-basic-primary/70 transition-all duration-200 hover:border-action-primary/30 hover:bg-action-primary/5 hover:text-action-primary dark:border-white/10 dark:text-white/50 dark:hover:border-wisled-400/30 dark:hover:text-wisled-400"
             >
               Voir tout
               <svg className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
@@ -295,7 +295,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <LocalizedClientLink
                     key={childIndex}
                     href={child.handle}
-                    className="group/card relative flex items-center gap-4 overflow-hidden rounded-2xl border border-basic-primary/[0.07] bg-secondary/20 p-3 transition-all duration-250 hover:border-action-primary/20 hover:bg-secondary/50 hover:shadow-lg dark:border-white/[0.05] dark:bg-white/[0.025] dark:hover:border-brand-400/20 dark:hover:bg-white/[0.06]"
+                    className="group/card relative flex items-center gap-4 overflow-hidden rounded-2xl border border-basic-primary/[0.07] bg-secondary/20 p-3 transition-all duration-250 hover:border-action-primary/20 hover:bg-secondary/50 hover:shadow-lg dark:border-white/[0.05] dark:bg-white/[0.025] dark:hover:border-wisled-400/20 dark:hover:bg-white/[0.06]"
                     data-testid={formatNameForTestId(`${child.name}-subcategory`)}
                   >
                     {/* Sub-category image */}
@@ -314,8 +314,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                       </Box>
                     ) : (
                       /* No image fallback */
-                      <Box className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-xl bg-action-primary/8 dark:bg-brand-400/8">
-                        <svg className="h-6 w-6 text-action-primary/40 dark:text-brand-400/40" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <Box className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-xl bg-action-primary/8 dark:bg-wisled-400/8">
+                        <svg className="h-6 w-6 text-action-primary/40 dark:text-wisled-400/40" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
                         </svg>
                       </Box>
@@ -323,7 +323,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
                     {/* Text */}
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="truncate text-[13px] font-semibold leading-snug text-basic-primary transition-colors duration-200 group-hover/card:text-action-primary dark:text-white/85 dark:group-hover/card:text-brand-400">
+                      <span className="truncate text-[13px] font-semibold leading-snug text-basic-primary transition-colors duration-200 group-hover/card:text-action-primary dark:text-white/85 dark:group-hover/card:text-wisled-400">
                         {child.name}
                       </span>
                       {child.category_children && child.category_children.length > 0 && (
@@ -335,7 +335,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
                     {/* Arrow */}
                     <svg
-                      className="ml-auto h-4 w-4 shrink-0 text-secondary opacity-0 transition-all duration-200 group-hover/card:translate-x-0 group-hover/card:text-action-primary group-hover/card:opacity-100 dark:group-hover/card:text-brand-400 -translate-x-1"
+                      className="ml-auto h-4 w-4 shrink-0 text-secondary opacity-0 transition-all duration-200 group-hover/card:translate-x-0 group-hover/card:text-action-primary group-hover/card:opacity-100 dark:group-hover/card:text-wisled-400 -translate-x-1"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={2.5}
@@ -372,7 +372,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 </div>
                 <LocalizedClientLink
                   href={activeCategory?.handle ?? '/shop'}
-                  className="inline-flex items-center gap-2 rounded-xl bg-action-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-action-primary-hover hover:shadow-md dark:bg-brand-600 dark:hover:bg-brand-500"
+                  className="inline-flex items-center gap-2 rounded-xl bg-action-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-action-primary-hover hover:shadow-md dark:bg-wisled-600 dark:hover:bg-wisled-500"
                 >
                   Voir {activeCategory?.name}
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
@@ -478,7 +478,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           {/* Panel container */}
           <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-b-2xl border-x border-b border-basic-primary/[0.08] bg-primary/[0.98] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.18)] backdrop-blur-2xl dark:border-white/[0.06] dark:bg-[#0d0f12]/[0.99] dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)]">
             {/* Top accent line */}
-            <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-action-primary/60 to-transparent dark:via-brand-500/60" />
+            <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-action-primary/60 to-transparent dark:via-wisled-500/60" />
             {customContent ?? renderSidebarLayout(item.category_children)}
           </div>
         </div>

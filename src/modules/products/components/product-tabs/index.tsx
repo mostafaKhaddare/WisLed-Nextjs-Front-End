@@ -237,7 +237,7 @@ const ProductTechnicalDocumentsTab = ({
 
               {/* Label + hint */}
               <div className="flex min-w-0 flex-col gap-0.5">
-                <span className="truncate text-sm font-semibold text-basic-primary transition-colors group-hover:text-action-primary dark:text-white/90 dark:group-hover:text-brand-400">
+                <span className="truncate text-sm font-semibold text-basic-primary transition-colors group-hover:text-action-primary dark:text-white/90 dark:group-hover:text-wisled-400">
                   {label}
                 </span>
                 <span className="text-xs text-secondary dark:text-white/40">

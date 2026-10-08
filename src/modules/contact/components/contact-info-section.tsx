@@ -41,10 +41,10 @@ function getIconStyle(title?: string): IconStyle {
   }
   if (t.includes('email') || t.includes('mail') || t.includes('courriel')) {
     return {
-      color: 'text-brand-600',
-      bg: 'bg-brand-50',
-      darkBg: 'dark:bg-brand-900/20',
-      darkColor: 'dark:text-brand-400',
+      color: 'text-wisled-600',
+      bg: 'bg-wisled-50',
+      darkBg: 'dark:bg-wisled-900/20',
+      darkColor: 'dark:text-wisled-400',
     }
   }
   if (t.includes('whatsapp')) {
@@ -110,7 +110,7 @@ export const ContactInfoSection = ({ data }: { data: ContactInfoData }) => {
         {sectionTitle && (
           <div className="mb-10 text-center">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-basic-primary/10 bg-primary px-4 py-1.5 dark:border-white/10 dark:bg-white/[0.04]">
-              <div className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+              <div className="h-1.5 w-1.5 rounded-full bg-wisled-500" />
               <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-secondary dark:text-white/40">Nous vous répondons</span>
             </div>
             <Heading className="text-2xl font-black tracking-tight text-basic-primary dark:text-white small:text-3xl">
@@ -156,7 +156,7 @@ export const ContactInfoSection = ({ data }: { data: ContactInfoData }) => {
                 {method.Link ? (
                   <a
                     href={method.Link}
-                    className="group/link inline-flex items-center gap-1.5 text-[15px] font-medium text-secondary transition-colors duration-200 hover:text-action-primary dark:text-white/50 dark:hover:text-brand-400"
+                    className="group/link inline-flex items-center gap-1.5 text-[15px] font-medium text-secondary transition-colors duration-200 hover:text-action-primary dark:text-white/50 dark:hover:text-wisled-400"
                   >
                     {method.Text}
                     <svg

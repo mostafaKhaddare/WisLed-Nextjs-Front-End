@@ -36,19 +36,19 @@ export default function CollectionsMenu({
   return (
     <div className="relative px-10 py-7">
       {/* Top accent */}
-      <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-action-primary/50 to-transparent dark:via-brand-500/50" />
+      <div className="absolute left-0 right-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-action-primary/50 to-transparent dark:via-wisled-500/50" />
 
       {/* Section header */}
       <div className="mb-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-action-primary dark:bg-brand-400" />
+          <div className="h-1.5 w-1.5 rounded-full bg-action-primary dark:bg-wisled-400" />
           <span className="text-[10.5px] font-black uppercase tracking-[0.22em] text-secondary dark:text-white/40">
             Nos collections
           </span>
         </div>
         <LocalizedClientLink
           href="/collections"
-          className="group inline-flex items-center gap-1.5 rounded-full border border-basic-primary/10 px-4 py-1.5 text-xs font-bold text-basic-primary/60 transition-all duration-200 hover:border-action-primary/30 hover:bg-action-primary/5 hover:text-action-primary dark:border-white/10 dark:text-white/40 dark:hover:border-brand-400/30 dark:hover:text-brand-400"
+          className="group inline-flex items-center gap-1.5 rounded-full border border-basic-primary/10 px-4 py-1.5 text-xs font-bold text-basic-primary/60 transition-all duration-200 hover:border-action-primary/30 hover:bg-action-primary/5 hover:text-action-primary dark:border-white/10 dark:text-white/40 dark:hover:border-wisled-400/30 dark:hover:text-wisled-400"
         >
           Voir toutes
           <svg className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">

@@ -144,7 +144,7 @@ const SideMenu = ({
                   </span>
                 ) : (
                   /* Coloured initial fallback */
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-action-primary/10 text-[13px] font-black text-action-primary dark:bg-brand-400/10 dark:text-brand-400">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-action-primary/10 text-[13px] font-black text-action-primary dark:bg-wisled-400/10 dark:text-wisled-400">
                     {item.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -163,7 +163,7 @@ const SideMenu = ({
                 type="button"
                 aria-label={`Voir les sous-catégories de ${item.name}`}
                 onClick={() => handleDrillInto(item)}
-                className="flex h-full items-center justify-center px-4 py-3.5 text-secondary transition-colors duration-150 hover:bg-action-primary/5 hover:text-action-primary dark:hover:bg-brand-400/5 dark:hover:text-brand-400 active:bg-action-primary/10"
+                className="flex h-full items-center justify-center px-4 py-3.5 text-secondary transition-colors duration-150 hover:bg-action-primary/5 hover:text-action-primary dark:hover:bg-wisled-400/5 dark:hover:text-wisled-400 active:bg-action-primary/10"
               >
                 {/* Animated chevron */}
                 <svg
@@ -247,7 +247,7 @@ const SideMenu = ({
       <LocalizedClientLink
         href={currentCategory.handle}
         onClick={handleClose}
-        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-action-primary/8 px-4 py-3 text-[13px] font-bold text-action-primary transition-all duration-200 hover:bg-action-primary/12 dark:bg-brand-400/8 dark:text-brand-400 dark:hover:bg-brand-400/12"
+        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-action-primary/8 px-4 py-3 text-[13px] font-bold text-action-primary transition-all duration-200 hover:bg-action-primary/12 dark:bg-wisled-400/8 dark:text-wisled-400 dark:hover:bg-wisled-400/12"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />

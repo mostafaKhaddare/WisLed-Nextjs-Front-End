@@ -92,7 +92,7 @@ function FormField({
 const baseInput =
   'w-full rounded-xl border bg-primary px-4 py-3 text-[14px] text-basic-primary outline-none transition-all duration-200 placeholder:text-disabled dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/20'
 const focusRing =
-  'focus:border-brand-500/70 focus:ring-4 focus:ring-brand-500/10 dark:focus:border-brand-400/50 dark:focus:ring-brand-400/10'
+  'focus:border-wisled-500/70 focus:ring-4 focus:ring-wisled-500/10 dark:focus:border-wisled-400/50 dark:focus:ring-wisled-400/10'
 const errorBorder = 'border-red-400/70 bg-red-50/30 dark:border-red-400/40 dark:bg-red-900/10'
 const normalBorder = 'border-basic-primary/10 hover:border-basic-primary/25 dark:border-white/[0.08] dark:hover:border-white/[0.16]'
 
@@ -198,16 +198,16 @@ export const ContactFormSection = ({
     <section className="relative overflow-hidden py-16 large:py-24">
       {/* Subtle decorative bg blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-24 -top-24 h-[500px] w-[500px] rounded-full bg-brand-100/30 blur-[100px] dark:bg-brand-900/10" />
-        <div className="absolute -bottom-24 -right-24 h-[400px] w-[400px] rounded-full bg-brand-50/40 blur-[100px] dark:bg-brand-800/10" />
+        <div className="absolute -left-24 -top-24 h-[500px] w-[500px] rounded-full bg-wisled-100/30 blur-[100px] dark:bg-wisled-900/10" />
+        <div className="absolute -bottom-24 -right-24 h-[400px] w-[400px] rounded-full bg-wisled-50/40 blur-[100px] dark:bg-wisled-800/10" />
       </div>
 
       <Container className="relative">
         {/* Section header */}
         <div className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-500/20 bg-brand-50 px-4 py-2 dark:border-brand-500/20 dark:bg-brand-900/20">
-            <div className="h-1.5 w-1.5 rounded-full bg-brand-500 dark:bg-brand-400" />
-            <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-brand-600 dark:text-brand-400">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-wisled-500/20 bg-wisled-50 px-4 py-2 dark:border-wisled-500/20 dark:bg-wisled-900/20">
+            <div className="h-1.5 w-1.5 rounded-full bg-wisled-500 dark:bg-wisled-400" />
+            <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-wisled-600 dark:text-wisled-400">
               Formulaire de contact
             </span>
           </div>
@@ -239,18 +239,18 @@ export const ContactFormSection = ({
                 {/* Email */}
                 <a
                   href="mailto:info@wisled.ma"
-                  className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:border-brand-500/40 hover:bg-white/10"
+                  className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:border-wisled-500/40 hover:bg-white/10"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/20">
-                    <svg className="h-5 w-5 text-brand-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-wisled-500/20">
+                    <svg className="h-5 w-5 text-wisled-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                     </svg>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-semibold uppercase tracking-wide text-white/40">Email</span>
-                    <span className="text-sm font-semibold text-white transition-colors group-hover:text-brand-400">info@wisled.ma</span>
+                    <span className="text-sm font-semibold text-white transition-colors group-hover:text-wisled-400">info@wisled.ma</span>
                   </div>
-                  <svg className="ml-auto h-4 w-4 text-white/20 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-brand-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <svg className="ml-auto h-4 w-4 text-white/20 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-wisled-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                   </svg>
                 </a>
@@ -292,7 +292,7 @@ export const ContactFormSection = ({
               </div>
 
               {/* Decorative bottom gradient bar */}
-              <div className="mt-6 h-1 w-full rounded-full bg-gradient-to-r from-brand-500 via-brand-400 to-emerald-400 opacity-60" />
+              <div className="mt-6 h-1 w-full rounded-full bg-gradient-to-r from-wisled-500 via-wisled-400 to-emerald-400 opacity-60" />
             </div>
 
             {/* Response time badge */}
@@ -325,7 +325,7 @@ export const ContactFormSection = ({
           {/* ── RIGHT: Form Card ── */}
           <div className="overflow-hidden rounded-2xl border border-basic-primary/10 bg-primary shadow-xl shadow-black/5 dark:border-white/[0.07] dark:bg-[#0f1115] dark:shadow-black/40">
             {/* Card top accent */}
-            <div className="h-1 w-full bg-gradient-to-r from-brand-500 via-brand-400 to-emerald-400" />
+            <div className="h-1 w-full bg-gradient-to-r from-wisled-500 via-wisled-400 to-emerald-400" />
 
             <div className="p-7 large:p-10">
               {status === 'success' ? (
@@ -443,14 +443,14 @@ export const ContactFormSection = ({
                         type="checkbox"
                         checked={privacyAccepted}
                         onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                        className="peer h-4 w-4 cursor-pointer rounded border-basic-primary/20 text-brand-500 transition-all focus:ring-2 focus:ring-brand-500/30"
+                        className="peer h-4 w-4 cursor-pointer rounded border-basic-primary/20 text-wisled-500 transition-all focus:ring-2 focus:ring-wisled-500/30"
                       />
                     </div>
                     <span className="text-[13px] leading-relaxed text-secondary dark:text-white/50">
                       J&apos;accepte la{' '}
                       <LocalizedClientLink
                         href="/privacy-policy"
-                        className="font-semibold text-action-primary underline-offset-2 hover:underline dark:text-brand-400"
+                        className="font-semibold text-action-primary underline-offset-2 hover:underline dark:text-wisled-400"
                       >
                         politique de confidentialité
                       </LocalizedClientLink>{' '}
@@ -462,7 +462,7 @@ export const ContactFormSection = ({
                   <button
                     type="submit"
                     disabled={status === 'loading' || !privacyAccepted}
-                    className="group relative mt-1 flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 py-4 text-[15px] font-bold text-white shadow-lg shadow-brand-500/25 transition-all duration-300 hover:from-brand-700 hover:to-brand-600 hover:shadow-xl hover:shadow-brand-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    className="group relative mt-1 flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-wisled-600 to-wisled-500 py-4 text-[15px] font-bold text-white shadow-lg shadow-wisled-500/25 transition-all duration-300 hover:from-wisled-700 hover:to-wisled-600 hover:shadow-xl hover:shadow-wisled-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                   >
                     {/* Shimmer overlay */}
                     {status !== 'loading' && (

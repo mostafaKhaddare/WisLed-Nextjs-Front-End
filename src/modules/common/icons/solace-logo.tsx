@@ -34,7 +34,7 @@ export const WisLedLogo = (props: IconProps) => {
         letterSpacing="0.1em"
       >
         <tspan>WIS</tspan>
-        <tspan className="fill-brand-500">LED</tspan>
+        <tspan className="fill-wisled-500">LED</tspan>
       </text>
     </svg>
   )
