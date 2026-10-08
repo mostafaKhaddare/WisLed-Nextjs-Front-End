@@ -19,38 +19,51 @@ export function CategoryTile({
   return (
     <Box
       className="group flex h-full w-full flex-col"
-      data-testid={formatNameForTestId(`${category.title}-category-tile`)}
+      data-testid={formatNameForTestId(`${category.title}-product-tile`)}
     >
-      {/* Image container with light neutral background */}
-      <Box className="relative aspect-square w-full overflow-hidden rounded-xl bg-wisled-50/80 dark:bg-wisled-950/50">
+      {/* Product shot on a light neutral plate — `contain` keeps the whole
+          fixture visible instead of cropping it to a square. */}
+      <Box className="relative aspect-[3/2] w-full overflow-hidden rounded-t-lg  bg-category-image-tile">
         <LocalizedClientLink
           href={`/categories/${category.handle}`}
-          className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
-          aria-label={category.title}
+          className="block h-full w-full"
         >
           <LoadingImage
             src={category.thumbnail}
             alt={category.title}
             loading="lazy"
-            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-            className="h-full w-full object-contain p-4 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover:scale-[1.03]"
+            sizes="(min-width: 900px) 25vw, (min-width: 640px) 33vw, 50vw"
+            className="h-full w-full  transition-transform duration-500 ease-out group-hover:scale-[1.03] "
           />
         </LocalizedClientLink>
       </Box>
-
-      {/* Category title */}
-      <LocalizedClientLink
-        href={`/categories/${category.handle}`}
-        className="mt-3 block w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
-      >
-        <Text
-          title={category.title}
-          as="span"
-          className="block text-center text-sm font-medium text-basic-primary transition-colors group-hover:text-wisled-600 dark:text-white/90 dark:group-hover:text-wisled-400 small:text-base"
-        >
-          {category.title}
-        </Text>
-      </LocalizedClientLink>
+      <CategoryInfo
+        categoryHandle={category.handle}
+        categoryTitle={category.title}
+      />
     </Box>
+  )
+}
+
+function CategoryInfo({
+  categoryHandle,
+  categoryTitle,
+}: {
+  categoryHandle: string
+  categoryTitle: string
+}) {
+  return (
+    <LocalizedClientLink
+      href={`/categories/${categoryHandle}`}
+      className=" bg-fg-primary p-1 block w-full rounded-b-lg"
+    >
+      <Text
+        title={categoryTitle}
+        as="span"
+        className="block truncate text-center text-md font-medium capitalize text-wisled-50 transition-colors  small:text-md"
+      >
+        {categoryTitle}
+      </Text>
+    </LocalizedClientLink>
   )
 }
