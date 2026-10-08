@@ -23,7 +23,7 @@ export function CategoryTile({
     >
       {/* Product shot on a light neutral plate — `contain` keeps the whole
           fixture visible instead of cropping it to a square. */}
-      <Box className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-category-image-tile">
+      <Box className="relative aspect-[3/2] w-full overflow-hidden rounded-t-lg  bg-category-image-tile">
         <LocalizedClientLink
           href={`/categories/${category.handle}`}
           className="block h-full w-full"
@@ -33,7 +33,7 @@ export function CategoryTile({
             alt={category.title}
             loading="lazy"
             sizes="(min-width: 900px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="h-full w-full object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-[1.03] small:p-5"
+            className="h-full w-full  transition-transform duration-500 ease-out group-hover:scale-[1.03] "
           />
         </LocalizedClientLink>
       </Box>
@@ -55,12 +55,12 @@ function CategoryInfo({
   return (
     <LocalizedClientLink
       href={`/categories/${categoryHandle}`}
-      className="mt-3 block w-full"
+      className=" p-1 block w-full rounded-b-lg"
     >
       <Text
         title={categoryTitle}
         as="span"
-        className="block truncate text-left text-sm font-medium capitalize text-basic-primary transition-colors group-hover:text-action-primary small:text-base"
+        className="block truncate text-center text-md font-medium capitalize text-basic-primary transition-colors  small:text-md"
       >
         {categoryTitle}
       </Text>
