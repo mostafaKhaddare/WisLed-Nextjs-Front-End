@@ -11,9 +11,9 @@ import { BagIcon } from '@modules/common/icons'
 import { ProductActions } from './action'
 import { LoadingImage } from './loading-image'
 import ProductPrice from './price'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 
-const MAX_SWATCHES_PER_OPTION = 4
+const MAX_VARIANT_BADGES = 3
 
 const TILE_SIZES: Record<'list' | 'carousel', string> = {
   list: '(max-width: 1023px) 50vw, 25vw',
@@ -21,51 +21,28 @@ const TILE_SIZES: Record<'list' | 'carousel', string> = {
     '(max-width: 639px) 73vw, (max-width: 767px) 63vw, (max-width: 1023px) 43vw, (max-width: 1279px) 34vw, 31vw',
 }
 
-function hasKelvin(value: string, kelvin: string) {
-  return new RegExp(`(^|[^0-9])${kelvin}([^0-9]|$)`).test(value)
+function getOptionPriority(optionTitle: string): number {
+  const title = optionTitle.toLowerCase()
+  if (title.includes('longueur') || title.includes('length') || title.includes('size') || title.includes('taille') || title.includes('meter') || title.includes('mètre') || title.includes('cm') || title.includes('mm') || title.includes('5m') || title.includes('10m')) return 1
+  if (title.includes('tension') || title.includes('voltage') || title.includes('volt') || title.includes('12v') || title.includes('24v')) return 2
+  if (title.includes('température') || title.includes('temperature') || title.includes('couleur') || title.includes('color') || title.includes('kelvin') || title.includes('blanc') || title.includes('white') || title.includes('rgb') || title.includes('cct')) return 3
+  return 4
 }
 
-function getVariantStyle(value: string) {
-  const v = value.trim().toLowerCase()
+function getPrioritizedVariantValues(optionsToRender: any[]): string[] {
+  const allValues: { value: string; priority: number }[] = []
 
-  if (v.includes('rgb') || v.includes('couleur'))
-    return { background: 'linear-gradient(90deg, #ff0000, #00ff00, #0000ff)', color: '#fff' }
-  if (v.includes('cct'))
-    return { background: 'linear-gradient(90deg, #ffcc80, #f5f5f5, #bbdefb)', color: '#000' }
+  for (const opt of optionsToRender) {
+    const priority = getOptionPriority(opt.title)
+    for (const val of opt.values) {
+      allValues.push({ value: val, priority })
+    }
+  }
 
-  if (hasKelvin(v, '2700') || v.includes('warm') || v.includes('chaud'))
-    return { background: '#ffcc80', color: '#000' }
-  if (hasKelvin(v, '3000')) return { background: '#ffe0b2', color: '#000' }
-  if (hasKelvin(v, '4000') || v.includes('naturel') || v.includes('neutral'))
-    return { background: '#f5f5f5', color: '#000' }
-  if (hasKelvin(v, '5000')) return { background: '#e3f2fd', color: '#000' }
-  if (hasKelvin(v, '6000') || hasKelvin(v, '6500') || v.includes('cool') || v.includes('froid'))
-    return { background: '#bbdefb', color: '#000' }
+  allValues.sort((a, b) => a.priority - b.priority)
 
-  if (v === 'black' || v === 'noir') return { background: '#111', color: '#fff' }
-  if (v === 'white' || v === 'blanc') return { background: '#fff', color: '#111' }
-  if (v === 'red' || v === 'rouge') return { background: '#ef4444', color: '#fff' }
-  if (v === 'green' || v.includes('vert')) return { background: '#22c55e', color: '#fff' }
-  if (v === 'blue' || v === 'bleu') return { background: '#3b82f6', color: '#fff' }
-  if (v === 'gold' || v === 'or' || v.includes('doré') || v.includes('dore'))
-    return { background: '#FFD700', color: '#000' }
-  if (v.includes('silver') || v.includes('argent')) return { background: '#C0C0C0', color: '#000' }
-  if (v === 'gray' || v === 'grey' || v === 'gris') return { background: '#9CA3AF', color: '#fff' }
-  if (v.includes('transparent'))
-    return { background: 'linear-gradient(135deg, #e5e7eb, #f9fafb)', color: '#111' }
-
-  return { background: '', color: '' }
-}
-
-const warmedImages = new Set<string>()
-
-function warmImage(src: string | null | undefined) {
-  if (!src || warmedImages.has(src) || typeof window === 'undefined') return
-
-  warmedImages.add(src)
-  const img = new window.Image()
-  img.decoding = 'async'
-  img.src = src
+  const uniqueValues = Array.from(new Set(allValues.map(v => v.value)))
+  return uniqueValues.slice(0, MAX_VARIANT_BADGES)
 }
 
 function hasSalePrice(product: { calculatedPrice: string; salePrice?: string }) {
@@ -103,7 +80,6 @@ export const ProductTile = memo(function ProductTile({
   priority?: boolean
 }) {
   const [displayedImage, setDisplayedImage] = useState<string | null>(product.thumbnail)
-  const [selected, setSelected] = useState<{ optionId: string; value: string } | null>(null)
 
   const isNew = useMemo(() => {
     const createdAt = new Date(product.created_at)
@@ -142,35 +118,15 @@ export const ProductTile = memo(function ProductTile({
       .filter((o: any) => o.values.length > 0)
   }, [product])
 
-  const findVariantImage = useCallback(
-    (optionId: string, value: string) =>
-      product.variants?.find((v: any) =>
-        v.options?.some((o: any) => o.option_id === optionId && o.value === value)
-      )?.thumbnail ?? null,
-    [product.variants]
-  )
-
-  const handleOptionSelect = useCallback(
-    (optionId: string, value: string) => {
-      const variantThumbnail = findVariantImage(optionId, value)
-
-      if (variantThumbnail) {
-        setDisplayedImage(variantThumbnail)
-        setSelected({ optionId, value })
-      }
-    },
-    [findVariantImage]
-  )
-
-  const handleMouseLeave = useCallback(() => {
-    setDisplayedImage(product.thumbnail)
-    setSelected(null)
-  }, [product.thumbnail])
-
-  useEffect(() => {
-    setDisplayedImage(product.thumbnail)
-    setSelected(null)
-  }, [product.thumbnail])
+  const variantBadges = useMemo(() => {
+    if (optionsToRender.length === 0) return { values: [], hasMore: false }
+    const prioritized = getPrioritizedVariantValues(optionsToRender)
+    const totalUniqueValues = Array.from(new Set(optionsToRender.flatMap((o: any) => o.values))).length
+    return {
+      values: prioritized,
+      hasMore: totalUniqueValues > prioritized.length
+    }
+  }, [optionsToRender])
 
   const imageHeightClass = layout === 'carousel' ? 'h-[280px]' : 'h-[180px]'
 
@@ -184,7 +140,6 @@ export const ProductTile = memo(function ProductTile({
         layout === 'carousel' && 'min-h-0'
       )}
       data-testid={formatNameForTestId(`${product.title}-product-tile`)}
-      onMouseLeave={handleMouseLeave}
     >
       <Box className={cn('relative overflow-hidden rounded-t-xl', imageHeightClass, 'bg-wisled-50/50 dark:bg-wisled-950/30')}>
         {/* Badges - Top Left */}
@@ -244,65 +199,34 @@ export const ProductTile = memo(function ProductTile({
             </Text>
           </LocalizedClientLink>
 
-          {/* Variant Selectors */}
-          {optionsToRender.length > 0 && (
-            <div className="mt-1 flex flex-wrap items-center gap-1.5" role="group" aria-label="Options de produit">
-              {optionsToRender.map((opt: any) => {
-                const visible = opt.values.slice(0, MAX_SWATCHES_PER_OPTION)
-                const overflow = opt.values.length - visible.length
-
-                return (
-                  <div key={opt.id} className="flex flex-wrap items-center gap-1.5">
-                    {visible.map((val: string) => {
-                      const style = getVariantStyle(val)
-                      const isActive = selected?.optionId === opt.id && selected.value === val
-
-                      return (
-                        <button
-                          key={`${opt.id}-${val}`}
-                          type="button"
-                          aria-pressed={isActive}
-                          aria-label={`${opt.title ?? 'Option'} : ${val}`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            handleOptionSelect(opt.id, val)
-                          }}
-                          onPointerEnter={() => warmImage(findVariantImage(opt.id, val))}
-                          onFocus={() => warmImage(findVariantImage(opt.id, val))}
-                          title={val}
-                          className={cn(
-                            'flex h-6 min-w-[24px] items-center justify-center rounded-full border px-2 text-[10px] font-medium shadow-sm transition-all duration-200',
-                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-1 focus-visible:ring-offset-primary',
-                            isActive
-                              ? 'scale-105 ring-2 ring-wisled-500 ring-offset-1 ring-offset-primary'
-                              : 'hover:scale-105',
-                            style.background
-                              ? undefined
-                              : 'border-wisled-200 bg-wisled-50 text-wisled-700 hover:bg-wisled-100 dark:border-wisled-800 dark:bg-wisled-900/40 dark:text-wisled-200 dark:hover:bg-wisled-800/60'
-                          )}
-                          style={
-                            style.background
-                              ? { background: style.background, color: style.color, borderColor: 'rgba(0,0,0,0.1)' }
-                              : undefined
-                          }
-                        >
-                          {val}
-                        </button>
-                      )
-                    })}
-
-                    {overflow > 0 && (
-                      <span
-                        className="text-[10px] font-medium text-basic-primary/50 dark:text-white/50"
-                        title={opt.values.slice(MAX_SWATCHES_PER_OPTION).join(', ')}
-                      >
-                        +{overflow}
-                      </span>
-                    )}
-                  </div>
-                )
-              })}
+          {/* Variant Badges - Non-interactive display of available options */}
+          {variantBadges.values.length > 0 && (
+            <div className="mt-1.5 flex items-center gap-1.5 overflow-hidden" aria-label="Variantes disponibles">
+              {variantBadges.values.map((val: string, idx: number) => (
+                <span
+                  key={idx}
+                  className={cn(
+                    'inline-flex h-5 items-center justify-center rounded-[6px] border px-2 text-[11px] font-medium',
+                    'border-wisled-200 bg-wisled-100/80 text-wisled-700',
+                    'dark:border-wisled-800 dark:bg-wisled-900/50 dark:text-wisled-200',
+                    'whitespace-nowrap flex-shrink-0'
+                  )}
+                >
+                  {val}
+                </span>
+              ))}
+              {variantBadges.hasMore && (
+                <span
+                  className={cn(
+                    'inline-flex h-5 items-center justify-center rounded-[6px] border px-2 text-[11px] font-medium',
+                    'border-wisled-200 bg-wisled-100/80 text-wisled-500',
+                    'dark:border-wisled-800 dark:bg-wisled-900/50 dark:text-wisled-400',
+                    'whitespace-nowrap flex-shrink-0'
+                  )}
+                >
+                  +{Array.from(new Set(optionsToRender.flatMap((o: any) => o.values))).length - variantBadges.values.length}
+                </span>
+              )}
             </div>
           )}
 
