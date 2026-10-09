@@ -20,10 +20,9 @@ interface SubcategoryItem {
 
 interface SubcategoryCardsProps {
   subcategories: SubcategoryItem[]
-  countryCode: string
 }
 
-export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCardsProps) {
+export function SubcategoryCards({ subcategories }: SubcategoryCardsProps) {
   if (!subcategories?.length) return null
 
   return (
@@ -33,7 +32,7 @@ export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCard
           {subcategories.map((subcat) => (
             <LocalizedClientLink
               key={subcat.id}
-              href={`/${countryCode}/categories/${subcat.handle}`}
+              href={`/categories/${subcat.handle}`}
               className="group/card relative flex items-center gap-4 shrink-0 w-[260px] sm:w-[300px] md:w-[320px] h-[112px] sm:h-[128px] rounded-xl overflow-hidden bg-primary border border-border-basic-primary/50 dark:border-white/[0.06] dark:bg-white/[0.02] transition-all duration-300 hover:shadow-lg hover:border-wisled-200/50 dark:hover:border-wisled-800/30 hover:-translate-y-0.5"
               data-testid={formatNameForTestId(`${subcat.name}-subcategory-card`)}
             >

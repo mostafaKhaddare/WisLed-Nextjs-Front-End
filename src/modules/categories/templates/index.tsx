@@ -190,7 +190,6 @@ export default async function CategoryTemplate({
               handle: subcat.handle,
               image: (subcat as any).product_category_image?.[0] || null,
             }))}
-            countryCode={countryCode}
           />
         )}
 
