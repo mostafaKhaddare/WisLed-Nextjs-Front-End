@@ -49,17 +49,16 @@ const SectionHeading = forwardRef<HTMLHeadingElement, SectionHeadingProps<'h2'>>
           >
             {children}
           </Component>
-
-          {accent && (
-            <div
-              aria-hidden="true"
-              className="relative flex-1 h-1.5 w-24 min-w-[80px] max-w-[120px] overflow-hidden rounded-full bg-fg-secondary"
-            >
-              <span className="absolute inset-y-0 left-0 w-2/3 origin-left rounded-full bg-gradient-to-r from-wisled-500 to-wisled-400 [transform:skewX(-20deg)]" />
-            </div>
-          )}
         </div>
-
+        {accent && (
+          <div
+            aria-hidden="true"
+            className={cn(
+              'relative h-1.5 w-24 min-w-[80px] max-w-[120px] origin-left rounded-full bg-gradient-to-r from-wisled-500 to-wisled-400 [transform:skewX(-20deg)]',
+              align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''
+            )}
+          />
+        )}
         {subtitle && (
           <div className="w-full">
             <p className="text-md text-secondary small:text-lg">{subtitle}</p>

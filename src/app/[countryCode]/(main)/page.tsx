@@ -86,6 +86,7 @@ export default async function Home(props: {
           categories={categories}
           title="Achetez par catégorie"
           headingDescription="Trouvez les solutions d'éclairage LED adaptées à votre projet"
+          initialLimit={20}
           viewAll={{
             link: '/categories',
             text: 'Afficher tout',
