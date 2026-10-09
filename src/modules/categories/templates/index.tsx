@@ -20,6 +20,7 @@ import ActiveProductFilters from '@modules/store/components/filters/active-filte
 import ProductFiltersDrawer from '@modules/store/components/filters/filters-drawer'
 import PaginatedProducts from '@modules/store/templates/paginated-products'
 import { SubcategoryCards } from '../components/subcategory-cards'
+import QuickFilters from '@modules/store/components/filters/quick-filters'
 
 export const runtime = 'edge'
 
@@ -193,6 +194,9 @@ export default async function CategoryTemplate({
           />
         )}
 
+        {/* Quick filter chips */}
+        <QuickFilters filters={filters} />
+
         <Box className="flex flex-col gap-4 mb-2">
           <Box className="flex items-center justify-between px-2">
             <Text className="text-sm font-semibold text-secondary">
@@ -200,14 +204,19 @@ export default async function CategoryTemplate({
             </Text>
           </Box>
 
-          <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap">
-            <Box className="hidden small:flex">
+          <Box className="grid w-full grid-cols-2 items-center justify-between gap-2 small:flex small:flex-wrap small:items-center small:justify-between">
+            <Box className="hidden small:flex small:flex-wrap small:items-center small:gap-2">
               <ProductFilters filters={filters} />
             </Box>
             <ProductFiltersDrawer>
               <ProductFilters filters={filters} />
             </ProductFiltersDrawer>
-            <RefinementList options={storeSortOptions} sortBy={sortBy || 'relevance'} />
+            <Box className="flex items-center gap-2">
+              <Text as="span" className="text-sm font-semibold text-secondary small:hidden">
+                Trier par
+              </Text>
+              <RefinementList options={storeSortOptions} sortBy={sortBy || 'relevance'} />
+            </Box>
           </Box>
 
           <ActiveProductFilters

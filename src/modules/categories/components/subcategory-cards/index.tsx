@@ -29,22 +29,22 @@ export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCard
   return (
     <Box className="w-full py-4" aria-label="Sous-catégories">
       <Box className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-        <Box className="flex flex-row items-start gap-3 min-w-max" role="list">
+        <Box className="flex flex-row items-stretch gap-3 min-w-max" role="list">
           {subcategories.map((subcat) => (
             <LocalizedClientLink
               key={subcat.id}
-              href={`/categories/${subcat.handle}`}
-              className="group/card relative flex flex-col items-center gap-2 shrink-0 w-[160px] sm:w-[180px] rounded-xl overflow-hidden bg-primary border border-border-basic-primary/50 dark:border-white/[0.06] dark:bg-white/[0.02] transition-all duration-300 hover:shadow-lg hover:border-wisled-200/50 dark:hover:border-wisled-800/30 hover:-translate-y-0.5"
+              href={`/${countryCode}/categories/${subcat.handle}`}
+              className="group/card relative flex items-center gap-4 shrink-0 w-[260px] sm:w-[300px] md:w-[320px] h-[112px] sm:h-[128px] rounded-xl overflow-hidden bg-primary border border-border-basic-primary/50 dark:border-white/[0.06] dark:bg-white/[0.02] transition-all duration-300 hover:shadow-lg hover:border-wisled-200/50 dark:hover:border-wisled-800/30 hover:-translate-y-0.5"
               data-testid={formatNameForTestId(`${subcat.name}-subcategory-card`)}
             >
-              {/* Image container with light neutral background */}
-              <Box className="relative aspect-square w-full overflow-hidden bg-wisled-50/80 dark:bg-wisled-950/50">
+              {/* Image on the left with light neutral background */}
+              <Box className="relative h-full w-[100px] sm:w-[112px] shrink-0 overflow-hidden bg-wisled-50/80 dark:bg-wisled-950/50 rounded-l-xl">
                 {subcat.image ? (
                   <Image
                     src={subcat.image.url}
                     alt={subcat.image.alt || subcat.name}
                     fill
-                    sizes="160px"
+                    sizes="112px"
                     loading="lazy"
                     className="object-contain p-3 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover/card:scale-[1.03]"
                   />
@@ -68,12 +68,12 @@ export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCard
                 )}
               </Box>
 
-              {/* Subcategory name */}
-              <Box className="px-3 pb-3 w-full text-center">
+              {/* Title on the right */}
+              <Box className="flex flex-1 items-center pr-4">
                 <Text
                   title={subcat.name}
                   as="span"
-                  className="text-sm font-medium text-basic-primary leading-snug transition-colors group-hover/card:text-wisled-600 dark:text-white/90 dark:group-hover/card:text-wisled-400 line-clamp-2 min-h-[2.5rem]"
+                  className="text-sm font-medium text-basic-primary leading-snug transition-colors group-hover/card:text-wisled-600 dark:text-white/90 dark:group-hover/card:text-wisled-400 line-clamp-2"
                 >
                   {subcat.name}
                 </Text>
@@ -84,7 +84,7 @@ export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCard
       </Box>
 
       {/* Scroll indicator */}
-      {subcategories.length > 5 && (
+      {subcategories.length > 4 && (
         <Box className="absolute bottom-0 right-0 left-0 h-16 bg-gradient-to-t from-primary to-transparent pointer-events-none dark:from-white/[0.02]" aria-hidden="true" />
       )}
     </Box>
