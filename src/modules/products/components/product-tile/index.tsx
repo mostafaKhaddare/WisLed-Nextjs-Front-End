@@ -8,7 +8,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Text } from '@modules/common/components/text'
 import { BagIcon } from '@modules/common/icons'
 
-import { ProductActions } from './action'
+import { AddToCartButton, WishlistButton } from './action'
 import { LoadingImage } from './loading-image'
 import ProductPrice from './price'
 import { memo, useMemo, useState } from 'react'
@@ -139,7 +139,8 @@ export const ProductTile = memo(function ProductTile({
     <Box
       className={cn(
         'group flex h-full flex-col overflow-hidden rounded-xl',
-        'bg-primary border border-border-basic-primary dark:border-white/[0.06] dark:bg-white/[0.02]',
+        'w-full max-w-[220px] small:max-w-[260px] large:max-w-[240px]',
+        'bg-card border border-border-primary dark:border-white/[0.06] dark:bg-white/[0.02]',
         'shadow-card-subtle transition-all duration-300',
         'hover:shadow-card-hover hover:border-wisled-200/50 dark:hover:border-wisled-800/30',
         layout === 'carousel' && 'min-h-0'
@@ -180,8 +181,8 @@ export const ProductTile = memo(function ProductTile({
           )}
         </LocalizedClientLink>
 
-        {/* Quick Actions Overlay - Top Right & Bottom Right */}
-        <ProductActions
+        {/* Quick Actions Overlay - Top Right */}
+        <WishlistButton
           productHandle={product.handle}
           regionId={regionId}
           thumbnail={product.thumbnail || undefined}
@@ -191,7 +192,7 @@ export const ProductTile = memo(function ProductTile({
       </Box>
 
       {/* Product Info */}
-      <Box className="flex flex-1 flex-col gap-2 p-3 small:p-4 min-h-[120px]">
+      <Box className="flex flex-1 flex-col gap-2 p-3 small:p-4 small:pb-1 min-h-[120px]">
         <div className="flex flex-1 flex-col justify-between gap-2 min-h-0">
           {/* Title */}
           <LocalizedClientLink href={`/products/${product.handle}`} className="min-h-[40px] small:min-h-[44px]">
@@ -235,11 +236,17 @@ export const ProductTile = memo(function ProductTile({
             </div>
           )}
 
-          {/* Price */}
-          <ProductPrice
-            calculatedPrice={product.calculatedPrice}
-            salePrice={product.salePrice}
-          />
+          {/* Price + Add to Cart - side by side */}
+          <div className="mt-auto flex items-center justify-between gap-2">
+            <ProductPrice
+              calculatedPrice={product.calculatedPrice}
+              salePrice={product.salePrice}
+            />
+            <AddToCartButton
+              productHandle={product.handle}
+              regionId={regionId}
+            />
+          </div>
         </div>
       </Box>
     </Box>

@@ -33,7 +33,7 @@ export function SubcategoryCards({ subcategories, countryCode }: SubcategoryCard
           {subcategories.map((subcat) => (
             <LocalizedClientLink
               key={subcat.id}
-              href={`/${countryCode}/categories/${subcat.handle}`}
+              href={`/categories/${subcat.handle}`}
               className="group/card relative flex flex-col items-center gap-2 shrink-0 w-[160px] sm:w-[180px] rounded-xl overflow-hidden bg-primary border border-border-basic-primary/50 dark:border-white/[0.06] dark:bg-white/[0.02] transition-all duration-300 hover:shadow-lg hover:border-wisled-200/50 dark:hover:border-wisled-800/30 hover:-translate-y-0.5"
               data-testid={formatNameForTestId(`${subcat.name}-subcategory-card`)}
             >
