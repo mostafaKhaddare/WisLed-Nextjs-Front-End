@@ -45,8 +45,16 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
       })
   }
 
+  /**
+   * `Infinity` when Medusa does not manage this variant's inventory or allows
+   * backorders — the server will accept any quantity, so the control must not
+   * impose its own ceiling. Otherwise it is the real stock figure, which is the
+   * genuine oversale guard.
+   */
   const maxQuantity =
-    item.variant.inventory_quantity > 0 ? item.variant.inventory_quantity : 10
+    !item.variant?.manage_inventory || item.variant?.allow_backorder
+      ? Infinity
+      : Math.max(0, item.variant?.inventory_quantity ?? 0)
 
   return (
     <Box
@@ -81,14 +89,13 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
           </Box>
           {type === 'full' ? (
             <Box className="flex items-center gap-2">
-              <Box className="flex w-[108px] flex-col gap-2">
-                <ItemQtySelect
+               <ItemQtySelect
                   qty={item.quantity}
                   maxQuantity={maxQuantity}
                   action={changeQuantity}
+                  className="w-full"
                 />
                 <ErrorMessage error={error} />
-              </Box>
               {updating && <Spinner />}
             </Box>
           ) : (

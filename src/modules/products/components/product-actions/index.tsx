@@ -131,31 +131,35 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
-  // Get the max quantity
-  const maxQuantity = useMemo(() => {
-    if (!selectedVariant || !cartItems) return 10
-
-    const cartQuantity =
-      cartItems.reduce((sum, item) => {
-        if (item.variant_id === selectedVariant?.id) {
-          return sum + item.quantity
-        }
-        return sum
-      }, 0) || 0
-
-    if (selectedVariant?.allow_backorder) {
-      return 100
-    }
-
-    if (
-      selectedVariant?.inventory_quantity !== null &&
-      selectedVariant?.inventory_quantity !== undefined
-    ) {
-      return Math.max(0, selectedVariant.inventory_quantity - cartQuantity)
-    }
-
-    return 10 - cartQuantity
+  /** How many of the selected variant are already in the cart. */
+  const cartQuantity = useMemo(() => {
+    if (!selectedVariant) return 0
+    return (cartItems ?? []).reduce((sum, item) => {
+      if (item.variant_id === selectedVariant.id) {
+        return sum + item.quantity
+      }
+      return sum
+    }, 0)
   }, [selectedVariant, cartItems])
+
+  /**
+   * Highest quantity the customer may add.
+   *
+   * `Infinity` means Medusa does not track this variant's stock (or backorders
+   * are allowed), so it will not reject a larger line and we must not invent a
+   * ceiling. Otherwise it is the real stock figure for the selected variant,
+   * minus what is already in the cart — which is what stops an oversale.
+   */
+  const maxQuantity = useMemo(() => {
+    if (!selectedVariant) return 0
+
+    if (!selectedVariant.manage_inventory || selectedVariant.allow_backorder) {
+      return Infinity
+    }
+
+    const available = selectedVariant.inventory_quantity ?? 0
+    return Math.max(0, available - cartQuantity)
+  }, [selectedVariant, cartQuantity])
 
   // Preselect the options
   useEffect(() => {
@@ -200,14 +204,12 @@ export default function ProductActions({
             </div>
           )}
         </div>
-        <Box className="flex items-center gap-x-3">
-          <Box className="min-w-[96px]">
-            <ItemQtySelect
-              qty={qty}
-              maxQuantity={maxQuantity}
-              action={setQty}
-            />
-          </Box>
+        <Box className="flex flex-wrap items-start gap-x-3 gap-y-2 small:flex-nowrap small:items-center">
+          <ItemQtySelect
+            qty={qty}
+            maxQuantity={maxQuantity}
+            action={setQty}
+          />
           <Button
             onClick={handleAddToCart}
             disabled={
