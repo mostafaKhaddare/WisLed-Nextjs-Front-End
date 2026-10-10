@@ -49,22 +49,28 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
     item.variant.inventory_quantity > 0 ? item.variant.inventory_quantity : 10
 
   return (
-    <Box className="flex bg-primary small:h-[172px]" data-testid="cart-item">
-      <Box>
+    <Box
+      className="flex items-start gap-3 rounded-2xl bg-white p-3 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-12px_rgba(20,20,59,0.12)] small:gap-4 small:p-4 dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
+      data-testid="cart-item"
+    >
+      <Box className="shrink-0">
         <LocalizedClientLink href={`/products/${handle}`}>
           <Thumbnail
-            className="h-[92px] max-w-[92px] rounded-none small:h-full small:max-w-[146px]"
+            className="h-[88px] w-[88px] rounded-xl small:h-[132px] small:w-[132px]"
             thumbnail={item.variant?.product?.thumbnail}
             images={item.variant?.product?.images}
             alt={item.product_title}
           />
         </LocalizedClientLink>
       </Box>
-      <Box className="flex w-full justify-between p-5">
-        <Box className="flex h-full flex-col gap-3 small:justify-between small:gap-0">
+      <Box className="flex w-full justify-between gap-3">
+        <Box className="flex h-full flex-col gap-2">
           <Box>
             <LocalizedClientLink href={`/products/${handle}`}>
-              <Heading as="h3" className="line-clamp-2 text-md font-medium">
+              <Heading
+                as="h3"
+                className="line-clamp-2 font-jakarta text-sm font-semibold text-[#0F1B33] small:text-base dark:text-white"
+              >
                 {item.product_title}
               </Heading>
             </LocalizedClientLink>
@@ -72,9 +78,6 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
               variant={item.variant}
               data-testid="product-variant"
             />
-          </Box>
-          <Box className="block w-max small:hidden">
-            <LineItemPrice item={item} style="tight" />
           </Box>
           {type === 'full' ? (
             <Box className="flex items-center gap-2">
@@ -93,16 +96,14 @@ const Item = ({ item, type = 'full' }: ItemProps) => {
           )}
         </Box>
         <Box
-          className={cn('flex flex-col items-end justify-between', {
+          className={cn('flex flex-col items-end justify-between gap-3', {
             'justify-end': type === 'preview',
           })}
         >
           {type === 'full' && (
             <DeleteButton id={item.id} className="w-12 hover:bg-transparent" />
           )}
-          <Box className="hidden small:block">
-            <LineItemPrice item={item} style="tight" />
-          </Box>
+          <LineItemPrice item={item} style="tight" />
         </Box>
       </Box>
     </Box>

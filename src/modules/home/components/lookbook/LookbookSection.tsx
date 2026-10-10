@@ -11,8 +11,6 @@ import LookbookCard from './LookbookCard'
 import LookbookCarousel from './LookbookCarousel'
 import LookbookTabs from './LookbookTabs'
 
-const INITIAL_LIMIT = 6
-
 const ANIMATION_CSS = `
   @keyframes lookbook-card-in {
     from { opacity: 0; transform: translateY(20px) scale(0.98); }
@@ -35,7 +33,6 @@ const LookbookSection = ({
     const [activeTab, setActiveTab] = useState('All')
     const [isVisible, setIsVisible] = useState(true)
     const [gridKey, setGridKey] = useState(0)
-    const [visibleCount, setVisibleCount] = useState(INITIAL_LIMIT)
     const [currentApiUrl, setCurrentApiUrl] = useState(STRAPI_API_URL)
     const [productsData, setProductsData] = useState<Record<string, StoreProduct>>({})
 
@@ -101,7 +98,6 @@ const LookbookSection = ({
         setIsVisible(false)
         setTimeout(() => {
             setActiveTab(tab)
-            setVisibleCount(INITIAL_LIMIT)   // reset to 6 on every tab switch
             setGridKey((k) => k + 1)
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => setIsVisible(true))
@@ -109,7 +105,7 @@ const LookbookSection = ({
         }, 220)
     }
 
-    // ── Filtered + sliced lists ───────────────────────────────────────────────
+    // ── Filtered list ────────────────────────────────────────────────────────
     const filteredInspirations = useMemo(
         () =>
             activeTab === 'All'
@@ -121,9 +117,6 @@ const LookbookSection = ({
         [inspirations, activeTab]
     )
 
-    const visibleInspirations = filteredInspirations.slice(0, visibleCount)
-    const hasMore = filteredInspirations.length > visibleCount
-
     if (!inspirations?.length) return null
 
     return (
@@ -133,12 +126,12 @@ const LookbookSection = ({
                     title="Inspirations"
                     description="Inspirez-vous de nos réalisations et trouvez les produits exacts utilisés pour créer ces ambiances uniques."
                     headerAside={<LookbookTabs tabs={tabs} activeTab={activeTab} onTabClick={handleTabChange} />}
-                    slideCount={visibleInspirations.length}
+                    slideCount={filteredInspirations.length}
                     visible={isVisible}
                 >
                     {/* Basis stays under 100%/n so the next card always peeks in. */}
                     <div className="embla__container flex gap-3 small:gap-4">
-                        {visibleInspirations.map((item: any, index) => {
+                        {filteredInspirations.map((item: any, index) => {
                             const attrs = getAttributes(item)
                             if (!attrs) return null
 
@@ -179,24 +172,6 @@ const LookbookSection = ({
                         })}
                     </div>
                 </LookbookCarousel>
-
-                {/* Show more / show less */}
-                {filteredInspirations.length > INITIAL_LIMIT && (
-                    <div className="mt-10 flex justify-center">
-                        <button
-                            onClick={() =>
-                                hasMore
-                                    ? setVisibleCount((c) => c + 6)
-                                    : setVisibleCount(INITIAL_LIMIT)
-                            }
-                            className="px-8 py-3 rounded-full border border-gray-300 dark:border-white/20 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-white/5 shadow-sm hover:shadow-md hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-all duration-300"
-                        >
-                            {hasMore
-                                ? `Voir plus · ${filteredInspirations.length - visibleCount} restants`
-                                : 'Voir moins'}
-                        </button>
-                    </div>
-                )}
 
                 {/* Empty state */}
                 {filteredInspirations.length === 0 && (

@@ -121,16 +121,37 @@
   overflow: hidden;
 }
 
+/*
+  A horizontal carousel sits inside a vertically scrolling page, so it has to
+  own *only* the horizontal axis.
+
+  - `touch-action: pan-x` is what lets a finger that lands on a slide keep
+    scrolling the page vertically. Without it (or with `none`) the browser
+    hands the whole gesture to the carousel and the page stops moving, which is
+    the "I can't scroll when I touch the carousel" bug on touch devices.
+  - `overscroll-behavior-x: contain` stops a horizontal swipe from bubbling out
+    and dragging the whole document sideways.
+  - `-webkit-user-select` / `user-select` stop a long press from starting a text
+    selection or an image drag, both of which also eat the scroll gesture.
+
+  Note there is deliberately no `will-change` here either. A permanently
+  promoted layer on the viewport makes some mobile browsers swallow vertical
+  scroll chaining even when `touch-action` is correct.
+*/
 .embla__viewport {
   overflow: hidden;
   width: 100%;
   height: 100%;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .embla__container {
   display: flex;
   touch-action: pan-x;
-  will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -143,6 +164,55 @@
 .embla__container.embla__container--horizontal {
   flex-direction: row;
   touch-action: pan-x;
+}
+
+/* Media inside a carousel must never start a native drag gesture. */
+.embla__container img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/*
+  Inspiration cards are pure media, so they must never intercept a touch.
+
+  The card deliberately declares no `touch-action` of its own: it inherits
+  `pan-x` from the embla container, which is the standard, proven combination.
+  Overriding it here (say, with `pan-y`) would intersect the two to "no axis at
+  all" and the page would stop scrolling vertically — the very bug this fixes.
+
+  What is fixed here is everything that *eats* the gesture before the axis
+  decision is made: the long-press callout, text selection, the native image
+  drag, and the image layer itself, which is the element a finger actually
+  lands on.
+*/
+.lookbook-card {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lookbook-card img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Crossfade used by the inspiration carousel on a room-type switch. */
+.lookbook-fade {
+  transition: opacity 220ms ease;
+}
+
+.lookbook-fade--out {
+  opacity: 0;
+  /* Clicks must not reach slides that are already faded away. */
+  pointer-events: none;
+}
+
+.lookbook-fade--in {
+  opacity: 1;
 }
 
 .embla__slide {

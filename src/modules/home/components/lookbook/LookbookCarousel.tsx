@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 
+import { cn } from '@lib/util/cn'
 import { Button } from '@modules/common/components/button'
 import { ArrowLeftIcon, ArrowRightIcon } from '@modules/common/icons'
 
@@ -65,23 +66,24 @@ const LookbookCarousel = ({
         <div>
             <div className="flex items-end justify-between gap-6">
                 <div className="max-w-2xl">
-                    <h2 className="text-3xl font-bold text-basic-primary small:text-4xl large:text-5xl">
+                    <h2 className="font-jakarta text-3xl font-bold tracking-tight text-[#0F1B33] small:text-4xl large:text-5xl dark:text-white">
                         {title}
                     </h2>
 
+                    {/*
+                        Accent line sits between the heading and the description —
+                        a short branded rule that visually ties the two together.
+                    */}
+                    <span
+                        aria-hidden="true"
+                        className="mt-3 block h-1.5 w-16 rounded-full bg-[#1D4ED8] small:mt-4 small:w-20"
+                    />
+
                     {description && (
-                        <div className="mt-4 text-sm text-basic-primary/70 small:text-base">
+                        <div className="mt-4 font-jakarta text-sm leading-relaxed text-[#5B6577] small:text-base dark:text-gray-300">
                             {description}
                         </div>
                     )}
-
-                    {/* Angled accent bar — drawn with CSS, no image asset. */}
-                    <div
-                        aria-hidden="true"
-                        className="relative mt-6 h-1.5 w-24 overflow-hidden rounded-full bg-fg-secondary"
-                    >
-                        <span className="absolute inset-y-0 left-0 w-2/3 origin-left rounded-full bg-gradient-to-r from-action-primary to-wisled-400 [transform:skewX(-20deg)]" />
-                    </div>
                 </div>
 
                 {/* Arrows are redundant next to swipe on small screens. */}
@@ -120,18 +122,19 @@ const LookbookCarousel = ({
                 `embla__viewport` / `embla__container` come from globals.css — the container
                 class is what carries `touch-action: pan-x`, without which the browser
                 steals the horizontal swipe for page scrolling on touch devices.
+
+                The crossfade is opacity-only on purpose. A `will-change: transform` here
+                (or a transform in the wrapper style) promotes this subtree to its own
+                compositing layer on mobile Safari, which silently kills scroll chaining:
+                the page stops scrolling as soon as a finger lands on a slide. Only the
+                opacity is ever animated, so the layer is never needed.
             */}
             <div
                 ref={emblaRef}
-                className="embla__viewport mt-10 overflow-hidden"
-                style={{
-                    transition: 'opacity 220ms ease, transform 220ms ease',
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? 'translateY(0)' : 'translateY(10px)',
-                    // Stop clicks reaching the outgoing slides mid tab-switch.
-                    pointerEvents: visible ? 'auto' : 'none',
-                    willChange: 'opacity, transform',
-                }}
+                className={cn(
+                    'embla__viewport mt-10 overflow-hidden lookbook-fade',
+                    visible ? 'lookbook-fade--in' : 'lookbook-fade--out'
+                )}
             >
                 {children}
             </div>

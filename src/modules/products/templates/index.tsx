@@ -71,6 +71,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
   const cart = await retrieveCart()
 
+  // "Nouveau" badge on the hero shot, same 7-day window the cards use.
+  const isNew =
+    (Date.now() - new Date(product.created_at!).getTime()) /
+      (1000 * 3600 * 24) <=
+    7
+
   return (
     <>
       <Container
@@ -83,6 +89,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
             <ImageGallery
               title={product.title}
               images={product?.images || []}
+              productHandle={product.handle}
+              regionId={region.id}
+              thumbnail={product.thumbnail}
+              productId={product.id}
+              isNew={isNew}
             />
           </Box>
           <Box className="flex w-full flex-col gap-y-4 py-8 large:sticky large:top-24 large:max-w-[550px] large:py-0">

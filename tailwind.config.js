@@ -14,6 +14,12 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        jakarta: [
+          'var(--font-plus-jakarta-sans)',
+          'system-ui',
+          'sans-serif',
+        ],
+        sora: ['var(--font-sora)', 'system-ui', 'sans-serif'],
       },
       transitionProperty: {
         width: 'width margin',

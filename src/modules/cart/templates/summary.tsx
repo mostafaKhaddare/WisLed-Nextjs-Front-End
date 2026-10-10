@@ -27,9 +27,9 @@ const Summary = ({ cart }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
-    <Box className="flex w-full flex-col gap-2 large:w-[326px] xl:w-[437px]">
+    <Box className="flex w-full flex-col gap-4">
       <DiscountCode cart={cart} />
-      <Box className="flex flex-col gap-5 bg-primary p-5">
+      <Box className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-12px_rgba(20,20,59,0.12)] small:p-6 dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]">
         <CartTotals totals={cart} />
         <LocalizedClientLink
           href={'/checkout?step=' + step}

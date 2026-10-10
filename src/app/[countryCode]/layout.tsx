@@ -1,5 +1,9 @@
 import { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import {
+  Montserrat,
+  Plus_Jakarta_Sans,
+  Sora,
+} from 'next/font/google'
 
 import { getBaseURL } from '@lib/util/env'
 import { WishlistProvider } from '@lib/context/wishlist-context'
@@ -13,6 +17,22 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-montserrat',
+  display: 'swap',
+})
+
+// Product cards, tabs and option pills are drawn against the design mock, which
+// specifies Plus Jakarta Sans for UI copy and Sora for figures.
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-plus-jakarta-sans',
+  display: 'swap',
+})
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-sora',
   display: 'swap',
 })
 
@@ -63,7 +83,11 @@ export default function StorefrontRootLayout(props: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={montserrat.variable}>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${montserrat.variable} ${plusJakartaSans.variable} ${sora.variable}`}
+    >
       <body className="text-basic-primary font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <WishlistProvider>

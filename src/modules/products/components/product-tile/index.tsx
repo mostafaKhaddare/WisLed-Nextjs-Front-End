@@ -1,52 +1,72 @@
 'use client'
 
+import { memo, useMemo, useState } from 'react'
+
 import { cn } from '@lib/util/cn'
 import { formatNameForTestId } from '@lib/util/formatNameForTestId'
-import { Badge } from '@modules/common/components/badge'
-import { Box } from '@modules/common/components/box'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
-import { Text } from '@modules/common/components/text'
 import { BagIcon } from '@modules/common/icons'
 
 import { AddToCartButton, WishlistButton } from './action'
+import {
+  CHIP_BG,
+  CHIP_TEXT,
+  NAVY,
+  PHOTO_GRADIENT,
+  getVariantDotColor,
+} from './design-tokens'
 import { LoadingImage } from './loading-image'
-import ProductPrice from './price'
-import { memo, useMemo, useState } from 'react'
 
-const MAX_VARIANT_BADGES = 3
+const MAX_VARIANT_CHIPS = 3
+const MAX_SPEC_ITEMS = 4
 
 const TILE_SIZES: Record<'list' | 'carousel', string> = {
   list: '(max-width: 1023px) 50vw, 25vw',
   carousel:
-    '(max-width: 639px) 73vw, (max-width: 767px) 63vw, (max-width: 1023px) 43vw, (max-width: 1279px) 34vw, 31vw',
+    '(max-width: 639px) 62vw, (max-width: 767px) 42vw, (max-width: 1023px) 32vw, (max-width: 1279px) 26vw, 24vw',
 }
 
+/** Options whose values are best read as colour / temperature swatches. */
+const COLOR_OPTION_RE =
+  /temp|couleur|color|kelvin|blanc|white|rgb|cct|teinte|ambiance|lumiere|lumière/i
+
+function isColorOption(title: string): boolean {
+  return COLOR_OPTION_RE.test(title ?? '')
+}
+
+/** Rough weight so measurable options read before free-form ones. */
 function getOptionPriority(optionTitle: string): number {
   const title = optionTitle.toLowerCase()
-  if (title.includes('longueur') || title.includes('length') || title.includes('size') || title.includes('taille') || title.includes('meter') || title.includes('mètre') || title.includes('cm') || title.includes('mm') || title.includes('5m') || title.includes('10m')) return 1
-  if (title.includes('tension') || title.includes('voltage') || title.includes('volt') || title.includes('12v') || title.includes('24v')) return 2
-  if (title.includes('température') || title.includes('temperature') || title.includes('couleur') || title.includes('color') || title.includes('kelvin') || title.includes('blanc') || title.includes('white') || title.includes('rgb') || title.includes('cct')) return 3
+  if (
+    title.includes('longueur') ||
+    title.includes('length') ||
+    title.includes('taille') ||
+    title.includes('meter') ||
+    title.includes('mètre') ||
+    title.includes('ip') ||
+    title.includes('étanchéité') ||
+    title.includes('etancheite')
+  ) {
+    return 1
+  }
+  if (
+    title.includes('tension') ||
+    title.includes('voltage') ||
+    title.includes('volt')
+  ) {
+    return 2
+  }
+  if (isColorOption(title)) return 3
   return 4
 }
 
-function getPrioritizedVariantValues(optionsToRender: any[]): string[] {
-  const allValues: { value: string; priority: number }[] = []
-
-  for (const opt of optionsToRender) {
-    const priority = getOptionPriority(opt.title)
-    for (const val of opt.values) {
-      allValues.push({ value: val, priority })
-    }
-  }
-
-  allValues.sort((a, b) => a.priority - b.priority)
-
-  const uniqueValues = Array.from(new Set(allValues.map(v => v.value)))
-  return uniqueValues.slice(0, MAX_VARIANT_BADGES)
-}
-
-function hasSalePrice(product: { calculatedPrice: string; salePrice?: string }) {
-  return Boolean(product.salePrice && product.salePrice !== product.calculatedPrice)
+function hasSalePrice(product: {
+  calculatedPrice: string
+  salePrice?: string
+}) {
+  return Boolean(
+    product.salePrice && product.salePrice !== product.calculatedPrice
+  )
 }
 
 function parsePrice(price: string | undefined): number {
@@ -54,12 +74,54 @@ function parsePrice(price: string | undefined): number {
   return parseFloat(price.replace(/[^\d.,]/g, '').replace(',', '.'))
 }
 
-function getDiscountPercentage(product: { calculatedPrice: string; salePrice?: string }) {
+function getDiscountPercentage(product: {
+  calculatedPrice: string
+  salePrice?: string
+}) {
   if (!hasSalePrice(product)) return 0
   const current = parsePrice(product.calculatedPrice)
   const original = parsePrice(product.salePrice)
   if (!current || !original || original <= current) return 0
   return Math.round(((original - current) / original) * 100)
+}
+
+/**
+ * Splits a localised currency string such as `MAD 100.00` (or `100.00 MAD`)
+ * into its number and its currency code so the two can be styled separately —
+ * the mock types the amount large and the currency as a small muted tail.
+ */
+function splitPrice(price?: string): { amount: string; currency: string } {
+  const trimmed = (price ?? '').trim()
+  if (!trimmed) return { amount: '', currency: '' }
+
+  const prefixed = /^(?<cur>[A-Za-z]{3})\s*(?<amt>[\d\s.,]+)$/.exec(trimmed)
+  if (prefixed?.groups) {
+    return {
+      amount: prefixed.groups.amt.trim(),
+      currency: prefixed.groups.cur.toUpperCase(),
+    }
+  }
+
+  const suffixed = /^(?<amt>[\d\s.,]+)\s*(?<cur>[A-Za-z]{3})$/.exec(trimmed)
+  if (suffixed?.groups) {
+    return {
+      amount: suffixed.groups.amt.trim(),
+      currency: suffixed.groups.cur.toUpperCase(),
+    }
+  }
+
+  return { amount: trimmed, currency: '' }
+}
+
+/** Light swatches would vanish into the chip fill, so they get a hairline. */
+function needsSwatchRing(hex: string): boolean {
+  const clean = hex.replace('#', '')
+  if (clean.length !== 6) return false
+  const r = parseInt(clean.slice(0, 2), 16)
+  const g = parseInt(clean.slice(2, 4), 16)
+  const b = parseInt(clean.slice(4, 6), 16)
+  // Relative luminance, quick approximation.
+  return (r * 299 + g * 587 + b * 114) / 1000 > 205
 }
 
 export const ProductTile = memo(function ProductTile({
@@ -84,25 +146,38 @@ export const ProductTile = memo(function ProductTile({
   layout?: 'list' | 'carousel'
   priority?: boolean
 }) {
-  const [displayedImage, setDisplayedImage] = useState<string | null>(product.thumbnail)
+  const [displayedImage, setDisplayedImage] = useState<string | null>(
+    product.thumbnail
+  )
+
+  // Hoisted to primitives so the memoisers below can depend on values instead
+  // of the object literal the parent builds inline each render.
+  const createdAt = product.created_at
+  const metadata = product.metadata
+  const calculatedPrice = product.calculatedPrice
+  const salePrice = product.salePrice
 
   const isNew = useMemo(() => {
-    const createdAt = new Date(product.created_at)
+    const createdDate = new Date(createdAt)
     const currentDate = new Date()
     const differenceInDays =
-      (currentDate.getTime() - createdAt.getTime()) / (1000 * 3600 * 24)
+      (currentDate.getTime() - createdDate.getTime()) / (1000 * 3600 * 24)
 
     return differenceInDays <= 7
-  }, [product.created_at])
+  }, [createdAt])
 
   const isBestSeller = useMemo(() => {
-    return product.metadata?.is_bestseller === true ||
-      product.metadata?.isBestSeller === true ||
-      product.metadata?.best_seller === true
-  }, [product.metadata])
+    return metadata?.is_bestseller === true
+  }, [metadata])
 
-  const onSale = useMemo(() => hasSalePrice(product), [product.calculatedPrice, product.salePrice])
-  const discountPct = useMemo(() => getDiscountPercentage(product), [product.calculatedPrice, product.salePrice])
+  const onSale = useMemo(
+    () => hasSalePrice({ calculatedPrice, salePrice }),
+    [calculatedPrice, salePrice]
+  )
+  const discountPct = useMemo(
+    () => getDiscountPercentage({ calculatedPrice, salePrice }),
+    [calculatedPrice, salePrice]
+  )
 
   const optionsToRender = useMemo(() => {
     if (!product.options || !product.variants) return []
@@ -112,57 +187,123 @@ export const ProductTile = memo(function ProductTile({
         const values = Array.from(
           new Set(
             product.variants!.map((v: any) => {
-              const val = v.options.find((o: any) => o.option_id === opt.id)?.value
+              const val = v.options.find((o: any) => o.option_id === opt.id)
+                ?.value
               return val
             })
           )
-        ).filter(Boolean)
+        ).filter(Boolean) as string[]
 
         return { ...opt, values }
       })
       .filter((o: any) => o.values.length > 0)
+      .sort(
+        (a: any, b: any) =>
+          getOptionPriority(a.title) - getOptionPriority(b.title)
+      )
   }, [product])
 
-  const variantBadges = useMemo(() => {
-    if (optionsToRender.length === 0) return { values: [], hasMore: false }
-    const prioritized = getPrioritizedVariantValues(optionsToRender)
-    const totalUniqueValues = Array.from(new Set(optionsToRender.flatMap((o: any) => o.values))).length
-    return {
-      values: prioritized,
-      hasMore: totalUniqueValues > prioritized.length
-    }
-  }, [optionsToRender])
+  const colorOption = useMemo(
+    () =>
+      optionsToRender.find((o: any) => isColorOption(o.title)) ??
+      optionsToRender[0],
+    [optionsToRender]
+  )
 
-  const imageHeightClass = layout === 'carousel' ? 'h-[280px]' : 'h-[180px]'
+  /**
+   * Colour / temperature values become the labelled chips; everything else is
+   * folded into the one-line spec strip under the title, which is where the
+   * mock shows "480 LED/m · 5 m · 24V · IP20".
+   */
+  const chips = useMemo(
+    () => (colorOption ? colorOption.values.slice(0, MAX_VARIANT_CHIPS) : []),
+    [colorOption]
+  )
+
+  const specLine = useMemo(() => {
+    const others = optionsToRender.filter((o: any) => o !== colorOption)
+    const values = Array.from(
+      new Set(others.flatMap((o: any) => o.values as string[]))
+    ).slice(0, MAX_SPEC_ITEMS)
+
+    return values.join(' · ')
+  }, [optionsToRender, colorOption])
+
+  const { amount, currency } = useMemo(
+    () => splitPrice(product.calculatedPrice),
+    [product.calculatedPrice]
+  )
+
+  const handleOptionClick = (
+    e: React.MouseEvent,
+    optionId: string,
+    value: string
+  ) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const variant = product.variants?.find((v: any) =>
+      v.options.some((o: any) => o.option_id === optionId && o.value === value)
+    )
+
+    if (variant?.thumbnail) {
+      setDisplayedImage(variant.thumbnail)
+    }
+  }
+
+  const isCarousel = layout === 'carousel'
 
   return (
-    <Box
+    <article
       className={cn(
-        'group flex h-full flex-col overflow-hidden rounded-xl',
-        'w-full max-w-[220px] small:max-w-[260px] large:max-w-[240px]',
-        'bg-card border border-border-primary dark:border-white/[0.06] dark:bg-white/[0.02]',
-        'shadow-card-subtle transition-all duration-300',
-        'hover:shadow-card-hover hover:border-wisled-200/50 dark:hover:border-wisled-800/30',
-        layout === 'carousel' && 'min-h-0'
+        'group relative flex h-full w-full flex-col overflow-hidden bg-white',
+        'rounded-[20px] small:rounded-3xl',
+        'shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-8px_rgba(20,20,59,0.14)]',
+        'transition-shadow duration-300',
+        'hover:shadow-[0_2px_4px_rgba(20,20,59,0.06),0_16px_32px_-12px_rgba(20,20,59,0.2)]',
+        'dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]',
+        isCarousel ? 'max-w-[220px] small:max-w-[360px]' : 'max-w-none'
       )}
       data-testid={formatNameForTestId(`${product.title}-product-tile`)}
     >
-      <Box className={cn('relative overflow-hidden rounded-t-xl', imageHeightClass, 'bg-wisled-50/50 dark:bg-wisled-950/30')}>
-        {/* Badges - Top Left */}
-        <div className="absolute left-2 top-2 z-10 flex flex-col gap-1.5 small:left-3 small:top-3" aria-hidden="true">
-          {onSale && discountPct > 0 && (
-            <Badge label={`-${discountPct}%`} variant="red" className="shadow-sm" />
-          )}
-          {isNew && (
-            <Badge label="Nouveau" variant="brand" className="shadow-sm" />
-          )}
-          {isBestSeller && (
-            <Badge label="Best Seller" variant="green" className="shadow-sm" />
-          )}
-        </div>
+      {/* ── Photo ─────────────────────────────────────────────────────────── */}
+      <div
+        className={cn(
+          'relative shrink-0 overflow-hidden',
+          isCarousel ? 'h-[120px]' : 'h-[150px]',
+          'small:h-[240px] large:h-[210px]'
+        )}
+        style={{ background: PHOTO_GRADIENT }}
+      >
+        {/* Badges */}
+        {(onSale || isNew || isBestSeller) && (
+          <div className="absolute left-2.5 top-2.5 z-10 flex flex-col items-start gap-1.5 small:left-3.5 small:top-3.5">
+            {onSale && discountPct > 0 && (
+              <span className="inline-flex h-[21.6px] items-center rounded-[10px] bg-[#E5484D] px-2 font-jakarta text-[11px] font-bold leading-none text-white small:h-[25.2px] small:rounded-xl small:text-xs">
+                -{discountPct}%
+              </span>
+            )}
+            {isNew && (
+              <span
+                className="inline-flex h-[21.6px] items-center rounded-[10px] px-2 font-jakarta text-[11px] font-bold leading-none text-white small:h-[25.2px] small:rounded-xl small:text-xs"
+                style={{ backgroundColor: NAVY }}
+              >
+                Nouveau
+              </span>
+            )}
+            {isBestSeller && (
+              <span className="inline-flex h-[21.6px] items-center rounded-[10px] bg-[#0F7B3D] px-2 font-jakarta text-[11px] font-bold leading-none text-white small:h-[25.2px] small:rounded-xl small:text-xs">
+                Best Seller
+              </span>
+            )}
+          </div>
+        )}
 
-        {/* Product Image */}
-        <LocalizedClientLink href={`/products/${product.handle}`} className="block h-full w-full" aria-label={product.title}>
+        <LocalizedClientLink
+          href={`/products/${product.handle}`}
+          className="block h-full w-full"
+          aria-label={product.title}
+        >
           {displayedImage ? (
             <LoadingImage
               src={displayedImage}
@@ -171,17 +312,16 @@ export const ProductTile = memo(function ProductTile({
               priority={priority}
               sizes={TILE_SIZES[layout]}
               fallbackSrc={product.thumbnail || undefined}
-              fallback={<BagIcon className="h-16 w-16 text-secondary/50" />}
-              className="h-full w-full object-contain p-4 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover:scale-[1.02]"
+              fallback={<BagIcon className="h-10 w-10 text-[#5B6577]/40" />}
+              className="h-full w-full object-contain p-3 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover:scale-[1.03] small:p-5"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-wisled-50/50 dark:bg-wisled-950/30">
-              <BagIcon className="h-16 w-16 text-secondary/50" />
+            <div className="flex h-full w-full items-center justify-center">
+              <BagIcon className="h-10 w-10 text-[#5B6577]/40" />
             </div>
           )}
         </LocalizedClientLink>
 
-        {/* Quick Actions Overlay - Top Right */}
         <WishlistButton
           productHandle={product.handle}
           regionId={regionId}
@@ -189,67 +329,85 @@ export const ProductTile = memo(function ProductTile({
           title={product.title}
           productId={product.id}
         />
-      </Box>
+      </div>
 
-      {/* Product Info */}
-      <Box className="flex flex-1 flex-col gap-2 p-3 small:p-4 small:pb-1 min-h-[120px]">
-        <div className="flex flex-1 flex-col justify-between gap-2 min-h-0">
-          {/* Title */}
-          <LocalizedClientLink href={`/products/${product.handle}`} className="min-h-[40px] small:min-h-[44px]">
-            <Text
-              title={product.title}
-              as="span"
-              className="line-clamp-2 text-sm font-medium text-basic-primary leading-snug transition-colors group-hover:text-wisled-600 dark:text-white/90 dark:group-hover:text-wisled-400 small:text-base"
-            >
-              {product.title}
-            </Text>
-          </LocalizedClientLink>
+      {/* ── Copy ──────────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 flex-col p-3 small:p-4">
+        <LocalizedClientLink
+          href={`/products/${product.handle}`}
+          className="block"
+        >
+          <h3 className="line-clamp-2 font-jakarta text-sm font-semibold leading-snug text-[#0F1B33] small:text-base small:leading-[1.4] dark:text-white">
+            {product.title}
+          </h3>
+        </LocalizedClientLink>
 
-          {/* Variant Badges - Non-interactive display of available options */}
-          {variantBadges.values.length > 0 && (
-            <div className="mt-1.5 flex items-center gap-1.5 overflow-hidden" aria-label="Variantes disponibles">
-              {variantBadges.values.map((val: string, idx: number) => (
-                <span
-                  key={idx}
+        {specLine && (
+          <p className="mt-1 line-clamp-2 font-jakarta text-xs leading-snug text-[#5B6577] small:mt-1.5 small:text-[13px] dark:text-gray-400">
+            {specLine}
+          </p>
+        )}
+
+        {/* Variant chips */}
+        {chips.length > 0 && (
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5 small:mt-3 small:gap-2">
+            {chips.map((val: string) => {
+              const dot = getVariantDotColor(val)
+              return (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={(e) =>
+                    colorOption && handleOptionClick(e, colorOption.id, val)
+                  }
+                  title={val}
+                  aria-label={`Voir la variante ${val}`}
                   className={cn(
-                    'inline-flex h-5 items-center justify-center rounded-[6px] border px-2 text-[11px] font-medium',
-                    'border-wisled-200 bg-wisled-100/80 text-wisled-700',
-                    'dark:border-wisled-800 dark:bg-wisled-900/50 dark:text-wisled-200',
-                    'whitespace-nowrap flex-shrink-0'
+                    'inline-flex h-[21.6px] shrink-0 items-center gap-1.5 rounded-[10px] px-2',
+                    'font-jakarta text-[11px] font-semibold leading-none transition-[filter]',
+                    'hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D4ED8]',
+                    'small:h-[23.2px] small:px-2.5 small:text-xs'
                   )}
+                  style={{ backgroundColor: CHIP_BG, color: CHIP_TEXT }}
                 >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'h-2 w-2 shrink-0 rounded-full',
+                      needsSwatchRing(dot) && 'ring-1 ring-[#5B6577]/25'
+                    )}
+                    style={{ backgroundColor: dot }}
+                  />
                   {val}
-                </span>
-              ))}
-              {variantBadges.hasMore && (
-                <span
-                  className={cn(
-                    'inline-flex h-5 items-center justify-center rounded-[6px] border px-2 text-[11px] font-medium',
-                    'border-wisled-200 bg-wisled-100/80 text-wisled-500',
-                    'dark:border-wisled-800 dark:bg-wisled-900/50 dark:text-wisled-400',
-                    'whitespace-nowrap flex-shrink-0'
-                  )}
-                >
-                  +{Array.from(new Set(optionsToRender.flatMap((o: any) => o.values))).length - variantBadges.values.length}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Price + Add to Cart - side by side */}
-          <div className="mt-auto flex items-center justify-between gap-2">
-            <ProductPrice
-              calculatedPrice={product.calculatedPrice}
-              salePrice={product.salePrice}
-            />
-            <AddToCartButton
-              productHandle={product.handle}
-              regionId={regionId}
-            />
+                </button>
+              )
+            })}
           </div>
+        )}
+
+        {/* Price + add to cart */}
+        <div className="mt-auto flex items-end justify-between gap-2 pt-3 small:pt-4">
+          <div className="flex flex-wrap items-baseline gap-x-1.5">
+            {onSale && (
+              <span className="font-jakarta text-xs font-medium text-[#5B6577] line-through small:text-[13px]">
+                {splitPrice(product.salePrice).amount}
+              </span>
+            )}
+            <span className="font-sora text-[15px] font-bold leading-none text-[#0F1B33] small:text-xl dark:text-white">
+              {amount}
+            </span>
+            <span className="font-jakarta text-[11px] font-semibold leading-none text-[#5B6577] small:text-xs">
+              {currency || 'MAD'}
+            </span>
+          </div>
+
+          <AddToCartButton
+            productHandle={product.handle}
+            regionId={regionId}
+          />
         </div>
-      </Box>
-    </Box>
+      </div>
+    </article>
   )
 })
 

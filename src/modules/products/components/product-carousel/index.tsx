@@ -40,7 +40,11 @@ export function ProductCarousel({
 
               return (
                 <Box
-                  className="flex-[0_0_calc(72.666%-8px)] small:flex-[0_0_calc(62.666%-8px)] medium:flex-[0_0_calc(42.666%-8px)] xl:flex-[0_0_calc(33.333%-8px)] 2xl:flex-[0_0_calc(30.333%-8px)]"
+                  // Basis is fixed on touch so the card is a true 220px wide —
+                  // the width the design mock uses — then switches to the
+                  // fluid per-breakpoint fractions once the viewport is wide
+                  // enough for several cards.
+                  className="flex-[0_0_220px] small:flex-[0_0_calc(50%-8px)] medium:flex-[0_0_calc(33.333%-8px)] large:flex-[0_0_calc(25%-12px)] xl:flex-[0_0_calc(25%-12px)] 2xl:flex-[0_0_calc(20%-12px)]"
                   key={item.id}
                 >
                   <ProductTile

@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { useWishlist } from '@lib/context/wishlist-context'
 import { addToCartCheapestVariant } from '@lib/data/cart'
 import { toast } from '@modules/common/components/toast'
-import { HeartIcon, BagIcon } from '@modules/common/icons'
+import { HeartIcon, BagIcon, PlusIcon } from '@modules/common/icons'
 import { Spinner } from '@modules/common/icons'
 import { cn } from '@lib/util/cn'
 import { Box } from '@modules/common/components/box'
@@ -18,6 +18,8 @@ interface ActionProps {
   title?: string
   thumbnail?: string
   productId?: string
+  /** Overrides the default in-card placement (used by the detail-page hero). */
+  className?: string
 }
 
 export function WishlistButton({
@@ -27,6 +29,7 @@ export function WishlistButton({
   title,
   thumbnail,
   productId,
+  className,
 }: ActionProps) {
   const { isWishlisted, toggleWishlist } = useWishlist()
   const [isLoadingWishlist, setIsLoadingWishlist] = useState(false)
@@ -67,20 +70,25 @@ export function WishlistButton({
   }
 
   return (
-    <Box className="absolute right-2 top-2 z-10 small:right-3 small:top-3">
+    <Box
+      className={cn(
+        'absolute right-2.5 top-2.5 z-10 small:right-3.5 small:top-3.5',
+        className
+      )}
+    >
       <Button
         variant="icon"
         onClick={handleWishlist}
         disabled={isLoadingWishlist}
         withIcon
         className={cn(
-          '!rounded-full !p-2 !h-auto !w-auto',
-          'backdrop-blur-sm shadow-md transition-all duration-200',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary',
-          isLoadingWishlist && 'opacity-60 cursor-not-allowed',
-          wishlisted
-            ? 'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60'
-            : 'bg-primary/90 hover:bg-wisled-50 hover:shadow-lg dark:bg-white/10 dark:hover:bg-white/20'
+          // Matches the mock: a plain white disc that reads on any photo.
+          '!grid !h-8 !w-8 !place-items-center !rounded-full !p-0',
+          'bg-white shadow-[0_2px_8px_rgba(13,27,54,0.15)]',
+          'transition-transform duration-200 hover:scale-105 active:scale-95',
+          'small:!h-9 small:!w-9',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D4ED8] focus-visible:ring-offset-2',
+          isLoadingWishlist && 'opacity-60 cursor-not-allowed'
         )}
         aria-label={
           wishlisted
@@ -89,14 +97,14 @@ export function WishlistButton({
         }
       >
         {isLoadingWishlist ? (
-          <Spinner className="h-4 w-4 text-red-500" />
+          <Spinner className="h-4 w-4 text-[#E5484D]" />
         ) : (
           <HeartIcon
             className={cn(
-              'h-4 w-4 transition-all duration-300',
+              'h-4 w-4 transition-all duration-300 small:h-[18px] small:w-[18px]',
               wishlisted
-                ? 'text-red-500 fill-red-500 scale-110'
-                : 'text-wisled-600 hover:text-red-400 dark:text-wisled-300 dark:hover:text-red-400 scale-100'
+                ? 'text-[#E5484D] fill-[#E5484D] scale-110'
+                : 'text-[#0F1B33] hover:text-[#E5484D] scale-100'
             )}
             filled={wishlisted}
           />
@@ -154,27 +162,33 @@ export function AddToCartButton({
   return (
     <Button
       variant="filled"
-      size="sm"
       onClick={handleAddToCart}
       disabled={isAddingToCart}
       className={cn(
-        'shrink-0 rounded-full px-3 py-1.5 gap-1.5',
-        'bg-wisled-500 text-white',
-        'hover:bg-wisled-600 active:bg-wisled-700',
-        'shadow-md shadow-wisled-500/25',
-        'hover:shadow-lg hover:shadow-wisled-500/40',
+        // One control, two shapes: a compact 44px disc on touch, the full
+        // "Ajouter" pill from the mock once there is room for the label.
+        'shrink-0 !rounded-full !p-0',
+        '!grid !h-11 !w-11 !place-items-center',
+        'small:!h-11 small:!w-auto small:!gap-2 small:!px-5',
+        'bg-[#1D4ED8] text-white',
+        'shadow-[0_6px_16px_rgba(29,78,216,0.28)]',
+        'hover:bg-[#1B45C4] hover:shadow-[0_8px_20px_rgba(29,78,216,0.36)]',
+        'active:bg-[#183CA9]',
         'transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wisled-500 focus-visible:ring-offset-2 focus-visible:ring-offset-primary',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D4ED8] focus-visible:ring-offset-2',
         isAddingToCart && 'opacity-60 cursor-not-allowed'
       )}
       aria-label="Ajouter au panier"
     >
       {isAddingToCart ? (
-        <Spinner className="h-4 w-4 text-white" />
+        <Spinner className="h-5 w-5 text-white" />
       ) : (
         <>
-          <BagIcon className="h-4 w-4" />
-          <span className="font-medium text-sm">Ajouter</span>
+          <PlusIcon className="h-5 w-5 small:hidden" />
+          <BagIcon className="hidden h-4 w-4 small:block" />
+          <span className="hidden font-jakarta text-sm font-bold leading-none small:inline">
+            Ajouter
+          </span>
         </>
       )}
     </Button>
