@@ -313,7 +313,7 @@ export const ProductTile = memo(function ProductTile({
               sizes={TILE_SIZES[layout]}
               fallbackSrc={product.thumbnail || undefined}
               fallback={<BagIcon className="h-10 w-10 text-[#5B6577]/40" />}
-              className="h-full w-full object-contain p-3 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover:scale-[1.03] small:p-5"
+              className="h-full w-full object-fill transition-transform duration-500 ease-out motion-reduce:transition-none group-hover:scale-[1.03]"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">

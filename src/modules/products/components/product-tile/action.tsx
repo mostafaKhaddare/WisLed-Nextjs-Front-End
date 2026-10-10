@@ -167,8 +167,10 @@ export function AddToCartButton({
       className={cn(
         // One control, two shapes: a compact 44px disc on touch, the full
         // "Ajouter" pill from the mock once there is room for the label.
+        // `flex`, not `grid`: a grid stacks its children into rows, which would
+        // drop the label underneath the icon instead of beside it.
         'shrink-0 !rounded-full !p-0',
-        '!grid !h-11 !w-11 !place-items-center',
+        '!flex !h-11 !w-11 !items-center !justify-center',
         'small:!h-11 small:!w-auto small:!gap-2 small:!px-5',
         'bg-[#1D4ED8] text-white',
         'shadow-[0_6px_16px_rgba(29,78,216,0.28)]',
@@ -183,6 +185,7 @@ export function AddToCartButton({
       {isAddingToCart ? (
         <Spinner className="h-5 w-5 text-white" />
       ) : (
+        // Icon first so it sits on the left, label on the right.
         <>
           <PlusIcon className="h-5 w-5 small:hidden" />
           <BagIcon className="hidden h-4 w-4 small:block" />
