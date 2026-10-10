@@ -46,6 +46,8 @@ export type BlogPost = {
   Title: string
   Slug: string
   Content: string
+  /** Optional short summary. Derived from Content when the CMS has none. */
+  Description?: string
   FeaturedImage: {
     url: string
     alternativeText?: string

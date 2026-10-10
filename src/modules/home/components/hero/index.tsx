@@ -19,6 +19,20 @@ interface HeroProps {
   transitionDuration?: number
 }
 
+/** Reassurance chips shown under the mobile hero panel. */
+const TRUST_CHIPS = [
+  'Livraison 24-48h',
+  'Paiement sécurisé',
+  'Garantie 2 ans',
+]
+
+/**
+ * Copy used when the CMS is offline or the fields are empty, so the mobile
+ * panel never renders a blank heading.
+ */
+const HEADLINE_FALLBACK = 'Illuminez vos espaces avec un éclairage sur mesure'
+const TEXT_FALLBACK = 'Découvrez des solutions d’éclairage économes en énergie.'
+
 
 
 const Hero = ({
@@ -27,6 +41,11 @@ const Hero = ({
   transitionDuration = 35
 }: HeroProps) => {
   const { Headline, Text: text, CTA, Image: bannerImage } = data
+
+  // Fall back to designed copy so the mobile panel is never blank when Strapi
+  // is unreachable or a field was left empty in the CMS.
+  const headline = Headline || HEADLINE_FALLBACK
+  const body = text || TEXT_FALLBACK
 
   // Normalize images to array; filter out nulls (Strapi offline fallback)
   const images = useMemo(
@@ -131,7 +150,12 @@ const Hero = ({
 
   return (
     <>
-      <Box className="relative h-[360px] max-h-screen w-full overflow-hidden small:h-[400px] large:h-[600px] 2xl:h-screen 2xl:max-h-[600px]">
+      {/*
+        Desktop banner carousel. Hidden below `large` because the mobile hero
+        panel below replaces it entirely — keeping both visible would duplicate
+        the H1 and show two competing calls to action.
+      */}
+      <Box className="relative hidden h-[360px] max-h-screen w-full overflow-hidden small:h-[400px] large:block large:h-[600px] 2xl:h-screen 2xl:max-h-[600px]">
         {/* Carousel Container */}
         <div
           className="h-full w-full"
@@ -307,28 +331,110 @@ const Hero = ({
         </div>
       </Box>
 
-      {/* Content for Small/Medium Screens */}
-      <Container className="flex flex-col gap-2 !py-4 small:gap-4 small:!py-6 large:hidden">
-        <Heading
-          as="h1"
-          className="max-w-full text-2xl font-bold text-basic-primary small:max-w-[510px] medium:text-5xl"
-        >
-          {Headline}
-        </Heading>
-        <Box className="flex flex-col-reverse justify-between gap-4 medium:flex-row medium:items-center">
-          <Button size="md" asChild className="w-max">
-            <LocalizedClientLink href={CTA.BtnLink}>
-              {CTA.BtnText}
-            </LocalizedClientLink>
-          </Button>
-          <Text
-            size="lg"
-            className="max-w-full text-basic-primary medium:max-w-[410px] medium:text-end"
+      {/*
+        ─── Mobile hero ───
+        The banner carousel is desktop-only. On touch the mock is a self
+        contained dark panel: navy radial wash, two LED-strip bars bleeding off
+        the top-right, an eyebrow, the CMS headline and copy, a primary and a
+        secondary action, and a small trust-chip strip underneath.
+      */}
+      <Box className="large:hidden">
+        <Box className="!px-0">
+          <section
+            className="relative mx-4 mt-4 flex min-h-[410px] flex-col justify-end gap-3.5 overflow-hidden rounded-[28px] px-[22px] pb-[26px] text-white"
+            style={{
+              background:
+                'radial-gradient(120% 80% at 80% 100%, #3B2A0E 0%, #0F1B33 62%)',
+            }}
           >
-            {text}
-          </Text>
+            {/* LED-strip decoration, rotated and cropped by the panel. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+            >
+              <div
+                className="absolute right-[-30px] top-[44px] h-[14px] w-[230px] rounded-[7px]"
+                style={{
+                  background: '#FFC15A',
+                  boxShadow: '0 0 60px 22px rgba(255,170,40,0.55)',
+                  transform: 'rotate(-14deg)',
+                }}
+              />
+              <div
+                className="absolute right-[-60px] top-[96px] h-[10px] w-[260px] rounded-[5px]"
+                style={{
+                  background: '#FFE2A8',
+                  boxShadow: '0 0 50px 16px rgba(255,200,100,0.4)',
+                  transform: 'rotate(-14deg)',
+                }}
+              />
+            </div>
+
+            <span className="relative font-jakarta text-xs font-bold uppercase leading-none tracking-[0.12em] text-[#FFC857]">
+              Solutions LED Projet &amp; Maison
+            </span>
+
+            <Heading
+              as="h1"
+              className="relative font-sora text-[32px] font-bold leading-[1.12] tracking-[-0.01em] text-white"
+            >
+              {headline}
+            </Heading>
+
+            {body && (
+              <Text className="relative font-jakarta text-[15px] leading-[1.5] text-[#D3DAEA]">
+                {body}
+              </Text>
+            )}
+
+            <div className="relative mt-1 flex flex-wrap gap-2.5">
+              <Button
+                size="md"
+                asChild
+                className="h-12 rounded-3xl bg-[#FFC857] px-[22px] font-jakarta text-[15px] font-bold text-[#1B1303] hover:bg-[#FFD37A]"
+              >
+                <LocalizedClientLink href={CTA.BtnLink}>
+                  {CTA.BtnText}
+                </LocalizedClientLink>
+              </Button>
+              <Button
+                size="md"
+                asChild
+                variant="tonal"
+                className="h-12 rounded-3xl border border-white/40 bg-transparent px-5 font-jakarta text-[15px] font-semibold text-white hover:bg-white/10"
+              >
+                <LocalizedClientLink href="/categories">
+                  Par application
+                </LocalizedClientLink>
+              </Button>
+            </div>
+
+            {/* Slide position indicator — decorative, the CMS carousel owns it. */}
+            <div aria-hidden="true" className="relative mt-1.5 flex gap-1.5">
+              <span className="h-1 w-[26px] rounded-sm bg-[#FFC857]" />
+              <span className="h-1 w-3 rounded-sm bg-white/35" />
+            </div>
+          </section>
         </Box>
-      </Container>
+
+        {/* Trust strip — horizontally scrollable, as in the mock. */}
+        <div className="mt-4 flex gap-2.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {TRUST_CHIPS.map((chip) => (
+            <div
+              key={chip}
+              className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-[inset_0_0_0_1px_#E4E7EF] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
+            >
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 rounded-full bg-[#FFC857] shadow-[0_0_10px_3px_rgba(255,200,87,0.6)]"
+              />
+              <span className="whitespace-nowrap font-jakarta text-[13px] font-semibold text-[#0F1B33] dark:text-white">
+                {chip}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Box>
     </>
   )
 }

@@ -21,6 +21,7 @@ import { ProductCarousel } from '@modules/products/components/product-carousel'
 import SkeletonCategoriesCarousel from '@modules/skeletons/templates/skeleton-categories-carousel'
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
 import LookbookSection from '@modules/home/components/lookbook/LookbookSection'
+import InnovationCard from '@modules/home/components/innovation'
 import OrganizationJsonLd from '@modules/seo/components/organization-json-ld'
 
 export const metadata: Metadata = {
@@ -119,6 +120,10 @@ export default async function Home(props: {
 
       {/* MidBanner: only render if image exists (Banner component requires it) */}
       {MidBanner && MidBanner.Image && <Banner data={MidBanner} />}
+
+      {/* "À propos / Innovation & Design" panel, sits above the news block. */}
+      <InnovationCard />
+
       {/* ------------------------------------------------ */}
       {posts && posts.length > 0 && <ExploreBlog posts={posts} />}
     </>
