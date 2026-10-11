@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { Box } from '@modules/common/components/box'
 import { Button } from '@modules/common/components/button'
 import { Container } from '@modules/common/components/container'
@@ -61,6 +63,10 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
   const gradient = THUMB_GRADIENTS[index % THUMB_GRADIENTS.length]
   const bar = THUMB_BARS[index % THUMB_BARS.length]
   const excerpt = post.Description ?? excerptOf(post.Content)
+  // Strapi hands back an absolute URL, so it is used as-is. Posts without a
+  // featured image fall back to the tinted placeholder so the tile still has a
+  // fixed 84x84 square on the left.
+  const cover = post.FeaturedImage?.url
 
   return (
     <LocalizedClientLink
@@ -68,19 +74,32 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
       className="flex h-[112px] items-center gap-4 rounded-[20px] bg-white p-[14px] shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.14)] transition-shadow hover:shadow-[0_2px_4px_rgba(20,20,59,0.06),0_16px_32px_-16px_rgba(20,20,59,0.2)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
       data-testid="blog-card"
     >
-      {/* Thumbnail */}
+      {/* Thumbnail — the post's real cover art when the CMS supplies one. */}
       <div
-        aria-hidden="true"
-        className="relative grid h-[84px] w-[84px] shrink-0 place-items-center overflow-hidden rounded-2xl"
-        style={{ background: gradient }}
+        className="relative h-[84px] w-[84px] shrink-0 overflow-hidden rounded-2xl"
+        style={cover ? undefined : { background: gradient }}
       >
-        <span
-          className="block h-[15.9px] w-[46.7px] rounded"
-          style={{
-            background: bar.fill,
-            boxShadow: `0 0 18px 4px ${bar.ring}`,
-          }}
-        />
+        {cover ? (
+          <Image
+            src={cover}
+            alt={post.FeaturedImage?.alternativeText ?? post.Title}
+            fill
+            sizes="84px"
+            className="object-cover object-center"
+          />
+        ) : (
+          <>
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-1/2 h-[15.9px] w-[46.7px] -translate-x-1/2 -translate-y-1/2 rounded"
+              style={{
+                background: bar.fill,
+                boxShadow: `0 0 18px 4px ${bar.ring}`,
+              }}
+            />
+            <span className="absolute inset-0 grid place-items-center bg-black/5" />
+          </>
+        )}
       </div>
 
       {/* Copy */}
@@ -168,11 +187,12 @@ export function ExploreBlog({ posts }: { posts: BlogPost[] }) {
           ))}
         </Box>
 
-        <HelpCard />
-
-        <Button className="mx-auto flex w-max large:hidden" asChild>
+        {/* "Afficher tout" sits directly under the news list. */}
+        <Button className="mx-auto flex w-max" asChild>
           <LocalizedClientLink href="/blog">Afficher tout</LocalizedClientLink>
         </Button>
+
+        <HelpCard />
       </Box>
     </Container>
   )

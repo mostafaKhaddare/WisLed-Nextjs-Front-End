@@ -270,7 +270,9 @@ export const ProductTile = memo(function ProductTile({
       <div
         className={cn(
           'relative shrink-0 overflow-hidden',
-          isCarousel ? 'h-[120px]' : 'h-[150px]',
+          // The mock gives the carousel tile a taller photo plate than the
+          // grid tile, so LED strips are not reduced to a sliver.
+          isCarousel ? 'h-[160px]' : 'h-[150px]',
           'small:h-[240px] large:h-[210px]'
         )}
         style={{ background: PHOTO_GRADIENT }}

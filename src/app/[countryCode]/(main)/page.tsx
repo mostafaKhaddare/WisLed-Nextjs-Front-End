@@ -72,6 +72,15 @@ export default async function Home(props: {
   const MidBanner = midBannerResult?.data?.MidBanner ?? null
   const posts = blogResult?.data ?? []
 
+  // Photo for the "À propos" panel. The mid banner is the first real lighting
+  // photo available on the page; the first post's featured image is the second
+  // choice, and with neither the panel falls back to its navy wash.
+  const aboutPhoto =
+    (Array.isArray(MidBanner?.Image) ? MidBanner.Image[0] : MidBanner?.Image) ??
+    posts[0]?.FeaturedImage ??
+    (Array.isArray(HeroBanner?.Image) ? HeroBanner.Image[0] : HeroBanner?.Image) ??
+    null
+
 
   return (
     <>
@@ -122,7 +131,7 @@ export default async function Home(props: {
       {MidBanner && MidBanner.Image && <Banner data={MidBanner} />}
 
       {/* "À propos / Innovation & Design" panel, sits above the news block. */}
-      <InnovationCard />
+      <InnovationCard image={aboutPhoto} />
 
       {/* ------------------------------------------------ */}
       {posts && posts.length > 0 && <ExploreBlog posts={posts} />}
