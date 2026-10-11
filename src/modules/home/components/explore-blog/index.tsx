@@ -119,7 +119,13 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
 
 /** WhatsApp / FAQ help panel shown directly under the blog list. */
 const HelpCard = () => (
-  <Box className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.14)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]">
+  <Box
+    className="flex flex-col gap-3 rounded-3xl p-5 shadow-[0_8px_24px_-14px_rgba(20,20,59,0.35)] dark:shadow-none dark:ring-1 dark:ring-white/10"
+    style={{
+      background:
+        'radial-gradient(120% 120% at 100% 0%, #EAF1FF 0%, #FFFFFF 58%)',
+    }}
+  >
     <Heading
       as="h3"
       className="font-sora text-[19px] font-semibold leading-snug text-[#0F1B33] dark:text-white"

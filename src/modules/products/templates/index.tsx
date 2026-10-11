@@ -6,15 +6,67 @@ import { getProductsListByCollectionId, getProductsById } from '@lib/data/produc
 import { HttpTypes } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { Container } from '@modules/common/components/container'
+import { Heading } from '@modules/common/components/heading'
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
+import { Text } from '@modules/common/components/text'
 import ImageGallery from '@modules/products/components/image-gallery'
 import ProductTabs from '@modules/products/components/product-tabs'
 import ProductInfo from '@modules/products/templates/product-info'
 import SkeletonProductActions from '@modules/skeletons/components/skeleton-product-actions'
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
 
+import { NAVY } from '../components/product-tile/design-tokens'
 import { ProductCarousel } from '../components/product-carousel'
 import ProductBreadcrumbs from './breadcrumbs'
 import ProductActionsWrapper from './product-actions-wrapper'
+
+/**
+ * Dark advice panel shown at the foot of a product page, after the related and
+ * recommended carousels and before the footer. Navy card with a WhatsApp CTA.
+ */
+function ProjectAdviceCard() {
+  return (
+    <Container className="!py-8">
+      <Box
+        className="mx-4 flex flex-col gap-3 rounded-3xl p-5 small:mx-6 small:p-6"
+        style={{ backgroundColor: NAVY }}
+      >
+        <Heading
+          as="h3"
+          className="font-sora text-[19px] font-semibold text-white"
+        >
+          Pas sûr du bon ruban ?
+        </Heading>
+        <Text className="font-jakarta text-sm leading-[1.5] text-[#C9D1E3]">
+          Dites-nous la pièce et la longueur : on vous conseille la puissance,
+          l&apos;alimentation et la teinte adaptées.
+        </Text>
+
+        <LocalizedClientLink
+          href="https://wa.me/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-3xl bg-[#25D366] font-jakarta text-[15px] font-bold leading-none text-[#06260F] transition-colors hover:bg-[#1FBE5B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1B33]"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#06260F"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z" />
+          </svg>
+          Demander conseil sur WhatsApp
+        </LocalizedClientLink>
+      </Box>
+    </Container>
+  )
+}
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -132,6 +184,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           />
         </Suspense>
       )}
+
+      {/* ── CONSEIL WHATSAPP ── */}
+      <ProjectAdviceCard />
     </>
   )
 }

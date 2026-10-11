@@ -15,6 +15,14 @@ type ItemQtySelectProps = {
    */
   maxQuantity: number
   action: (quantity: number) => void
+  /** Blocks the control while a request is in flight. */
+  disabled?: boolean
+  /**
+   * Tall chrome for the product-detail buy row: a 56px fully-rounded pill with
+   * no border of its own and no stock hint, because the surrounding panel
+   * supplies both.
+   */
+  bare?: boolean
   className?: string
 }
 
@@ -32,6 +40,8 @@ export default function ItemQtySelect({
   qty,
   maxQuantity,
   action,
+  disabled = false,
+  bare = false,
   className,
 }: ItemQtySelectProps) {
   const isCapped = Number.isFinite(maxQuantity)
@@ -89,23 +99,43 @@ export default function ItemQtySelect({
     }
   }
 
-  const showDropdown = isCapped && upper >= 1 && upper <= DROPDOWN_THRESHOLD
+  /**
+   * Keeps focus in the field when a stepper is pressed.
+   *
+   * Without it, `mousedown` on − or + blurs the input first, which commits the
+   * stale draft, and then the click handler commits the new value. Two requests
+   * race and the stale one can land last, leaving the quantity unchanged — the
+   * "the + doesn't work" bug. Preventing the default mousedown means the click
+   * handler is the only thing that fires.
+   */
+  const keepFocus = (event: React.MouseEvent) => {
+    event.preventDefault()
+  }
+
+  const showDropdown =
+    !bare && isCapped && upper >= 1 && upper <= DROPDOWN_THRESHOLD
 
   return (
     <div className={cn('flex w-max flex-col gap-1', className)}>
       <div
         className={cn(
-          'inline-flex h-10 items-stretch overflow-hidden rounded-lg border border-ui-border-base bg-ui-bg-base',
+          'inline-flex items-stretch overflow-hidden rounded-lg border border-ui-border-base bg-ui-bg-base',
           'focus-within:border-ui-border-interactive',
-          upper === 0 && 'pointer-events-none opacity-60'
+          bare &&
+            '!h-14 !rounded-[28px] !border-0 !bg-transparent !shadow-none',
+          (upper === 0 || disabled) && 'pointer-events-none opacity-60'
         )}
       >
         <button
           type="button"
           aria-label="Diminuer la quantité"
-          disabled={qty <= 1}
+          disabled={disabled || qty <= 1}
+          onMouseDown={keepFocus}
           onClick={() => step(-1)}
-          className="grid w-9 place-items-center text-lg font-medium text-ui-fg-subtle transition-colors hover:bg-ui-bg-base-hover disabled:opacity-40"
+          className={cn(
+            'grid w-9 place-items-center text-lg font-medium text-ui-fg-subtle transition-colors hover:bg-ui-bg-base-hover disabled:opacity-40',
+            bare && '!w-12 !text-[#0F1B33]'
+          )}
         >
           −
         </button>
@@ -118,18 +148,26 @@ export default function ItemQtySelect({
           value={draft}
           aria-label="Choose quantity"
           data-testid="item-qty-select"
+          disabled={disabled}
           onChange={(event) => setDraft(event.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="w-14 border-x border-ui-border-base bg-transparent text-center text-md font-medium text-ui-fg-base outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className={cn(
+            'w-14 border-x border-ui-border-base bg-transparent text-center text-md font-medium text-ui-fg-base outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+            bare && '!h-14 !w-10 !border-0 !font-jakarta !text-base !font-bold'
+          )}
         />
 
         <button
           type="button"
           aria-label="Augmenter la quantité"
-          disabled={qty >= upper}
+          disabled={disabled || qty >= upper}
+          onMouseDown={keepFocus}
           onClick={() => step(1)}
-          className="grid w-9 place-items-center text-lg font-medium text-ui-fg-subtle transition-colors hover:bg-ui-bg-base-hover disabled:opacity-40"
+          className={cn(
+            'grid w-9 place-items-center text-lg font-medium text-ui-fg-subtle transition-colors hover:bg-ui-bg-base-hover disabled:opacity-40',
+            bare && '!w-12 !text-[#0F1B33]'
+          )}
         >
           +
         </button>
@@ -137,7 +175,7 @@ export default function ItemQtySelect({
 
       {/* A real cap gets stated; an unmanaged inventory says so rather than
           quietly implying a limit. */}
-      {!error && (
+      {!bare && !error && (
         <span className="text-xs text-ui-fg-subtle">
           {isCapped ? `Max ${formatLimit(maxQuantity)}` : 'Sans limite'}
         </span>
@@ -148,6 +186,7 @@ export default function ItemQtySelect({
         <select
           aria-label="Quantité prédéfinie"
           value={qty}
+          disabled={disabled}
           onChange={(event) => commit(Number(event.target.value))}
           className="mt-0.5 h-8 rounded-md border border-ui-border-base bg-ui-bg-base px-2 text-md text-ui-fg-base outline-none"
         >

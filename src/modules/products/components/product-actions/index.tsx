@@ -204,12 +204,16 @@ export default function ProductActions({
             </div>
           )}
         </div>
-        <Box className="flex flex-wrap items-start gap-x-3 gap-y-2 small:flex-nowrap small:items-center">
-          <ItemQtySelect
-            qty={qty}
-            maxQuantity={maxQuantity}
-            action={setQty}
-          />
+        {/* Quantity stepper + add to cart, as one row per the mock */}
+        <Box className="flex flex-wrap items-stretch gap-x-3 gap-y-2 small:flex-nowrap">
+          <Box className="flex h-14 items-center rounded-[28px] bg-white px-1.5 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.12)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]">
+            <ItemQtySelect
+              qty={qty}
+              maxQuantity={maxQuantity}
+              action={setQty}
+              bare
+            />
+          </Box>
           <Button
             onClick={handleAddToCart}
             disabled={
@@ -219,7 +223,7 @@ export default function ProductActions({
               isAdding ||
               maxQuantity === 0
             }
-            className="w-full"
+            className="!h-14 flex-1 !rounded-[28px] !bg-[#1D4ED8] !font-jakarta !text-base !font-bold !text-white hover:!bg-[#1B45C4]"
             isLoading={isAdding}
             data-testid="add-product-button"
           >
@@ -231,13 +235,37 @@ export default function ProductActions({
           </Button>
         </Box>
 
+        {/* Reassurance strip directly under the buy controls */}
+        <Box className="flex flex-col gap-2.5 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.12)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]">
+          {[
+            'Paiement à la livraison disponible',
+            'Conseil pour choisir l’alimentation adaptée',
+          ].map((label) => (
+            <Box key={label} className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
+                style={{
+                  background: 'rgba(255,200,87,0.6)',
+                  boxShadow: '0 0 10px 2px rgba(255,200,87,0.55)',
+                }}
+              >
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FFC857]" />
+              </span>
+              <span className="font-jakarta text-sm font-semibold text-[#0F1B33] dark:text-white">
+                {label}
+              </span>
+            </Box>
+          ))}
+        </Box>
+
         {/* WhatsApp Button */}
         <Button
           onClick={handleWhatsAppClick}
-          className="w-full bg-green-600 text-white py-3 px-6 rounded-full font-medium flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors"
+          className="!h-[52px] w-full !rounded-[26px] !bg-[#25D366] !font-jakarta !text-[15px] !font-bold !text-[#06260F] hover:!bg-[#1FBE5B]"
         >
           <FaWhatsapp size={20} />
-          <span>Commander via WhatsApp</span>
+          <span>Poser une question sur WhatsApp</span>
         </Button>
 
         {maxQuantity === 0 && inStock && (

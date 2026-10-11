@@ -27,6 +27,36 @@ const HEADLINE_FALLBACK = 'Illuminez vos espaces avec un éclairage sur mesure'
 const TEXT_FALLBACK =
   'Découvrez des solutions d’éclairage économes en énergie.'
 
+/**
+ * Reassurance chips under the hero. Square white tiles with a glowing gold dot,
+ * in a row that scrolls sideways on narrow screens.
+ */
+const TRUST_CHIPS = [
+  'Paiement à la livraison',
+  'Contrôleurs DMX & Smart LED',
+  'Livraison 24-48h',
+]
+
+/** Reassurance chips shown under the hero carousel. */
+const TrustStrip = () => (
+  <div className="scrollbar-hide flex gap-2.5 overflow-x-auto px-4 pb-1">
+    {TRUST_CHIPS.map((chip) => (
+      <div
+        key={chip}
+        className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-[inset_0_0_0_1px_#E4E7EF] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
+      >
+        <span
+          aria-hidden="true"
+          className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFC857] shadow-[0_0_10px_3px_rgba(255,200,87,0.6)]"
+        />
+        <span className="whitespace-nowrap font-jakarta text-[13px] font-semibold text-[#0F1B33] dark:text-white">
+          {chip}
+        </span>
+      </div>
+    ))}
+  </div>
+)
+
 const Hero = ({
   data,
   autoplayDelay = 5000,
@@ -356,6 +386,8 @@ const Hero = ({
           )}
         </div>
       </Box>
+
+      <TrustStrip />
     </>
   )
 }

@@ -1,9 +1,9 @@
 'use client'
 
 import Image from 'next/image'
+
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Box } from '@modules/common/components/box'
-import { Text } from '@modules/common/components/text'
 import { formatNameForTestId } from '@lib/util/formatNameForTestId'
 
 interface CategoryImage {
@@ -22,70 +22,79 @@ interface SubcategoryCardsProps {
   subcategories: SubcategoryItem[]
 }
 
+/** Tints cycling per position, so consecutive tiles never look identical. */
+const TILE_GRADIENTS = [
+  'linear-gradient(135deg, #FFF3DC 0%, #FFE2A8 100%)',
+  'linear-gradient(135deg, #E9E2FF 0%, #C9B8FF 100%)',
+  'linear-gradient(135deg, #D8F5FF 0%, #9FE3FA 100%)',
+]
+
+/** LED-strip bar drawn on the placeholder tile when a category has no image. */
+const TILE_BARS = [
+  { fill: '#FFC15A', glow: 'rgba(255,170,40,0.7)' },
+  { fill: '#B79CFF', glow: 'rgba(130,90,255,0.65)' },
+  { fill: '#3CC8F0', glow: 'rgba(30,170,229,0.65)' },
+]
+
+/**
+ * Horizontal strip of square subcategory tiles.
+ *
+ * A 112x112 rounded tile (24px radius) holding the category's own photo when one
+ * exists, or a tinted placeholder with an LED-strip bar; the name sits beneath.
+ */
 export function SubcategoryCards({ subcategories }: SubcategoryCardsProps) {
   if (!subcategories?.length) return null
 
   return (
-    <Box className="w-full py-4" aria-label="Sous-catégories">
-      <Box className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-        <Box className="flex flex-row items-stretch gap-3 min-w-max" role="list">
-          {subcategories.map((subcat) => (
-            <LocalizedClientLink
-              key={subcat.id}
-              href={`/categories/${subcat.handle}`}
-              className="group/card relative flex items-center gap-4 shrink-0 w-[260px] sm:w-[300px] md:w-[320px] h-[112px] sm:h-[128px] rounded-xl overflow-hidden bg-primary border border-border-basic-primary/50 dark:border-white/[0.06] dark:bg-white/[0.02] transition-all duration-300 hover:shadow-lg hover:border-wisled-200/50 dark:hover:border-wisled-800/30 hover:-translate-y-0.5"
-              data-testid={formatNameForTestId(`${subcat.name}-subcategory-card`)}
-            >
-              {/* Image on the left with light neutral background */}
-              <Box className="relative h-full w-[100px] sm:w-[112px] shrink-0 overflow-hidden bg-wisled-50/80 dark:bg-wisled-950/50 rounded-l-xl">
-                {subcat.image ? (
-                  <Image
-                    src={subcat.image.url}
-                    alt={subcat.image.alt || subcat.name}
-                    fill
-                    sizes="112px"
-                    loading="lazy"
-                    className="object-contain p-3 transition-transform duration-500 ease-out motion-reduce:transition-none group-hover/card:scale-[1.03]"
-                  />
-                ) : (
-                  <Box className="flex h-full w-full items-center justify-center bg-wisled-100/50 dark:bg-wisled-900/30">
-                    <svg
-                      className="h-10 w-10 text-wisled-300 dark:text-wisled-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z"
-                      />
-                    </svg>
-                  </Box>
-                )}
-              </Box>
+    <Box className="w-full px-2" aria-label="Sous-catégories">
+      <Box className="scrollbar-hide -mx-2 overflow-x-auto px-2 pb-2">
+        <Box className="flex flex-row items-end gap-3" role="list">
+          {subcategories.map((subcat, index) => {
+            const gradient = TILE_GRADIENTS[index % TILE_GRADIENTS.length]
+            const bar = TILE_BARS[index % TILE_BARS.length]
 
-              {/* Title on the right */}
-              <Box className="flex flex-1 items-center pr-4">
-                <Text
-                  title={subcat.name}
-                  as="span"
-                  className="text-sm font-medium text-basic-primary leading-snug transition-colors group-hover/card:text-wisled-600 dark:text-white/90 dark:group-hover/card:text-wisled-400 line-clamp-2"
+            return (
+              <LocalizedClientLink
+                key={subcat.id}
+                href={`/categories/${subcat.handle}`}
+                className="group/card flex w-[112px] shrink-0 flex-col"
+                role="listitem"
+                data-testid={formatNameForTestId(`${subcat.name}-subcategory-card`)}
+              >
+                {/* Tile */}
+                <span
+                  className="relative block h-[112px] w-[112px] shrink-0 overflow-hidden rounded-3xl transition-transform duration-300 group-hover/card:-translate-y-0.5"
+                  style={subcat.image ? undefined : { background: gradient }}
                 >
+                  {subcat.image ? (
+                    <Image
+                      src={subcat.image.url}
+                      alt={subcat.image.alt || subcat.name}
+                      fill
+                      sizes="112px"
+                      loading="lazy"
+                      className="object-cover object-center"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-1/2 top-1/2 h-2.5 w-16 -translate-x-1/2 -translate-y-1/2 rounded-[5px]"
+                      style={{
+                        background: bar.fill,
+                        boxShadow: `0 0 22px 5px ${bar.glow}`,
+                      }}
+                    />
+                  )}
+                </span>
+
+                <span className="mt-2.5 line-clamp-2 font-jakarta text-[13px] font-semibold leading-snug text-[#0F1B33] dark:text-white">
                   {subcat.name}
-                </Text>
-              </Box>
-            </LocalizedClientLink>
-          ))}
+                </span>
+              </LocalizedClientLink>
+            )
+          })}
         </Box>
       </Box>
-
-      {/* Scroll indicator */}
-      {subcategories.length > 4 && (
-        <Box className="absolute bottom-0 right-0 left-0 h-16 bg-gradient-to-t from-primary to-transparent pointer-events-none dark:from-white/[0.02]" aria-hidden="true" />
-      )}
     </Box>
   )
 }

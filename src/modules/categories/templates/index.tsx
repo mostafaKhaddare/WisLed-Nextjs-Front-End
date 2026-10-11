@@ -172,14 +172,23 @@ export default async function CategoryTemplate({
       <Container className="flex flex-col gap-6 !px-2 !pb-8 !pt-4">
         <CategoryBreadcrumbs countryCode={countryCode} categoryTrail={categoryTrail} />
 
-        <Box className="flex flex-col gap-2 px-2">
+        {/* Heading row: title on the left, product count on the right */}
+        <Box className="flex items-end justify-between gap-4 px-2">
+          <h1 className="font-sora text-[32px] font-bold leading-[1.15] tracking-[-0.32px] text-[#0F1B33] dark:text-white">
+            {currentCategory.name}
+          </h1>
+          <Text className="shrink-0 font-jakarta text-[13px] text-[#5B6577]">
+            {count === 1 ? `${count} produit` : `${count} produits`}
+          </Text>
+        </Box>
 
-          {currentCategory.description && (
-            <Text className="text-md text-secondary md:hidden">
+        {currentCategory.description && (
+          <Box className="px-2">
+            <Text className="font-jakarta text-sm leading-[1.55] text-[#5B6577] dark:text-gray-400">
               {currentCategory.description}
             </Text>
-          )}
-        </Box>
+          </Box>
+        )}
 
         {/* Subcategories */}
         {currentCategory.category_children?.length > 0 && (

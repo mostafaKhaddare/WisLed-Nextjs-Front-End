@@ -118,7 +118,7 @@ const ImageGallery = ({
                 sizes="(max-width: 900px) 100vw, 620px"
                 priority={index === 0}
                 quality={90}
-                className="h-full w-full object-contain p-4 small:p-6"
+                className="h-full w-full object-fill"
               />
             </button>
           ))}
@@ -178,7 +178,7 @@ const ImageGallery = ({
                 alt={`${title} — miniature ${index + 1}`}
                 sizes="80px"
                 loading="lazy"
-                className="h-full w-full object-contain p-1.5"
+                className="h-full w-full object-cover"
               />
             </button>
           ))}

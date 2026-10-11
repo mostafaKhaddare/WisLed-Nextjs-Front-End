@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 
 import { cn } from '@lib/util/cn'
 import { getVariantColor } from '@lib/util/get-variant-color'
@@ -10,7 +9,12 @@ import { InformationCircleSolid } from '@medusajs/icons'
 import ColorGuideModal from '../color-guide-modal'
 import PowerCalculatorModal from '../power-calculator-modal'
 
-import { HAIRLINE, MUTED, NAVY } from '../product-tile/design-tokens'
+import {
+  getVariantDotColor,
+  HAIRLINE,
+  MUTED,
+  NAVY,
+} from '../product-tile/design-tokens'
 
 type OptionSelectProps = {
   option: HttpTypes.StoreProductOption
@@ -42,6 +46,20 @@ const PILL_BASE = `
 // feedback is limited to the fill, which inline styles do not override.
 const PILL_IDLE = 'bg-white text-[#0F1B33] hover:bg-[#F1F3F9]'
 const PILL_ACTIVE = 'bg-[#0F1B33] text-white hover:bg-[#1B2B4E]'
+
+/**
+ * Resolves the dot colour for a variant value.
+ *
+ * A CMS colour wins when one is set, otherwise the palette keyed off the value
+ * itself. Values that are not colours at all (12V, 24V, IP20) return null and
+ * get no dot, rather than a meaningless grey one.
+ */
+function resolveSwatch(
+  value: string,
+  variantsColors: VariantColor[]
+): string | null {
+  return getVariantColor(value, variantsColors)?.Color || getVariantDotColor(value)
+}
 
 const OptionSelect: React.FC<OptionSelectProps> = ({
   option,
@@ -109,9 +127,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
 
       <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
         {filteredOptions?.map((v) => {
-          const color = getVariantColor(v, variantsColors)
-          const image = color?.Image
-          const hex = color?.Color
+          const swatch = resolveSwatch(v, variantsColors)
           const isActive = v === current
 
           return (
@@ -125,25 +141,14 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
               disabled={disabled}
               data-testid="option-button"
             >
-              {/* Swatch disc — an image when the CMS supplies one, else the
-                  stored hex, else omitted for plain values like 12V / 24V. */}
-              {image ? (
-                <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/5">
-                  <Image
-                    src={image.url}
-                    alt=""
-                    width={32}
-                    height={32}
-                    className="h-full w-full object-cover"
-                  />
-                </span>
-              ) : hex ? (
+              {/* Swatch disc — a CMS colour when one is set, else the palette. */}
+              {swatch && (
                 <span
                   aria-hidden="true"
                   className="h-4 w-4 shrink-0 rounded-full ring-1 ring-black/5"
-                  style={{ backgroundColor: hex }}
+                  style={{ backgroundColor: swatch }}
                 />
-              ) : null}
+              )}
 
               {v}
             </button>
