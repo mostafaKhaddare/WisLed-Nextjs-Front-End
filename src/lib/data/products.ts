@@ -153,18 +153,24 @@ export const getProductsListByCollectionId = async function ({
     })
 }
 
-export const getStoreFilters = async function () {
-  const filters: ProductFilters = await fetch(
-    `${BACKEND_URL}/store/filter-product-attributes`,
-    {
-      headers: {
-        'x-publishable-api-key': PUBLISHABLE_API_KEY!,
-      },
-      next: {
-        revalidate: 3600,
-      },
-    }
-  ).then((res) => res.json())
+// Facets drive the filter UI. Without a category id the facets are
+// global; with one they describe only that category's products, which
+// is what makes each category offer its own filter set. Next caches
+// fetch responses per URL, so each category gets its own 1h entry.
+export const getStoreFilters = async function (categoryId?: string) {
+  const url = new URL(`${BACKEND_URL}/store/filter-product-attributes`)
+  if (categoryId) {
+    url.searchParams.set('category_id', categoryId)
+  }
+
+  const filters: ProductFilters = await fetch(url.toString(), {
+    headers: {
+      'x-publishable-api-key': PUBLISHABLE_API_KEY!,
+    },
+    next: {
+      revalidate: 3600,
+    },
+  }).then((res) => res.json())
 
   return filters
 }

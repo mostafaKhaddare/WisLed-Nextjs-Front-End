@@ -7,7 +7,6 @@ import Autoplay from 'embla-carousel-autoplay'
 
 import { Button } from '@modules/common/components/button'
 import { Box } from '@modules/common/components/box'
-import { Container } from '@modules/common/components/container'
 import { Heading } from '@modules/common/components/heading'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Text } from '@modules/common/components/text'
@@ -28,22 +27,26 @@ const TEXT_FALLBACK =
   'Découvrez des solutions d’éclairage économes en énergie.'
 
 /**
- * Reassurance chips under the hero. Square white tiles with a glowing gold dot,
- * in a row that scrolls sideways on narrow screens.
+ * Reassurance chips under the hero.
+ *
+ * Deliberately no cash-on-delivery claim — this storefront sells into Italy,
+ * where card and PayPal are the expected methods, so an unbacked promise about
+ * paying on delivery would be misleading. These are all things the store can
+ * actually stand behind.
  */
 const TRUST_CHIPS = [
-  'Paiement à la livraison',
-  'Contrôleurs DMX & Smart LED',
-  'Livraison 24-48h',
+  'Paiement 100% sécurisé',
+  'Livraison suivi en Europe',
+  'Garantie 2 ans',
 ]
 
-/** Reassurance chips shown under the hero carousel. */
+/** Trust strip: square white tiles with a glowing dot, scrolling sideways. */
 const TrustStrip = () => (
   <div className="scrollbar-hide flex gap-2.5 overflow-x-auto px-4 pb-1">
     {TRUST_CHIPS.map((chip) => (
       <div
         key={chip}
-        className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-[inset_0_0_0_1px_#E4E7EF] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
+        className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-[0_1px_2px_rgba(20,20,59,0.05)] ring-1 ring-[#E4E7EF] dark:bg-[#141A2B] dark:shadow-none dark:ring-white/[0.06]"
       >
         <span
           aria-hidden="true"
@@ -131,14 +134,6 @@ const Hero = ({
     [emblaApi]
   )
 
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev()
-  }, [emblaApi])
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext()
-  }, [emblaApi])
-
   // Toggle autoplay
   const toggleAutoplay = useCallback(() => {
     const autoplay = emblaApi?.plugins()?.autoplay
@@ -152,192 +147,155 @@ const Hero = ({
     setIsPlaying(!isPlaying)
   }, [emblaApi, isPlaying])
 
-  // Keyboard navigation
-  useEffect(() => {
-    if (!emblaApi || !hasMultipleImages) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft') {
-        scrollPrev()
-      } else if (event.key === 'ArrowRight') {
-        scrollNext()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [emblaApi, hasMultipleImages, scrollPrev, scrollNext])
-
   return (
     <>
       {/*
-        Banner carousel. One component across every breakpoint: the mobile and
-        desktop hero are the same image slider with the copy overlaid on it, so
-        there is a single H1 and a single set of calls to action.
+        Rounded hero panel. The carousel supplies the photo behind the copy at
+        every breakpoint, so there is one hero rather than a mobile panel and a
+        desktop banner.
       */}
-      <Box className="relative h-[420px] max-h-screen w-full overflow-hidden small:h-[500px] large:h-[600px] 2xl:h-screen 2xl:max-h-[600px]">
-        {/* Carousel Container */}
-        <div
-          className="h-full w-full"
-          ref={hasMultipleImages ? emblaRef : null}
-          role="region"
-          aria-label="Hero banner carousel"
-          aria-live="polite"
-        >
-          <div className="flex h-full">
-            {hasImages ? (
-              images.map((image, index) => (
-                <div
-                  key={image.url || index}
-                  className="relative h-full w-full shrink-0"
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`${index + 1} of ${images.length}`}
-                >
-                  <Image
-                    src={image.url}
-                    alt={image.alternativeText || `Hero banner ${index + 1}`}
-                    className="h-full w-full object-cover"
-                    fill
-                    sizes="100vw"
-                    priority={index === 0}
-                    quality={90}
-                  />
-                  {/* Gradient overlay for better text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-                </div>
-              ))
-            ) : (
-              /* CSS-only gradient fallback when Strapi is offline */
-              <div className="relative h-full w-full shrink-0">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 70%, #1a1a2e 100%)',
-                  }}
-                />
-                {/* Decorative orbs */}
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <Box className="mx-4 mt-4 small:mx-6">
+        <Box className="relative h-[440px] overflow-hidden rounded-[28px] medium:h-[478px]">
+          <div
+            className="h-full w-full"
+            ref={hasMultipleImages ? emblaRef : null}
+            role="region"
+            aria-label="Hero banner carousel"
+            aria-live="polite"
+          >
+            <div className="flex h-full">
+              {hasImages ? (
+                images.map((image, index) => (
                   <div
-                    className="absolute -left-20 top-0 h-[400px] w-[400px] rounded-full opacity-20 blur-[100px]"
-                    style={{
-                      background: 'radial-gradient(circle, #6366f1, transparent)',
-                    }}
-                  />
-                  <div
-                    className="absolute -right-20 bottom-0 h-[350px] w-[350px] rounded-full opacity-15 blur-[100px]"
-                    style={{
-                      background: 'radial-gradient(circle, #06b6d4, transparent)',
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                      backgroundImage:
-                        'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)',
-                      backgroundSize: '32px 32px',
-                    }}
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Arrows (large screens, where there is room beside the copy) */}
-          {hasMultipleImages && (
-            <>
-              <button
-                onClick={scrollPrev}
-                className="absolute left-4 top-1/2 z-30 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 large:block"
-                aria-label="Previous slide"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 19.5L8.25 12l7.5-7.5"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={scrollNext}
-                className="absolute right-4 top-1/2 z-30 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 large:block"
-                aria-label="Next slide"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              </button>
-            </>
-          )}
-
-          {/* Content Overlay — visible at every breakpoint, sized responsively */}
-          <div className="absolute bottom-0 left-0 z-20 w-full p-5 pb-14 small:p-8 small:pb-16">
-            <Container className="!p-0">
-              <div className="flex max-w-[520px] flex-col gap-3 text-white drop-shadow-lg small:gap-4 xl:max-w-[600px]">
-                <Heading
-                  as="h1"
-                  className="font-sora text-[28px] font-bold leading-[1.15] small:text-3xl xl:text-5xl"
-                >
-                  {headline}
-                </Heading>
-                {body && (
-                  <Text className="font-jakarta text-[15px] font-medium text-white/90 small:text-lg">
-                    {body}
-                  </Text>
-                )}
-                <div className="flex flex-wrap gap-2.5 pt-1 small:gap-6 small:pt-2">
-                  <Button
-                    size="md"
-                    asChild
-                    className="h-12 rounded-3xl bg-wisled-500 px-[22px] font-jakarta text-[15px] font-bold text-white hover:bg-wisled-600"
+                    key={image.url || index}
+                    className="relative h-full w-full shrink-0"
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${index + 1} of ${images.length}`}
                   >
-                    <LocalizedClientLink href={CTA.BtnLink}>
-                      {CTA.BtnText}
-                    </LocalizedClientLink>
-                  </Button>
-                  <Button
-                    size="md"
-                    asChild
-                    variant="tonal"
-                    className="h-12 rounded-3xl border border-white/40 bg-transparent px-5 font-jakarta text-[15px] font-semibold text-white hover:bg-white/10"
-                  >
-                    <LocalizedClientLink href="/categories">
-                      Par application
-                    </LocalizedClientLink>
-                  </Button>
+                    <Image
+                      src={image.url}
+                      alt={image.alternativeText || `Hero banner ${index + 1}`}
+                      className="h-full w-full object-cover object-right-top"
+                      fill
+                      sizes="100vw"
+                      priority={index === 0}
+                      quality={90}
+                    />
+                    {/* Dark wash so the copy stays legible over any photo. */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1B33] via-[#0F1B33]/45 to-transparent" />
+                  </div>
+                ))
+              ) : (
+                /* CSS-only gradient fallback when Strapi is offline */
+                <div className="relative h-full w-full shrink-0">
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'radial-gradient(120% 80% at 80% 100%, #3B2A0E 0%, #0F1B33 62%)',
+                    }}
+                  />
+                  {/* Decorative LED strips */}
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    <div
+                      className="absolute right-[-30px] top-[44px] h-[14px] w-[230px] rounded-[7px]"
+                      style={{
+                        background: '#FFC15A',
+                        boxShadow: '0 0 60px 22px rgba(255,170,40,0.55)',
+                        transform: 'rotate(-14deg)',
+                      }}
+                    />
+                    <div
+                      className="absolute right-[-60px] top-[96px] h-[10px] w-[260px] rounded-[5px]"
+                      style={{
+                        background: '#FFE2A8',
+                        boxShadow: '0 0 50px 16px rgba(255,200,100,0.4)',
+                        transform: 'rotate(-14deg)',
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </Container>
-          </div>
+              )}
+            </div>
 
-          {/* Navigation Dots */}
-          {hasMultipleImages && (
-            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-              {/* Play/Pause Button */}
+            {/* Content overlay */}
+            <div className="absolute inset-0 z-20 flex flex-col justify-end gap-3.5 p-6 small:gap-4">
+              <span className="font-jakarta text-xs font-bold uppercase leading-none tracking-[0.12em] text-[#FFC857]">
+                Solutions LED Projet &amp; Maison
+              </span>
+
+              <Heading
+                as="h1"
+                className="max-w-[420px] font-sora text-[32px] font-bold leading-[1.12] tracking-[-0.01em] text-white"
+              >
+                {headline}
+              </Heading>
+
+              {body && (
+                <Text className="max-w-[300px] font-jakarta text-[15px] leading-[1.5] text-white/85">
+                  {body}
+                </Text>
+              )}
+
+              <div className="flex flex-wrap gap-2.5 small:gap-3">
+                <Button
+                  size="md"
+                  asChild
+                  className="h-12 rounded-3xl bg-[#FFC857] px-[22px] font-jakarta text-[15px] font-bold text-[#1B1303] hover:bg-[#FFD37A]"
+                >
+                  <LocalizedClientLink href={CTA.BtnLink}>
+                    {CTA.BtnText}
+                  </LocalizedClientLink>
+                </Button>
+                <Button
+                  size="md"
+                  asChild
+                  variant="tonal"
+                  className="h-12 rounded-3xl border border-white/40 bg-transparent px-5 font-jakarta text-[15px] font-semibold text-white hover:bg-white/10"
+                >
+                  <LocalizedClientLink href="/categories">
+                    Par application
+                  </LocalizedClientLink>
+                </Button>
+              </div>
+
+              {/* Slide position indicator. Clicking a dot jumps to that slide;
+                  with one slide it is decorative only. */}
+              <div
+                aria-hidden={!hasMultipleImages}
+                className="mt-1.5 flex items-center gap-1.5"
+              >
+                {hasMultipleImages
+                  ? images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => scrollTo(index)}
+                        aria-label={`Go to slide ${index + 1}`}
+                        aria-current={
+                          index === selectedIndex ? 'true' : 'false'
+                        }
+                        className={`h-1 rounded-sm transition-all duration-300 ${
+                          index === selectedIndex
+                            ? 'w-[26px] bg-[#FFC857]'
+                            : 'w-3 bg-white/35'
+                        }`}
+                      />
+                    ))
+                  : (
+                      <>
+                        <span className="h-1 w-[26px] rounded-sm bg-[#FFC857]" />
+                        <span className="h-1 w-3 rounded-sm bg-white/35" />
+                      </>
+                    )}
+              </div>
+            </div>
+
+            {/* Autoplay toggle, only meaningful with more than one slide */}
+            {hasMultipleImages && (
               <button
                 onClick={toggleAutoplay}
-                className="mr-2 rounded-full bg-white/20 p-1.5 backdrop-blur-sm transition-all hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="absolute right-4 top-4 z-30 rounded-full bg-black/30 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/40 focus:outline-none focus:ring-2 focus:ring-white/50"
                 aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
               >
                 {isPlaying ? (
@@ -360,31 +318,9 @@ const Hero = ({
                   </svg>
                 )}
               </button>
-
-              {/* Dot indicators */}
-              {images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => scrollTo(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === selectedIndex
-                      ? 'w-8 bg-white'
-                      : 'w-2 bg-white/50 hover:bg-white/75'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                  aria-current={index === selectedIndex ? 'true' : 'false'}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Slide counter (optional) */}
-          {hasMultipleImages && (
-            <div className="absolute right-4 top-4 z-20 rounded-full bg-black/30 px-3 py-1 text-sm text-white backdrop-blur-sm">
-              {selectedIndex + 1} / {images.length}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </Box>
       </Box>
 
       <TrustStrip />

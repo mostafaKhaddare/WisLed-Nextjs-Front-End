@@ -24,6 +24,8 @@ export const FILTER_KEYS = {
   IP_RATING_KEY: 'ip_rating',
   VOLTAGE_KEY: 'voltage',
   PRODUCT_TYPE_KEY: 'product_type',
+  STRIP_WIDTH_KEY: 'strip_width',
+  PROFILE_KEY: 'profile',
 }
 
 export const PRODUCT_LIST_PATHNAMES = {

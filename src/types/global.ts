@@ -49,6 +49,14 @@ export type ProductFilters = {
     id: string
     value: string
   }[]
+  strip_width: {
+    id: string
+    value: string
+  }[]
+  profile: {
+    id: string
+    value: string
+  }[]
 }
 export type CategoryImage = {
   id?: string

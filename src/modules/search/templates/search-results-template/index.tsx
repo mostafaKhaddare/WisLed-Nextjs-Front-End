@@ -35,6 +35,8 @@ type SearchResultsTemplateProps = {
   ip_rating?: string[]
   voltage?: string[]
   product_type?: string[]
+  strip_width?: string[]
+  profile?: string[]
   region: StoreRegion
   countryCode: string
 }
@@ -52,6 +54,8 @@ export default async function SearchResultsTemplate({
   ip_rating,
   voltage,
   product_type,
+  strip_width,
+  profile,
   region,
   countryCode,
 }: SearchResultsTemplateProps) {
@@ -75,6 +79,8 @@ export default async function SearchResultsTemplate({
       ip_rating,
       voltage,
       product_type,
+      strip_width,
+      profile,
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -102,6 +108,8 @@ export default async function SearchResultsTemplate({
     if (ip_rating) queryParams.ip_rating = ip_rating
     if (voltage) queryParams.voltage = voltage
     if (product_type) queryParams.product_type = product_type
+    if (strip_width) queryParams.strip_width = strip_width
+    if (profile) queryParams.profile = profile
 
     if (price) {
       const ranges = price

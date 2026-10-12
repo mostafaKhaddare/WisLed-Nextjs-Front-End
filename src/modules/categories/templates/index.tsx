@@ -17,8 +17,9 @@ import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-g
 import SkeletonProductsCarousel from '@modules/skeletons/templates/skeleton-products-carousel'
 import ProductFilters from '@modules/store/components/filters'
 import ActiveProductFilters from '@modules/store/components/filters/active-filters'
-import ProductFiltersDrawer from '@modules/store/components/filters/filters-drawer'
+import FiltersModal from '@modules/store/components/filters/filters-modal'
 import PaginatedProducts from '@modules/store/templates/paginated-products'
+import ProjectAdviceCard from '@modules/products/components/project-advice-card'
 import { SubcategoryCards } from '../components/subcategory-cards'
 import QuickFilters from '@modules/store/components/filters/quick-filters'
 
@@ -43,6 +44,8 @@ export default async function CategoryTemplate({
     ip_rating,
     voltage,
     product_type,
+    strip_width,
+    profile,
   } = searchParams
   const { countryCode, category } = params
 
@@ -54,7 +57,7 @@ export default async function CategoryTemplate({
   if (!currentCategory || !region) notFound()
 
   const pageNumber = page ? parseInt(page) : 1
-  const filters = await getStoreFilters()
+  const filters = await getStoreFilters(currentCategory.id)
 
   let results: any[] = []
   let count = 0
@@ -75,6 +78,8 @@ export default async function CategoryTemplate({
       ip_rating: ip_rating?.split(','),
       voltage: voltage?.split(','),
       product_type: product_type?.split(','),
+      strip_width: strip_width?.split(','),
+      profile: profile?.split(','),
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -95,6 +100,8 @@ export default async function CategoryTemplate({
     if (ip_rating) queryParams.ip_rating = ip_rating.split(',')
     if (voltage) queryParams.voltage = voltage.split(',')
     if (product_type) queryParams.product_type = product_type.split(',')
+    if (strip_width) queryParams.strip_width = strip_width.split(',')
+    if (profile) queryParams.profile = profile.split(',')
 
     if (price) {
       const ranges = price.split(',')
@@ -216,13 +223,8 @@ export default async function CategoryTemplate({
             <Box className="hidden small:flex small:flex-wrap small:items-center small:gap-2">
               <ProductFilters filters={filters} />
             </Box>
-            <ProductFiltersDrawer>
-              <ProductFilters filters={filters} />
-            </ProductFiltersDrawer>
+            <FiltersModal filters={filters} count={count} />
             <Box className="flex items-center gap-2">
-              <Text as="span" className="text-sm font-semibold text-secondary small:hidden">
-                Trier par
-              </Text>
               <RefinementList options={storeSortOptions} sortBy={sortBy || 'relevance'} />
             </Box>
           </Box>
@@ -253,6 +255,8 @@ export default async function CategoryTemplate({
           <ProductCarousel products={recommendedProducts} regionId={region.id} title="Produits recommandés " />
         </Suspense>
       )}
+
+      <ProjectAdviceCard />
     </>
   )
 }

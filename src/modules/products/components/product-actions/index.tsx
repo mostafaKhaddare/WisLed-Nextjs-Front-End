@@ -235,30 +235,6 @@ export default function ProductActions({
           </Button>
         </Box>
 
-        {/* Reassurance strip directly under the buy controls */}
-        <Box className="flex flex-col gap-2.5 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.12)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]">
-          {[
-            'Paiement à la livraison disponible',
-            'Conseil pour choisir l’alimentation adaptée',
-          ].map((label) => (
-            <Box key={label} className="flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="grid h-4 w-4 shrink-0 place-items-center rounded-full"
-                style={{
-                  background: 'rgba(255,200,87,0.6)',
-                  boxShadow: '0 0 10px 2px rgba(255,200,87,0.55)',
-                }}
-              >
-                <span className="h-2.5 w-2.5 rounded-full bg-[#FFC857]" />
-              </span>
-              <span className="font-jakarta text-sm font-semibold text-[#0F1B33] dark:text-white">
-                {label}
-              </span>
-            </Box>
-          ))}
-        </Box>
-
         {/* WhatsApp Button */}
         <Button
           onClick={handleWhatsAppClick}

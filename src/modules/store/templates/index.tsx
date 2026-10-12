@@ -41,6 +41,8 @@ export default async function StoreTemplate({
     ip_rating,
     voltage,
     product_type,
+    strip_width,
+    profile,
   } = searchParams
   const region = await getRegion(countryCode)
 
@@ -67,6 +69,8 @@ export default async function StoreTemplate({
       ip_rating: ip_rating?.split(','),
       voltage: voltage?.split(','),
       product_type: product_type?.split(','),
+      strip_width: strip_width?.split(','),
+      profile: profile?.split(','),
     })
     results = searchResponse.results
     count = searchResponse.count
@@ -86,6 +90,8 @@ export default async function StoreTemplate({
     if (ip_rating) queryParams.ip_rating = ip_rating.split(',')
     if (voltage) queryParams.voltage = voltage.split(',')
     if (product_type) queryParams.product_type = product_type.split(',')
+    if (strip_width) queryParams.strip_width = strip_width.split(',')
+    if (profile) queryParams.profile = profile.split(',')
 
     if (price) {
       const ranges = price.split(',')

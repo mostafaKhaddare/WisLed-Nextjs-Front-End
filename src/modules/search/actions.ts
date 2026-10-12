@@ -29,6 +29,8 @@ type SearchParams = {
   ip_rating?: string[]
   voltage?: string[]
   product_type?: string[]
+  strip_width?: string[]
+  profile?: string[]
 }
 
 /**
@@ -61,6 +63,8 @@ export async function search({
   ip_rating,
   voltage,
   product_type,
+  strip_width,
+  profile,
 }: SearchParams): Promise<SearchedProducts> {
   const sortBy =
     order === 'price_asc'
@@ -147,6 +151,18 @@ export async function search({
   if (product_type && Array.isArray(product_type)) {
     product_type.forEach((id) => {
       searchParams.append('product_type[]', id)
+    })
+  }
+
+  if (strip_width && Array.isArray(strip_width)) {
+    strip_width.forEach((id) => {
+      searchParams.append('strip_width[]', id)
+    })
+  }
+
+  if (profile && Array.isArray(profile)) {
+    profile.forEach((id) => {
+      searchParams.append('profile[]', id)
     })
   }
 

@@ -13,88 +13,108 @@ const regionMapCache = {
   regionMapUpdated: Date.now(),
 }
 
+// A slow backend (e.g. a cold Render instance) must never stall the
+// middleware: Vercel kills edge invocations that run too long and
+// answers with MIDDLEWARE_INVOCATION_TIMEOUT. The abort turns a
+// hang into a fast fallback to the cached region map.
+const REGION_FETCH_TIMEOUT_MS = 3000
+
+let inFlightRefresh: Promise<void> | null = null
+
+async function refreshRegionMap() {
+  // Validate environment variables
+  if (!BACKEND_URL) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        'NEXT_PUBLIC_MEDUSA_BACKEND_URL is not set. Please set it in your .env file.'
+      )
+    }
+    return
+  }
+
+  if (!PUBLISHABLE_API_KEY) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        'NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY is not set. Please set it in your .env file.'
+      )
+    }
+    return
+  }
+
+  try {
+    // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
+    const response = await fetch(`${BACKEND_URL}/store/regions`, {
+      headers: {
+        'x-publishable-api-key': PUBLISHABLE_API_KEY,
+      },
+      signal:
+        typeof AbortSignal.timeout === 'function'
+          ? AbortSignal.timeout(REGION_FETCH_TIMEOUT_MS)
+          : undefined,
+    })
+
+    if (!response.ok) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(
+          `Failed to fetch regions: ${response.status} ${response.statusText}. Make sure your Medusa backend is running at ${BACKEND_URL}`
+        )
+      }
+      return
+    }
+
+    const { regions } = await response.json()
+
+    if (!regions?.length) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('No regions found in Medusa backend')
+      }
+      return
+    }
+
+    // Clear existing map before populating
+    regionMapCache.regionMap.clear()
+
+    // Create a map of country codes to regions.
+    regions.forEach((region: HttpTypes.StoreRegion) => {
+      region.countries?.forEach((c) => {
+        regionMapCache.regionMap.set(c.iso_2 ?? '', region)
+      })
+    })
+
+    regionMapCache.regionMapUpdated = Date.now()
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        `Error fetching regions from ${BACKEND_URL}:`,
+        error instanceof Error ? error.message : 'Unknown error'
+      )
+      console.error(
+        'Make sure your Medusa backend is running and accessible. The middleware will use cached regions if available.'
+      )
+    }
+  }
+}
+
 async function getRegionMap() {
   const { regionMap, regionMapUpdated } = regionMapCache
 
-  if (
+  const isStale =
     !regionMap.keys().next().value ||
     regionMapUpdated < Date.now() - 3600 * 1000
-  ) {
-    // Validate environment variables
-    if (!BACKEND_URL) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(
-          'NEXT_PUBLIC_MEDUSA_BACKEND_URL is not set. Please set it in your .env file.'
-        )
-      }
-      return regionMapCache.regionMap
-    }
 
-    if (!PUBLISHABLE_API_KEY) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(
-          'NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY is not set. Please set it in your .env file.'
-        )
-      }
-      return regionMapCache.regionMap
-    }
-
-    try {
-      // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
-      const response = await fetch(`${BACKEND_URL}/store/regions`, {
-        headers: {
-          'x-publishable-api-key': PUBLISHABLE_API_KEY,
-        },
-        next: {
-          revalidate: 3600,
-          tags: ['regions'],
-        },
-      })
-
-      if (!response.ok) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error(
-            `Failed to fetch regions: ${response.status} ${response.statusText}. Make sure your Medusa backend is running at ${BACKEND_URL}`
-          )
-        }
-        // Return existing map if available, otherwise return empty map
-        return regionMapCache.regionMap
-      }
-
-      const { regions } = await response.json()
-
-      if (!regions?.length) {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('No regions found in Medusa backend')
-        }
-        return regionMapCache.regionMap
-      }
-
-      // Clear existing map before populating
-      regionMapCache.regionMap.clear()
-
-      // Create a map of country codes to regions.
-      regions.forEach((region: HttpTypes.StoreRegion) => {
-        region.countries?.forEach((c) => {
-          regionMapCache.regionMap.set(c.iso_2 ?? '', region)
-        })
-      })
-
-      regionMapCache.regionMapUpdated = Date.now()
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(
-          `Error fetching regions from ${BACKEND_URL}:`,
-          error instanceof Error ? error.message : 'Unknown error'
-        )
-        console.error(
-          'Make sure your Medusa backend is running and accessible. The middleware will use cached regions if available.'
-        )
-      }
-      // Return existing map if available, otherwise return empty map
-      return regionMapCache.regionMap
-    }
+  if (!isStale) {
+    return regionMapCache.regionMap
   }
+
+  // Single-flight: concurrent requests after a cache expiry share one
+  // refresh instead of stampeding the backend with parallel fetches.
+  if (!inFlightRefresh) {
+    inFlightRefresh = refreshRegionMap().finally(() => {
+      inFlightRefresh = null
+    })
+  }
+
+  await inFlightRefresh
 
   return regionMapCache.regionMap
 }
@@ -233,5 +253,7 @@ export const config = {
   // `payload` and `payload-admin` must stay out of the region middleware.
   // Otherwise `/payload-admin` gets rewritten to `/ma/payload-admin` by the
   // storefront locale logic below and the CMS admin cannot load.
-  matcher: ['/((?!api|payload|payload-admin|_next/static|favicon.ico).*)'],
+  // `_next/image` is excluded too: asset requests need no region rewrite,
+  // and every middleware invocation spends edge execution budget.
+  matcher: ['/((?!api|payload|payload-admin|_next/static|_next/image|favicon.ico).*)'],
 }

@@ -68,6 +68,18 @@ export default function ProductFilters({
     value: pt.value,
   })) ?? []
 
+  // Strip width and profile are LED-specific and only appear when products
+  // actually carry the metadata, so the group list stays empty otherwise.
+  const stripWidthOptions = filters.strip_width?.map((sw) => ({
+    id: sw.id,
+    value: sw.value,
+  })) ?? []
+
+  const profileOptions = filters.profile?.map((pf) => ({
+    id: pf.id,
+    value: pf.value,
+  })) ?? []
+
   const priceOptions = PRICING_OPTIONS.map((po) => ({
     ...po,
     disabled: currentPrice !== null && currentPrice !== po.id,
@@ -174,6 +186,38 @@ export default function ProductFilters({
                 <FilterItems
                   items={productTypeOptions}
                   param={FILTER_KEYS.PRODUCT_TYPE_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Largeur de ruban */}
+        {stripWidthOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Largeur de ruban (mm)"
+              content={
+                <FilterItems
+                  items={stripWidthOptions}
+                  param={FILTER_KEYS.STRIP_WIDTH_KEY}
+                />
+              }
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Profil / diffuseur */}
+        {profileOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Profil / diffuseur"
+              content={
+                <FilterItems
+                  items={profileOptions}
+                  param={FILTER_KEYS.PROFILE_KEY}
                 />
               }
             />
@@ -304,6 +348,38 @@ export default function ProductFilters({
               <FilterItems
                 items={productTypeOptions}
                 param={FILTER_KEYS.PRODUCT_TYPE_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {stripWidthOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir une largeur de ruban"
+              data-testid="strip-width-filter"
+            >
+              Largeur
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={stripWidthOptions}
+                param={FILTER_KEYS.STRIP_WIDTH_KEY}
+              />
+            </SelectContent>
+          </Select>
+        )}
+        {profileOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir un profil"
+              data-testid="profile-filter"
+            >
+              Profil
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems
+                items={profileOptions}
+                param={FILTER_KEYS.PROFILE_KEY}
               />
             </SelectContent>
           </Select>

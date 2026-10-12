@@ -127,9 +127,6 @@ export default async function Home(props: {
         />
       </Suspense>
 
-      {/* MidBanner: only render if image exists (Banner component requires it) */}
-      {MidBanner && MidBanner.Image && <Banner data={MidBanner} />}
-
       {/* "À propos / Innovation & Design" panel, sits above the news block. */}
       <InnovationCard image={aboutPhoto} />
 
