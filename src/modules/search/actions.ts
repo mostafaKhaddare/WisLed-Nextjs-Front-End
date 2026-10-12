@@ -1,5 +1,6 @@
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { getMedusaBackendUrl } from '@lib/medusa-env'
+import { medusaTimeoutSignal } from '@lib/util/medusa-timeout'
 import { SearchedProducts } from 'types/global'
 
 // Resolved through getMedusaBackendUrl rather than read directly. Reading
@@ -181,6 +182,7 @@ export async function search({
         'x-publishable-api-key': PUBLISHABLE_API_KEY!,
       },
       cache: 'no-store',
+      signal: medusaTimeoutSignal(),
     }
   )
 

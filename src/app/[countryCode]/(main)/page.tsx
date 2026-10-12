@@ -13,7 +13,6 @@ import {
   getInspirationsData,
 } from '@lib/data/cms'
 import { CategoryCarousel } from '@modules/categories/components/category-carousel'
-import { Banner } from '@modules/home/components/banner'
 import Collections from '@modules/home/components/collections'
 import { ExploreBlog } from '@modules/home/components/explore-blog'
 import Hero from '@modules/home/components/hero'
@@ -37,30 +36,26 @@ export default async function Home(props: {
 
   const { countryCode } = params
 
-  const [categories, { collections: collectionsList }, bestSellers] =
-    await Promise.all([
-      listCategories(),
-      getCollectionsList(),
-      getBestSellers({
-        countryCode: countryCode,
-        limit: 12,
-      }),
-    ])
-
-  const region = await getRegion(countryCode)
-
-  if (!bestSellers || !collectionsList || !region) {
-    return null
-  }
-
-  // CMS data — all Strapi calls are safe (return null on failure, never throw)
+  // Medusa (catalog) and Payload (CMS) are fetched together so a slow or
+  // offline backend costs one round trip, not two. Every Medusa call is
+  // bounded by the shared request timeout and degrades on its own — empty
+  // lists and a null region — so the Payload sections below still render
+  // while the catalog is offline.
   const [
+    categories,
+    { collections: collectionsList },
+    bestSellers,
+    region,
     strapiCollections,
     heroBannerResult,
     midBannerResult,
     blogResult,
     inspirationsData,
   ] = await Promise.all([
+    listCategories(),
+    getCollectionsList(),
+    getBestSellers({ countryCode, limit: 12 }),
+    getRegion(countryCode),
     getCollectionsData(),
     getHeroBannerData(),
     getMidBannerData(),
@@ -82,6 +77,10 @@ export default async function Home(props: {
     null
 
 
+  // Sections that price or link products need a region; without one
+  // (backend offline) they are skipped rather than breaking the page.
+  const regionId = region?.id
+
   return (
     <>
       <OrganizationJsonLd />
@@ -90,19 +89,21 @@ export default async function Home(props: {
 
 
 
-      <Suspense fallback={<SkeletonCategoriesCarousel />}>
-        <CategoryCarousel
-          testId="our-bestsellers-section"
-          categories={categories}
-          title="Achetez par catégorie"
-          headingDescription="Trouvez les solutions d'éclairage LED adaptées à votre projet"
-          initialLimit={20}
-          viewAll={{
-            link: '/categories',
-            text: 'Afficher tout',
-          }}
-        />
-      </Suspense>
+      {categories && categories.length > 0 && (
+        <Suspense fallback={<SkeletonCategoriesCarousel />}>
+          <CategoryCarousel
+            testId="our-bestsellers-section"
+            categories={categories}
+            title="Achetez par catégorie"
+            headingDescription="Trouvez les solutions d'éclairage LED adaptées à votre projet"
+            initialLimit={20}
+            viewAll={{
+              link: '/categories',
+              text: 'Afficher tout',
+            }}
+          />
+        </Suspense>
+      )}
 
 
       {strapiCollections && (
@@ -112,20 +113,27 @@ export default async function Home(props: {
           headingDescription="Explorez nos collections thématiques pour chaque besoin d'éclairage"
         />
       )}
-      {/* SHOP THE LOOK SECTION */}
-      <LookbookSection regionId={region.id} inspirations={inspirationsData?.data || []} />
-      <Suspense fallback={<SkeletonProductsCarousel />}>
-        <ProductCarousel
-          testId="our-bestsellers-section"
-          products={bestSellers}
-          regionId={region.id}
-          title="Nos meilleures ventes"
-          viewAll={{
-            link: '/categories',
-            text: 'Afficher tout',
-          }}
+      {/* SHOP THE LOOK SECTION — needs a region to price products */}
+      {regionId && (
+        <LookbookSection
+          regionId={regionId}
+          inspirations={inspirationsData?.data || []}
         />
-      </Suspense>
+      )}
+      {regionId && bestSellers && bestSellers.length > 0 && (
+        <Suspense fallback={<SkeletonProductsCarousel />}>
+          <ProductCarousel
+            testId="our-bestsellers-section"
+            products={bestSellers}
+            regionId={regionId}
+            title="Nos meilleures ventes"
+            viewAll={{
+              link: '/categories',
+              text: 'Afficher tout',
+            }}
+          />
+        </Suspense>
+      )}
 
       {/* "À propos / Innovation & Design" panel, sits above the news block. */}
       <InnovationCard image={aboutPhoto} />

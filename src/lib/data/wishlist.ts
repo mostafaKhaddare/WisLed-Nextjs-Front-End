@@ -1,6 +1,7 @@
 'use server'
 
 import { getMedusaBackendUrl } from '@lib/medusa-env'
+import { medusaTimeoutSignal } from '@lib/util/medusa-timeout'
 
 import { getCustomer } from './customer'
 import { getAuthHeaders } from './cookies'
@@ -72,6 +73,7 @@ export async function getVariantIdByProductHandle(
           'x-publishable-api-key': PUBLISHABLE_API_KEY,
         },
         cache: 'no-store',
+        signal: medusaTimeoutSignal(),
       }
     )
 
@@ -180,6 +182,7 @@ export async function getWishlist(): Promise<{
         },
         credentials: 'include',
         cache: 'no-store',
+        signal: medusaTimeoutSignal(),
       })
     } catch (fetchError) {
       // Network error or fetch failed
@@ -351,6 +354,7 @@ export async function addToWishlist(
         },
         credentials: 'include',
         body: JSON.stringify({ variant_id: variantId }),
+        signal: medusaTimeoutSignal(),
       })
     } catch (fetchError) {
       // Network error or fetch failed
@@ -520,6 +524,7 @@ export async function removeFromWishlist(
         ...(authHeaders.authorization ? { Authorization: authHeaders.authorization } : {}),
       },
       credentials: 'include',
+      signal: medusaTimeoutSignal(),
     })
 
     if (!response.ok) {

@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
 
 import { storeSortOptions } from '@lib/constants'
 import { getProductsList, getStoreFilters } from '@lib/data/products'
@@ -46,7 +45,21 @@ export default async function StoreTemplate({
   } = searchParams
   const region = await getRegion(countryCode)
 
-  if (!region) return notFound()
+  // Without a region the catalog can be neither priced nor searched. That
+  // happens when the backend is offline (e.g. a suspended host), so show a
+  // notice instead of a 404 — the rest of the site keeps serving.
+  if (!region) {
+    return (
+      <Container className="flex flex-col gap-8 !pb-8 !pt-4">
+        <Box className="flex flex-col gap-4">
+          <Text className="text-md text-secondary">
+            Le catalogue est temporairement indisponible. Veuillez réessayer
+            dans quelques instants.
+          </Text>
+        </Box>
+      </Container>
+    )
+  }
 
   const pageNumber = page ? parseInt(page) : 1
   const filters = await getStoreFilters()

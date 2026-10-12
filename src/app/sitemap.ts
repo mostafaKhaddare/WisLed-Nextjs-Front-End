@@ -37,12 +37,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // Fetch products for this region
         // Pagination limit might apply, explicitly fetch a reasonable batch (e.g. 100)
         // For a real production site with thousands of products, this should be paginated or optimized.
-        const { response } = await getProductsList({
+        // A hung or failing backend must not fail the whole sitemap: the
+        // region fetch above already degrades to [], so this loop only runs
+        // once regions answered, and a per-request failure here is contained
+        // to an empty product list for that region.
+        const products = await getProductsList({
             countryCode: countryCode,
             queryParams: { limit: 100 }
         })
-
-        const products = response.products
+            .then(({ response }) => response.products)
+            .catch(() => [])
 
         products.forEach((product) => {
             sitemapEntries.push({

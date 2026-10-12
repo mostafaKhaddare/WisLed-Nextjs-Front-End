@@ -4,6 +4,7 @@ import { sdk } from '@lib/config'
 import { HttpTypes } from '@medusajs/types'
 import { BACKEND_URL, PUBLISHABLE_API_KEY } from '@modules/search/actions'
 import { logMedusaRequestError } from '@lib/util/medusa-request'
+import { medusaTimeoutSignal } from '@lib/util/medusa-timeout'
 import { ProductFilters } from 'types/global'
 
 import { getRegion } from './regions'
@@ -157,22 +158,44 @@ export const getProductsListByCollectionId = async function ({
 // global; with one they describe only that category's products, which
 // is what makes each category offer its own filter set. Next caches
 // fetch responses per URL, so each category gets its own 1h entry.
+//
+// The fetch carries the same hard deadline as the SDK calls, and a
+// failure degrades to an empty filter set instead of throwing: the
+// catalog page then renders without filter options rather than going
+// down with the backend.
 export const getStoreFilters = async function (categoryId?: string) {
   const url = new URL(`${BACKEND_URL}/store/filter-product-attributes`)
   if (categoryId) {
     url.searchParams.set('category_id', categoryId)
   }
 
-  const filters: ProductFilters = await fetch(url.toString(), {
-    headers: {
-      'x-publishable-api-key': PUBLISHABLE_API_KEY!,
-    },
-    next: {
-      revalidate: 3600,
-    },
-  }).then((res) => res.json())
+  try {
+    const filters: ProductFilters = await fetch(url.toString(), {
+      headers: {
+        'x-publishable-api-key': PUBLISHABLE_API_KEY!,
+      },
+      signal: medusaTimeoutSignal(),
+      next: {
+        revalidate: 3600,
+      },
+    }).then((res) => res.json())
 
-  return filters
+    return filters
+  } catch (error) {
+    logMedusaRequestError('/store/filter-product-attributes', error)
+    return {
+      collection: [],
+      type: [],
+      material: [],
+      color_temperature: [],
+      wattage: [],
+      ip_rating: [],
+      voltage: [],
+      product_type: [],
+      strip_width: [],
+      profile: [],
+    }
+  }
 }
 
 export const getBestSellers = async function ({
