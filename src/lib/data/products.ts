@@ -101,6 +101,13 @@ export const getProductsList = async function ({
         queryParams,
       }
     })
+    .catch((error) => {
+      logMedusaRequestError('/store/products', error)
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+      }
+    })
 }
 
 export const getProductsListByCollectionId = async function ({
@@ -154,6 +161,13 @@ export const getProductsListByCollectionId = async function ({
           count,
         },
         nextPage,
+      }
+    })
+    .catch((error) => {
+      logMedusaRequestError('/store/products', error)
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
       }
     })
 }
