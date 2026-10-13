@@ -22,7 +22,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
-  const product = await getProductByHandle(handle, region.id)
+  // A slow backend can resolve the region and then time out on the
+  // product itself; treat that as a missing product rather than a 500.
+  let product
+  try {
+    product = await getProductByHandle(handle, region.id)
+  } catch {
+    product = undefined
+  }
 
   if (!product) {
     notFound()
@@ -60,7 +67,14 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
-  const pricedProduct = await getProductByHandle(params.handle, region.id)
+  // A slow backend can resolve the region and then time out on the
+  // product itself; treat that as a missing product rather than a 500.
+  let pricedProduct
+  try {
+    pricedProduct = await getProductByHandle(params.handle, region.id)
+  } catch {
+    pricedProduct = undefined
+  }
 
   if (!pricedProduct) {
     notFound()

@@ -81,7 +81,15 @@ export default async function CollectionPageLayout(
 
   const { children } = props
 
-  const currentCollection = await getCollectionByHandle(handle)
+  // A hung backend (e.g. a suspended host) must not turn a collection
+  // page into a 500. The fetch is bounded by the shared request
+  // timeout, so treat a failure the same as a missing collection.
+  let currentCollection: StoreCollection | undefined
+  try {
+    currentCollection = await getCollectionByHandle(handle)
+  } catch {
+    currentCollection = undefined
+  }
 
   if (!currentCollection) {
     notFound()

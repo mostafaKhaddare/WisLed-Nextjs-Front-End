@@ -59,6 +59,22 @@ export default async function SearchResultsTemplate({
   region,
   countryCode,
 }: SearchResultsTemplateProps) {
+  // Without a region the search can be neither priced nor run. That
+  // happens when the backend is offline, so show a notice instead of
+  // crashing — the rest of the site keeps serving.
+  if (!region) {
+    return (
+      <Container className="flex flex-col gap-8 !py-8">
+        <Box className="flex flex-col gap-4">
+          <Text className="text-md text-secondary">
+            La recherche est temporairement indisponible. Veuillez réessayer
+            dans quelques instants.
+          </Text>
+        </Box>
+      </Container>
+    )
+  }
+
   const pageNumber = page ? parseInt(page) : 1
   const filters = await getStoreFilters()
 

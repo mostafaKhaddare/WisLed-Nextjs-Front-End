@@ -83,7 +83,17 @@ export default async function CategoryPageLayout(
 
   const { children } = props
 
-  const { product_categories } = await getCategoryByHandle(category)
+  // A hung backend (e.g. a suspended host) must not turn a category
+  // page into a 500. The fetch is bounded by the shared request
+  // timeout, so treat a failure the same as a missing category.
+  let product_categories: StoreProductCategory[] = []
+  try {
+    const result = await getCategoryByHandle(category)
+    product_categories = result.product_categories
+  } catch {
+    // Backend offline: treat as no category found.
+  }
+
   const currentCategory = product_categories?.[product_categories.length - 1]
 
   if (!currentCategory) {
