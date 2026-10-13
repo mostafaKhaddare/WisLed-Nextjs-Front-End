@@ -50,7 +50,14 @@ export default async function CategoryTemplate({
   const { countryCode, category } = params
 
   const region = await getRegion(countryCode)
-  const { product_categories } = await getCategoryByHandle(category)
+
+  let product_categories: any[] = []
+  try {
+    product_categories =
+      (await getCategoryByHandle(category)).product_categories ?? []
+  } catch {
+    product_categories = []
+  }
 
   const currentCategory = product_categories[product_categories.length - 1]
 

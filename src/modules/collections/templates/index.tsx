@@ -48,9 +48,12 @@ export default async function CollectionTemplate({
   const region = await getRegion(countryCode)
   if (!region) notFound()
 
-  const currentCollection = await getCollectionByHandle(handle).then(
-    (collection: StoreCollection) => collection
-  )
+  let currentCollection: StoreCollection | undefined
+  try {
+    currentCollection = await getCollectionByHandle(handle)
+  } catch {
+    currentCollection = undefined
+  }
   if (!currentCollection) notFound()
 
   const pageNumber = page ? parseInt(page) : 1
