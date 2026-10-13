@@ -28,6 +28,10 @@ export const getProductsById = async function ({
       { next: { tags: ['products'] } }
     )
     .then(({ products }) => products)
+    .catch((error) => {
+      logMedusaRequestError('/store/products', error)
+      return []
+    })
 }
 
 export const getProductByHandle = async function (
