@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 
-import { getAllBlogSlugs, getBlogPostBySlug } from '@lib/data/cms'
+import { getAllBlogSlugs, getBlogPostBySlug, getBlogPosts } from '@lib/data/cms'
+import { getProductsList } from '@lib/data/products'
 import { listRegions } from '@lib/data/regions'
 import { StoreRegion } from '@medusajs/types'
 import BlogPostTemplate from '@modules/blog/templates/blogPostTemplate'
@@ -30,7 +31,7 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata(props) {
+export async function generateMetadata(props: { params: Promise<{ slug: string; countryCode: string }> }) {
   const params = await props.params
   const article = await getBlogPostBySlug(params.slug)
 
@@ -56,5 +57,37 @@ export default async function BlogPost(props: {
     notFound()
   }
 
-  return <BlogPostTemplate article={article} countryCode={countryCode} />
+  const [allPosts, { response: { products: recommendedProducts } }] = await Promise.all([
+    getBlogPosts({ sortBy: '-createdAt' }),
+    getProductsList({
+      pageParam: 0,
+      queryParams: { limit: 6 },
+      countryCode,
+    }).catch(() => ({ response: { products: [] } })),
+  ])
+
+  // Find current post index for prev/next navigation
+  const allArticles = allPosts?.data ?? []
+  const currentIndex = allArticles.findIndex((p) => p.Slug === slug)
+  const prevPost = currentIndex > 0 ? allArticles[currentIndex - 1] : null
+  const nextPost =
+    currentIndex >= 0 && currentIndex < allArticles.length - 1
+      ? allArticles[currentIndex + 1]
+      : null
+
+  // Related articles: same category or same index neighbors
+  const relatedArticles = allArticles
+    .filter((p) => p.Slug !== slug)
+    .slice(0, 4)
+
+  return (
+    <BlogPostTemplate
+      article={article}
+      countryCode={countryCode}
+      prevPost={prevPost}
+      nextPost={nextPost}
+      relatedArticles={relatedArticles}
+      recommendedProducts={recommendedProducts}
+    />
+  )
 }

@@ -1,5 +1,7 @@
 export { ArrowLeftIcon } from './arrow-left'
 export { ArrowRightIcon } from './arrow-right'
+export { ChevronLeftIcon } from './chevron-left'
+export { ChevronRightIcon } from './chevron-right'
 export { BagIcon } from './bag'
 export { BancontactIcon } from './bancontact'
 export { BarsIcon } from './bars'
