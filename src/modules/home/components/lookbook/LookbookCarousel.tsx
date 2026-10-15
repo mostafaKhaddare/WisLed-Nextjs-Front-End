@@ -80,12 +80,16 @@ const LookbookCarousel = ({
 
         let startX = 0
         let startY = 0
+        let directionDetermined = false
+        let isVertical = false
         const THRESHOLD = 5
 
         const handlePointerDown = (e: PointerEvent) => {
             if (e.pointerType !== 'touch') return
             startX = e.clientX
             startY = e.clientY
+            directionDetermined = false
+            isVertical = false
         }
 
         const handlePointerMove = (e: PointerEvent) => {
@@ -95,39 +99,46 @@ const LookbookCarousel = ({
             const dx = Math.abs(e.clientX - startX)
             const dy = Math.abs(e.clientY - startY)
 
-            // Once we've determined the direction, we don't need to keep checking.
-            if (dx > THRESHOLD || dy > THRESHOLD) {
-                if (dy > dx) {
+            // Determine direction once at the start of the gesture
+            if (!directionDetermined && (dx > THRESHOLD || dy > THRESHOLD)) {
+                directionDetermined = true
+                isVertical = dy > dx
+                if (isVertical) {
                     // Vertical — allow page scroll by making viewport transparent to scroll
                     viewport.style.overflow = 'visible'
                 } else {
                     // Horizontal — keep carousel behavior
                     viewport.style.overflow = 'hidden'
                 }
-                // Reset after first decision — the browser will re-evaluate
-                startX = 0
-                startY = 0
             }
         }
 
         const handlePointerUp = () => {
-            viewport.style.overflow = 'hidden'
+            // Reset state
             startX = 0
             startY = 0
+            directionDetermined = false
+            viewport.style.overflow = 'hidden'
         }
+
+        const handlePointerCancel = handlePointerUp
+        const handlePointerLeave = handlePointerUp
+        const handlePointerOut = handlePointerUp
 
         viewport.addEventListener('pointerdown', handlePointerDown, { passive: true })
         viewport.addEventListener('pointermove', handlePointerMove, { passive: true })
         viewport.addEventListener('pointerup', handlePointerUp, { passive: true })
-        viewport.addEventListener('pointercancel', handlePointerUp, { passive: true })
-        viewport.addEventListener('pointerleave', handlePointerUp, { passive: true })
-        viewport.addEventListener('pointerout', handlePointerUp, { passive: true })
+        viewport.addEventListener('pointercancel', handlePointerCancel, { passive: true })
+        viewport.addEventListener('pointerleave', handlePointerLeave, { passive: true })
+        viewport.addEventListener('pointerout', handlePointerOut, { passive: true })
 
         return () => {
             viewport.removeEventListener('pointerdown', handlePointerDown)
             viewport.removeEventListener('pointermove', handlePointerMove)
             viewport.removeEventListener('pointerup', handlePointerUp)
-            viewport.removeEventListener('pointercancel', handlePointerUp)
+            viewport.removeEventListener('pointercancel', handlePointerCancel)
+            viewport.removeEventListener('pointerleave', handlePointerLeave)
+            viewport.removeEventListener('pointerout', handlePointerOut)
         }
     }, [emblaApi])
 
