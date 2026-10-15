@@ -31,17 +31,14 @@ const LookbookCarousel = ({
 }: LookbookCarouselProps) => {
     const [emblaRef, emblaApi] = useEmblaCarousel({
         align: 'start',
-        // The track deliberately shows a sliver of the next card, so snaps are
-        // allowed to land between cards instead of forcing whole-slide jumps.
         skipSnaps: true,
         loop: false,
     })
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
 
-    const viewportRef = useRef<HTMLDivElement>(null)
-    const touchStart = useRef<{ x: number; y: number } | null>(null)
-    const isDragging = useRef(false)
+    // Viewport ref for touch-direction detection
+    const viewportRef = useRef<HTMLDivElement | null>(null)
 
     const onSelect = useCallback(() => {
         if (!emblaApi) return
@@ -66,69 +63,77 @@ const LookbookCarousel = ({
 
     const hasOverflow = slideCount > 1
 
-    // ── Touch scroll fix ──────────────────────────────────────────────
-    // On mobile, when the user touches the carousel image and tries to scroll
-    // vertically, the carousel viewport intercepts the touch and the page
-    // stops scrolling. This handler detects the primary drag direction:
-    //   - If the drag is predominantly vertical → release to the page
-    //     (temporarily set touch-action to pan-y so Embla doesn't fight it)
-    //   - If the drag is predominantly horizontal → let Embla handle it
+    // ── Mobile scroll fix ───────────────────────────────────────────────
+    // Problem: on mobile, the carousel viewport has `overflow: hidden` which
+    // creates a scroll container. Even with `touch-action: pan-x` on the
+    // viewport (set via CSS), some browsers still block vertical page scroll
+    // when the touch starts inside the carousel.
+    //
+    // Fix: Listen for `pointerdown` on the viewport. If the subsequent
+    // `pointermove` is predominantly vertical (page scroll intent), we
+    // temporarily set `overflow: visible` on the viewport so the page can
+    // scroll. If it's horizontal (carousel swipe intent), we restore
+    // `overflow: hidden` and let Embla handle the drag.
     useEffect(() => {
         const viewport = viewportRef.current
         if (!viewport) return
+        if (!hasOverflow) return
 
-        const handleTouchStart = (e: TouchEvent) => {
-            // Only track single-touch drags
-            if (e.touches.length !== 1) return
-            const touch = e.touches[0]
-            touchStart.current = { x: touch.clientX, y: touch.clientY }
-            isDragging.current = false
+        let startX = 0
+        let startY = 0
+        let isScrollingVertically = false
+        let isHorizontalDrag = false
+        const THRESHOLD = 5
+
+        const handlePointerDown = (e: PointerEvent) => {
+            if (e.pointerType !== 'touch') return
+            startX = e.clientX
+            startY = e.clientY
+            isScrollingVertically = false
+            isHorizontalDrag = false
         }
 
-        const handleTouchMove = (e: TouchEvent) => {
-            if (!touchStart.current || e.touches.length !== 1) return
-            const touch = e.touches[0]
-            const dx = Math.abs(touch.clientX - touchStart.current.x)
-            const dy = Math.abs(touch.clientY - touchStart.current.y)
+        const handlePointerMove = (e: PointerEvent) => {
+            if (!startX || !startY) return
+            if (e.pointerType !== 'touch') return
 
-            // 3px threshold — below this we can't tell the direction
-            const THRESHOLD = 3
-            if (dx > THRESHOLD || dy > THRESHOLD) {
-                isDragging.current = true
+            const dx = Math.abs(e.clientX - startX)
+            const dy = Math.abs(e.clientY - startY)
+
+            if (!isScrollingVertically && !isHorizontalDrag) {
+                if (dy > dx && dy > THRESHOLD) {
+                    // Vertical scroll — allow the page to scroll through the
+                    // carousel by making the viewport non-clipping temporarily.
+                    isScrollingVertically = true
+                    viewport.style.overflow = 'visible'
+                } else if (dx > dy && dx > THRESHOLD) {
+                    // Horizontal drag — carousel should handle it.
+                    isHorizontalDrag = true
+                    viewport.style.overflow = 'hidden'
+                }
             }
-
-            // If vertical movement exceeds horizontal, the user is trying
-            // to scroll the page. Release the touch by switching to pan-y
-            // so the browser hands the gesture to the page, not Embla.
-            if (dy > dx && dy > THRESHOLD) {
-                viewport.style.touchAction = 'pan-y'
-            } else if (dx > dy && dx > THRESHOLD) {
-                // Horizontal drag — let the carousel own it
-                viewport.style.touchAction = 'none'
-            }
         }
 
-        const handleTouchEnd = () => {
-            touchStart.current = null
-            isDragging.current = false
-            // Reset to pan-x when the gesture ends so horizontal swipe
-            // works again on the next interaction.
-            viewport.style.touchAction = 'pan-x'
+        const handlePointerUp = () => {
+            startX = 0
+            startY = 0
+            isScrollingVertically = false
+            isHorizontalDrag = false
+            viewport.style.overflow = 'hidden'
         }
 
-        // Use passive listeners so we never block the browser's native scroll.
-        viewport.addEventListener('touchstart', handleTouchStart, { passive: true })
-        viewport.addEventListener('touchmove', handleTouchMove, { passive: true })
-        viewport.addEventListener('touchend', handleTouchEnd, { passive: true })
-        viewport.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+        viewport.addEventListener('pointerdown', handlePointerDown, { passive: true })
+        viewport.addEventListener('pointermove', handlePointerMove, { passive: true })
+        viewport.addEventListener('pointerup', handlePointerUp, { passive: true })
+        viewport.addEventListener('pointercancel', handlePointerUp, { passive: true })
 
         return () => {
-            viewport.removeEventListener('touchstart', handleTouchStart)
-            viewport.removeEventListener('touchmove', handleTouchMove)
-            viewport.removeEventListener('touchend', handleTouchEnd)
-            viewport.removeEventListener('touchcancel', handleTouchEnd)
+            viewport.removeEventListener('pointerdown', handlePointerDown)
+            viewport.removeEventListener('pointermove', handlePointerMove)
+            viewport.removeEventListener('pointerup', handlePointerUp)
+            viewport.removeEventListener('pointercancel', handlePointerUp)
         }
-    }, [emblaApi])
+    }, [emblaApi, hasOverflow])
 
     return (
         <div>
@@ -206,6 +211,11 @@ const LookbookCarousel = ({
                     compositing layer on mobile Safari, which silently kills scroll chaining:
                     the page stops scrolling as soon as a finger lands on a slide. Only the
                     opacity is ever animated, so the layer is never needed.
+
+                    On mobile, the JS touch-direction handler above temporarily toggles
+                    `overflow` on this viewport: when the user drags predominantly vertical,
+                    overflow becomes `visible` so the page can scroll through the carousel.
+                    When the drag is horizontal, overflow stays `hidden` and Embla handles it.
                 */}
                 <div
                     ref={(node) => {
@@ -216,7 +226,6 @@ const LookbookCarousel = ({
                         'embla__viewport mt-10 overflow-hidden lookbook-fade',
                         visible ? 'lookbook-fade--in' : 'lookbook-fade--out',
                     )}
-                    style={{ touchAction: 'pan-x' }}
                 >
                     {children}
                 </div>

@@ -34,10 +34,6 @@ const LookbookCard: React.FC<LookbookCardProps> = ({
     return (
     <div 
         className="lookbook-card group relative aspect-[3/4] w-full rounded-[32px] bg-secondary/10"
-        // Allow vertical page scrolling when the finger lands on the card,
-        // while letting the carousel viewport capture horizontal swipes.
-        // `pan-x` means: horizontal drag → carousel, vertical drag → page scroll.
-        style={{ touchAction: 'pan-x' }}
     >
         {/*
             Only the media layer is clipped. The hotspot markers sit outside
