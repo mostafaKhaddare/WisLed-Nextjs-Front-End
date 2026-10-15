@@ -15,6 +15,7 @@ import {
   DialogOverlay,
   DialogPortal,
   DialogTitle,
+  DialogTrigger,
 } from '@modules/common/components/dialog'
 import { Heading } from '@modules/common/components/heading'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'

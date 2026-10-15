@@ -52,7 +52,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const params = await props.params
   try {
-    const { product_categories } = await getCategoryByHandle(params.category)
+    const product_categories = await getCategoryByHandle(params.category)
 
     const title = product_categories
       .map((category: StoreProductCategory) => category.name)
@@ -88,8 +88,7 @@ export default async function CategoryPageLayout(
   // timeout, so treat a failure the same as a missing category.
   let product_categories: StoreProductCategory[] = []
   try {
-    const result = await getCategoryByHandle(category)
-    product_categories = result.product_categories
+    product_categories = await getCategoryByHandle(category)
   } catch {
     // Backend offline: treat as no category found.
   }

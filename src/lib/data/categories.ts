@@ -44,4 +44,9 @@ export const getCategoryByHandle = async function (
     },
     { next: { tags: ['categories'] } }
   )
+    .then(({ product_categories }) => product_categories)
+    .catch((error) => {
+      logMedusaRequestError('/store/product-categories', error)
+      return []
+    })
 }
