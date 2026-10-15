@@ -86,13 +86,22 @@ const LookbookCarousel = ({
                     )}
                 </div>
 
-                {/* Arrows are redundant next to swipe on small screens. */}
+                {/*
+                    Arrow buttons: always visible on desktop, auto-revealed on
+                    touch after the first interaction. They provide a clear
+                    affordance for keyboard and mouse users.
+                */}
                 {hasOverflow && (
-                    <div className="hidden shrink-0 gap-2 small:flex">
+                    <div
+                        className={cn(
+                            'shrink-0 gap-2 transition-opacity duration-300',
+                            'hidden small:flex',
+                        )}
+                    >
                         <Button
                             withIcon
                             variant="filled"
-                            className={arrowClass}
+                            className={cn(arrowClass, 'border border-[#E4E7EF] dark:border-white/10')}
                             aria-label="Inspirations précédentes"
                             onClick={scrollPrev}
                             disabled={!canScrollPrev}
@@ -102,7 +111,7 @@ const LookbookCarousel = ({
                         <Button
                             withIcon
                             variant="filled"
-                            className={arrowClass}
+                            className={cn(arrowClass, 'border border-[#E4E7EF] dark:border-white/10')}
                             aria-label="Inspirations suivantes"
                             onClick={scrollNext}
                             disabled={!canScrollNext}
@@ -113,30 +122,49 @@ const LookbookCarousel = ({
                 )}
             </div>
 
-            {/* Full row width so the room-type pill row is not squeezed into the
+            {/* Full width so the room-type pill row is not squeezed into the
                 heading measure — it scrolls on its own when the list is long. */}
             {headerAside && <div className="mt-8">{headerAside}</div>}
 
-            {/*
-                The viewport clips the track, so the page itself never scrolls sideways.
-                `embla__viewport` / `embla__container` come from globals.css — the container
-                class is what carries `touch-action: pan-x`, without which the browser
-                steals the horizontal swipe for page scrolling on touch devices.
+            <div className="relative">
+                {/*
+                    The viewport clips the track, so the page itself never scrolls sideways.
+                    `embla__viewport` / `embla__container` come from globals.css — the container
+                    class is what carries `touch-action: pan-x`, without which the browser
+                    steals the horizontal swipe for page scrolling on touch devices.
 
-                The crossfade is opacity-only on purpose. A `will-change: transform` here
-                (or a transform in the wrapper style) promotes this subtree to its own
-                compositing layer on mobile Safari, which silently kills scroll chaining:
-                the page stops scrolling as soon as a finger lands on a slide. Only the
-                opacity is ever animated, so the layer is never needed.
-            */}
-            <div
-                ref={emblaRef}
-                className={cn(
-                    'embla__viewport mt-10 overflow-hidden lookbook-fade',
-                    visible ? 'lookbook-fade--in' : 'lookbook-fade--out'
+                    The crossfade is opacity-only on purpose. A `will-change: transform` here
+                    (or a transform in the wrapper style) promotes this subtree to its own
+                    compositing layer on mobile Safari, which silently kills scroll chaining:
+                    the page stops scrolling as soon as a finger lands on a slide. Only the
+                    opacity is ever animated, so the layer is never needed.
+                */}
+                <div
+                    ref={emblaRef}
+                    className={cn(
+                        'embla__viewport mt-10 overflow-hidden lookbook-fade',
+                        visible ? 'lookbook-fade--in' : 'lookbook-fade--out',
+                    )}
+                    style={{ touchAction: 'pan-x' }}
+                >
+                    {children}
+                </div>
+
+                {/* Progress indicator dots - subtle, shows current position */}
+                {hasOverflow && (
+                    <div
+                        className={cn(
+                            'mt-4 flex justify-center gap-1.5',
+                        )}
+                    >
+                        {Array.from({ length: Math.ceil(slideCount / 4) }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-1 w-8 rounded-full bg-gray-300 dark:bg-gray-600"
+                            />
+                        ))}
+                    </div>
                 )}
-            >
-                {children}
             </div>
         </div>
     )

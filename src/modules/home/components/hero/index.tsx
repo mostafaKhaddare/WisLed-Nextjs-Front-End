@@ -11,6 +11,7 @@ import { Heading } from '@modules/common/components/heading'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Text } from '@modules/common/components/text'
 import { HeroBanner } from 'types/strapi'
+import { ArrowLeftIcon, ArrowRightIcon } from '@modules/common/icons'
 
 interface HeroProps {
   data: HeroBanner
@@ -101,6 +102,7 @@ const Hero = ({
       loop: true,
       duration: transitionDuration,
       align: 'start',
+      watchDrag: hasMultipleImages,
     },
     autoplayPlugin
   )
@@ -130,9 +132,27 @@ const Hero = ({
 
   // Navigation functions
   const scrollTo = useCallback(
-    (index: number) => emblaApi?.scrollTo(index),
+    (index: number) => {
+      emblaApi?.scrollTo(index)
+      const autoplay = emblaApi?.plugins()?.autoplay
+      if (autoplay) autoplay.reset()
+    },
     [emblaApi]
   )
+
+  const scrollPrev = useCallback(() => {
+    if (!emblaApi) return
+    emblaApi.scrollPrev()
+    const autoplay = emblaApi.plugins()?.autoplay
+    if (autoplay) autoplay.reset()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (!emblaApi) return
+    emblaApi.scrollNext()
+    const autoplay = emblaApi.plugins()?.autoplay
+    if (autoplay) autoplay.reset()
+  }, [emblaApi])
 
   // Toggle autoplay
   const toggleAutoplay = useCallback(() => {
@@ -147,6 +167,36 @@ const Hero = ({
     setIsPlaying(!isPlaying)
   }, [emblaApi, isPlaying])
 
+  // Keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!hasMultipleImages) return
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault()
+          scrollPrev()
+          break
+        case 'ArrowRight':
+          e.preventDefault()
+          scrollNext()
+          break
+        case 'Home':
+          e.preventDefault()
+          scrollTo(0)
+          break
+        case 'End':
+          e.preventDefault()
+          scrollTo(images.length - 1)
+          break
+        case ' ':
+          e.preventDefault()
+          toggleAutoplay()
+          break
+      }
+    },
+    [hasMultipleImages, images.length, scrollTo, scrollPrev, scrollNext, toggleAutoplay]
+  )
+
   return (
     <>
       {/*
@@ -154,14 +204,20 @@ const Hero = ({
         every breakpoint, so there is one hero rather than a mobile panel and a
         desktop banner.
       */}
-      <Box className="mx-4 mt-4 small:mx-6">
-        <Box className="relative h-[440px] overflow-hidden rounded-[28px] medium:h-[478px]">
+       <Box className="relative mx-4 mt-4 small:mx-6">
+         <Box
+           className="group relative h-[440px] overflow-hidden rounded-[28px] medium:h-[478px]"
+           tabIndex={hasMultipleImages ? 0 : undefined}
+           onKeyDown={handleKeyDown}
+         >
+          {/* Carousel track */}
           <div
             className="h-full w-full"
             ref={hasMultipleImages ? emblaRef : null}
             role="region"
             aria-label="Hero banner carousel"
             aria-live="polite"
+            aria-roledescription="carousel"
           >
             <div className="flex h-full">
               {hasImages ? (
@@ -181,6 +237,7 @@ const Hero = ({
                       sizes="100vw"
                       priority={index === 0}
                       quality={90}
+                      draggable={false}
                     />
                     {/* Dark wash so the copy stays legible over any photo. */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0F1B33] via-[#0F1B33]/45 to-transparent" />
@@ -260,42 +317,71 @@ const Hero = ({
                 </Button>
               </div>
 
-              {/* Slide position indicator. Clicking a dot jumps to that slide;
-                  with one slide it is decorative only. */}
-              <div
-                aria-hidden={!hasMultipleImages}
-                className="mt-1.5 flex items-center gap-1.5"
-              >
-                {hasMultipleImages
-                  ? images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => scrollTo(index)}
-                        aria-label={`Go to slide ${index + 1}`}
-                        aria-current={
-                          index === selectedIndex ? 'true' : 'false'
-                        }
-                        className={`h-1 rounded-sm transition-all duration-300 ${
-                          index === selectedIndex
-                            ? 'w-[26px] bg-[#FFC857]'
-                            : 'w-3 bg-white/35'
-                        }`}
+              {/* Navigation: arrows + progress dots */}
+              {hasMultipleImages && (
+                <>
+                  {/* Arrow buttons - only show on hover/focus for cleaner look */}
+                  <div className="absolute top-1/2 right-0 -translate-y-1/2 flex flex-col gap-2 pr-2 opacity-0 transition-opacity duration-300 group-focus-within:opacity-100 sm:opacity-100 sm:group-hover:opacity-100">
+                    <button
+                      onClick={scrollPrev}
+                      aria-label="Diapositive précédente"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/40 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    >
+                      <ArrowLeftIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={scrollNext}
+                      aria-label="Diapositive suivante"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/40 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    >
+                      <ArrowRightIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  {/* Progress bar + dots */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1">
+                    <div className="relative h-1 w-full bg-white/20">
+                      <div
+                        className="absolute top-0 left-0 h-1 bg-[#FFC857] transition-all duration-300"
+                        style={{
+                          width: `${((selectedIndex + 1) / images.length) * 100}%`,
+                        }}
                       />
-                    ))
-                  : (
-                      <>
-                        <span className="h-1 w-[26px] rounded-sm bg-[#FFC857]" />
-                        <span className="h-1 w-3 rounded-sm bg-white/35" />
-                      </>
-                    )}
-              </div>
+                    </div>
+                    <div className="mt-2 flex items-center justify-center gap-1.5">
+                      {images.map((_, index) => {
+                        const isActive = index === selectedIndex
+                        const isAdjacent =
+                          Math.abs(index - selectedIndex) <= 1
+
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => scrollTo(index)}
+                            aria-label={`Aller à la diapositive ${index + 1}`}
+                            aria-current={isActive ? 'true' : 'false'}
+                            aria-hidden={!hasMultipleImages}
+                            className={`relative h-2 rounded-full transition-all duration-300 ${
+                              isActive
+                                ? 'w-8 bg-[#FFC857]'
+                                : isAdjacent
+                                ? 'w-3 bg-white/60 hover:bg-white/80'
+                                : 'w-2 bg-white/20 hover:bg-white/40'
+                            }`}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Autoplay toggle, only meaningful with more than one slide */}
             {hasMultipleImages && (
               <button
                 onClick={toggleAutoplay}
-                className="absolute right-4 top-4 z-30 rounded-full bg-black/30 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-black/40 focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/40 focus:outline-none focus:ring-2 focus:ring-white/50"
                 aria-label={isPlaying ? 'Pause autoplay' : 'Start autoplay'}
               >
                 {isPlaying ? (
@@ -303,7 +389,7 @@ const Hero = ({
                     xmlns="http://www.w3.org/2000/svg"
                     fill="white"
                     viewBox="0 0 24 24"
-                    className="h-3 w-3"
+                    className="h-4 w-4"
                   >
                     <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                   </svg>
@@ -312,7 +398,7 @@ const Hero = ({
                     xmlns="http://www.w3.org/2000/svg"
                     fill="white"
                     viewBox="0 0 24 24"
-                    className="h-3 w-3"
+                    className="h-4 w-4"
                   >
                     <path d="M8 5v14l11-7z" />
                   </svg>
