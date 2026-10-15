@@ -134,8 +134,8 @@ export default async function CategoryTemplate({
      const fallbackProducts = response.response.products
      const fallbackCount = response.response.count
 
-    // Shape products and compute cheapest variant price
-    const shaped = fallbackProducts.map((product: any) => {
+     // Shape products and compute cheapest variant price
+     const shaped = (fallbackProducts || []).map((product: any) => {
       const prices = getProductPrice({ product })
       const cheapest = prices?.cheapestPrice
 
@@ -174,7 +174,7 @@ export default async function CategoryTemplate({
       queryParams: { limit: 9 },
       countryCode,
     })
-    const recommendedProducts = recommendedResponse.response.products
+    const recommendedProducts = recommendedResponse.response.products || []
 
   // Build breadcrumbs
   const categoryTrail: Array<{ name: string; handle: string }> = []
