@@ -65,7 +65,7 @@ const LookbookCarousel = ({
 
     // ── Mobile scroll fix ───────────────────────────────────────────────
     // Problem: on mobile, the carousel viewport has `overflow: hidden` which
-    // creates a scroll container. Even with `touch-action: pan-x` on the
+    // creates a scroll container. Even with `touch-action: pan-y` on the
     // viewport (set via CSS), some browsers still block vertical page scroll
     // when the touch starts inside the carousel.
     //
@@ -77,20 +77,15 @@ const LookbookCarousel = ({
     useEffect(() => {
         const viewport = viewportRef.current
         if (!viewport) return
-        if (!hasOverflow) return
 
         let startX = 0
         let startY = 0
-        let isScrollingVertically = false
-        let isHorizontalDrag = false
         const THRESHOLD = 5
 
         const handlePointerDown = (e: PointerEvent) => {
             if (e.pointerType !== 'touch') return
             startX = e.clientX
             startY = e.clientY
-            isScrollingVertically = false
-            isHorizontalDrag = false
         }
 
         const handlePointerMove = (e: PointerEvent) => {
@@ -100,26 +95,25 @@ const LookbookCarousel = ({
             const dx = Math.abs(e.clientX - startX)
             const dy = Math.abs(e.clientY - startY)
 
-            if (!isScrollingVertically && !isHorizontalDrag) {
-                if (dy > dx && dy > THRESHOLD) {
-                    // Vertical scroll — allow the page to scroll through the
-                    // carousel by making the viewport non-clipping temporarily.
-                    isScrollingVertically = true
+            // Once we've determined the direction, we don't need to keep checking.
+            if (dx > THRESHOLD || dy > THRESHOLD) {
+                if (dy > dx) {
+                    // Vertical — allow page scroll by making viewport transparent to scroll
                     viewport.style.overflow = 'visible'
-                } else if (dx > dy && dx > THRESHOLD) {
-                    // Horizontal drag — carousel should handle it.
-                    isHorizontalDrag = true
+                } else {
+                    // Horizontal — keep carousel behavior
                     viewport.style.overflow = 'hidden'
                 }
+                // Reset after first decision — the browser will re-evaluate
+                startX = 0
+                startY = 0
             }
         }
 
         const handlePointerUp = () => {
+            viewport.style.overflow = 'hidden'
             startX = 0
             startY = 0
-            isScrollingVertically = false
-            isHorizontalDrag = false
-            viewport.style.overflow = 'hidden'
         }
 
         viewport.addEventListener('pointerdown', handlePointerDown, { passive: true })
@@ -133,7 +127,7 @@ const LookbookCarousel = ({
             viewport.removeEventListener('pointerup', handlePointerUp)
             viewport.removeEventListener('pointercancel', handlePointerUp)
         }
-    }, [emblaApi, hasOverflow])
+    }, [emblaApi])
 
     return (
         <div>
@@ -202,9 +196,8 @@ const LookbookCarousel = ({
             <div className="relative">
                 {/*
                     The viewport clips the track, so the page itself never scrolls sideways.
-                    `embla__viewport` / `embla__container` come from globals.css — the container
-                    class is what carries `touch-action: pan-x`, without which the browser
-                    steals the horizontal swipe for page scrolling on touch devices.
+                    `touch-action: pan-y` (from globals.css) tells the browser to handle
+                    vertical scrolling and lets Embla handle horizontal dragging.
 
                     The crossfade is opacity-only on purpose. A `will-change: transform` here
                     (or a transform in the wrapper style) promotes this subtree to its own
@@ -212,10 +205,10 @@ const LookbookCarousel = ({
                     the page stops scrolling as soon as a finger lands on a slide. Only the
                     opacity is ever animated, so the layer is never needed.
 
-                    On mobile, the JS touch-direction handler above temporarily toggles
-                    `overflow` on this viewport: when the user drags predominantly vertical,
-                    overflow becomes `visible` so the page can scroll through the carousel.
-                    When the drag is horizontal, overflow stays `hidden` and Embla handles it.
+                    On mobile, the JS pointer-event handler above is a backup: it detects
+                    the primary drag direction and temporarily toggles `overflow` on this
+                    viewport. Vertical drag → overflow: visible (page scrolls through).
+                    Horizontal drag → overflow: hidden (carousel owns it).
                 */}
                 <div
                     ref={(node) => {
