@@ -120,6 +120,8 @@ const LookbookCarousel = ({
         viewport.addEventListener('pointermove', handlePointerMove, { passive: true })
         viewport.addEventListener('pointerup', handlePointerUp, { passive: true })
         viewport.addEventListener('pointercancel', handlePointerUp, { passive: true })
+        viewport.addEventListener('pointerleave', handlePointerUp, { passive: true })
+        viewport.addEventListener('pointerout', handlePointerUp, { passive: true })
 
         return () => {
             viewport.removeEventListener('pointerdown', handlePointerDown)
