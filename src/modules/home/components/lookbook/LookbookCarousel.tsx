@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 
 import { cn } from '@lib/util/cn'
@@ -39,6 +39,10 @@ const LookbookCarousel = ({
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
 
+    const viewportRef = useRef<HTMLDivElement>(null)
+    const touchStart = useRef<{ x: number; y: number } | null>(null)
+    const isDragging = useRef(false)
+
     const onSelect = useCallback(() => {
         if (!emblaApi) return
         setCanScrollPrev(emblaApi.canScrollPrev())
@@ -61,6 +65,70 @@ const LookbookCarousel = ({
     const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
 
     const hasOverflow = slideCount > 1
+
+    // ── Touch scroll fix ──────────────────────────────────────────────
+    // On mobile, when the user touches the carousel image and tries to scroll
+    // vertically, the carousel viewport intercepts the touch and the page
+    // stops scrolling. This handler detects the primary drag direction:
+    //   - If the drag is predominantly vertical → release to the page
+    //     (temporarily set touch-action to pan-y so Embla doesn't fight it)
+    //   - If the drag is predominantly horizontal → let Embla handle it
+    useEffect(() => {
+        const viewport = viewportRef.current
+        if (!viewport) return
+
+        const handleTouchStart = (e: TouchEvent) => {
+            // Only track single-touch drags
+            if (e.touches.length !== 1) return
+            const touch = e.touches[0]
+            touchStart.current = { x: touch.clientX, y: touch.clientY }
+            isDragging.current = false
+        }
+
+        const handleTouchMove = (e: TouchEvent) => {
+            if (!touchStart.current || e.touches.length !== 1) return
+            const touch = e.touches[0]
+            const dx = Math.abs(touch.clientX - touchStart.current.x)
+            const dy = Math.abs(touch.clientY - touchStart.current.y)
+
+            // 3px threshold — below this we can't tell the direction
+            const THRESHOLD = 3
+            if (dx > THRESHOLD || dy > THRESHOLD) {
+                isDragging.current = true
+            }
+
+            // If vertical movement exceeds horizontal, the user is trying
+            // to scroll the page. Release the touch by switching to pan-y
+            // so the browser hands the gesture to the page, not Embla.
+            if (dy > dx && dy > THRESHOLD) {
+                viewport.style.touchAction = 'pan-y'
+            } else if (dx > dy && dx > THRESHOLD) {
+                // Horizontal drag — let the carousel own it
+                viewport.style.touchAction = 'none'
+            }
+        }
+
+        const handleTouchEnd = () => {
+            touchStart.current = null
+            isDragging.current = false
+            // Reset to pan-x when the gesture ends so horizontal swipe
+            // works again on the next interaction.
+            viewport.style.touchAction = 'pan-x'
+        }
+
+        // Use passive listeners so we never block the browser's native scroll.
+        viewport.addEventListener('touchstart', handleTouchStart, { passive: true })
+        viewport.addEventListener('touchmove', handleTouchMove, { passive: true })
+        viewport.addEventListener('touchend', handleTouchEnd, { passive: true })
+        viewport.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+
+        return () => {
+            viewport.removeEventListener('touchstart', handleTouchStart)
+            viewport.removeEventListener('touchmove', handleTouchMove)
+            viewport.removeEventListener('touchend', handleTouchEnd)
+            viewport.removeEventListener('touchcancel', handleTouchEnd)
+        }
+    }, [emblaApi])
 
     return (
         <div>
@@ -140,7 +208,10 @@ const LookbookCarousel = ({
                     opacity is ever animated, so the layer is never needed.
                 */}
                 <div
-                    ref={emblaRef}
+                    ref={(node) => {
+                        viewportRef.current = node
+                        emblaRef(node)
+                    }}
                     className={cn(
                         'embla__viewport mt-10 overflow-hidden lookbook-fade',
                         visible ? 'lookbook-fade--in' : 'lookbook-fade--out',

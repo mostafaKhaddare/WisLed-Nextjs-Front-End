@@ -25,41 +25,7 @@ interface HeroProps {
  */
 const HEADLINE_FALLBACK = 'Illuminez vos espaces avec un éclairage sur mesure'
 const TEXT_FALLBACK =
-  'Découvrez des solutions d’éclairage économes en énergie.'
-
-/**
- * Reassurance chips under the hero.
- *
- * Deliberately no cash-on-delivery claim — this storefront sells into Italy,
- * where card and PayPal are the expected methods, so an unbacked promise about
- * paying on delivery would be misleading. These are all things the store can
- * actually stand behind.
- */
-const TRUST_CHIPS = [
-  'Paiement 100% sécurisé',
-  'Livraison suivi en Europe',
-  'Garantie 2 ans',
-]
-
-/** Trust strip: square white tiles with a glowing dot, scrolling sideways. */
-const TrustStrip = () => (
-  <div className="scrollbar-hide flex gap-2.5 overflow-x-auto px-4 pb-1">
-    {TRUST_CHIPS.map((chip) => (
-      <div
-        key={chip}
-        className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-3 shadow-[0_1px_2px_rgba(20,20,59,0.05)] ring-1 ring-[#E4E7EF] dark:bg-[#141A2B] dark:shadow-none dark:ring-white/[0.06]"
-      >
-        <span
-          aria-hidden="true"
-          className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFC857] shadow-[0_0_10px_3px_rgba(255,200,87,0.6)]"
-        />
-        <span className="whitespace-nowrap font-jakarta text-[13px] font-semibold text-[#0F1B33] dark:text-white">
-          {chip}
-        </span>
-      </div>
-    ))}
-  </div>
-)
+  "Découvrez des solutions d'éclairage économes en énergie."
 
 const Hero = ({
   data,
@@ -406,11 +372,9 @@ const Hero = ({
               </button>
             )}
           </div>
-        </Box>
-      </Box>
-
-      <TrustStrip />
-    </>
+         </Box>
+       </Box>
+     </>
   )
 }
 
