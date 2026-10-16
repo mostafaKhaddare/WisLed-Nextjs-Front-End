@@ -77,7 +77,8 @@ export function resolveCollectionImage(
  */
 export function buildCollectionCards(
   cmsCollections: CmsCollectionLike[],
-  medusaCollections: MedusaCollectionLike[]
+  medusaCollections: MedusaCollectionLike[],
+  options: { includeUncurated?: boolean } = {}
 ): CollectionCard[] {
   const cmsByHandle = new Map(
     cmsCollections.map((cmsCollection) => [cmsCollection.Handle, cmsCollection])
@@ -92,9 +93,12 @@ export function buildCollectionCards(
       cmsCollection?.Image?.url
     )
 
-    // Neither curated in the CMS nor carrying a Medusa image: skip it so we
-    // only ever show intentionally published collections.
-    if (!cmsCollection && !imgSrc) continue
+    // Neither curated in the CMS nor carrying a Medusa image: skip it so the
+    // curated sections (homepage, nav) only ever show intentionally published
+    // collections. The dedicated collections index opts into `includeUncurated`
+    // so every Medusa collection is listed — including ones still waiting for
+    // artwork, which then render the branded placeholder tile.
+    if (!cmsCollection && !imgSrc && !options.includeUncurated) continue
 
     cards.push({
       title: cmsCollection?.Title || medusaCollection.title,
