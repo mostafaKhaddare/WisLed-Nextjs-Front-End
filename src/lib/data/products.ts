@@ -181,14 +181,90 @@ export const getProductsListByCollectionId = async function ({
 // failure degrades to an empty filter set instead of throwing: the
 // catalog page then renders without filter options rather than going
 // down with the backend.
-export const getStoreFilters = async function (categoryId?: string) {
+const STORE_FILTER_FACET_KEYS = [
+  'collection',
+  'type',
+  'material',
+  'color_temperature',
+  'wattage',
+  'ip_rating',
+  'voltage',
+  'product_type',
+  'strip_width',
+  'profile',
+] as const
+
+function emptyStoreFilters(): ProductFilters {
+  return {
+    collection: [],
+    type: [],
+    material: [],
+    color_temperature: [],
+    wattage: [],
+    ip_rating: [],
+    voltage: [],
+    product_type: [],
+    strip_width: [],
+    profile: [],
+  }
+}
+
+type FilterOption = ProductFilters['collection'][number]
+
+/**
+ * Coerce one facet from the API into `{ id, value }` options.
+ *
+ * Anything that is not a usable option is dropped instead of being forwarded,
+ * because these values cross the server → client boundary and are rendered
+ * straight into the filter UI.
+ */
+function toOptionList(value: unknown): FilterOption[] {
+  if (!Array.isArray(value)) return []
+
+  return value.flatMap((entry) => {
+    if (typeof entry === 'string') {
+      return entry ? [{ id: entry, value: entry }] : []
+    }
+    if (entry && typeof entry === 'object') {
+      const record = entry as Record<string, unknown>
+      const id = typeof record.id === 'string' ? record.id : ''
+      if (!id) return []
+      const value =
+        typeof record.value === 'string' && record.value ? record.value : id
+      return [{ id, value }]
+    }
+    return []
+  })
+}
+
+/**
+ * Force the response into the `ProductFilters` shape.
+ *
+ * The storefront filter components index this object directly
+ * (`filters.collection.map(…)`), so a response that is missing facets — or an
+ * error body — must never reach them.
+ */
+function normalizeStoreFilters(data: unknown): ProductFilters {
+  const filters = emptyStoreFilters()
+  if (!data || typeof data !== 'object') return filters
+
+  const record = data as Record<string, unknown>
+  for (const key of STORE_FILTER_FACET_KEYS) {
+    filters[key] = toOptionList(record[key])
+  }
+  return filters
+}
+
+export const getStoreFilters = async function (
+  categoryId?: string
+): Promise<ProductFilters> {
   const url = new URL(`${BACKEND_URL}/store/filter-product-attributes`)
   if (categoryId) {
     url.searchParams.set('category_id', categoryId)
   }
 
   try {
-    const filters: ProductFilters = await fetch(url.toString(), {
+    const response = await fetch(url.toString(), {
       headers: {
         'x-publishable-api-key': PUBLISHABLE_API_KEY!,
       },
@@ -196,23 +272,24 @@ export const getStoreFilters = async function (categoryId?: string) {
       next: {
         revalidate: 3600,
       },
-    }).then((res) => res.json())
+    })
 
-    return filters
+    // A failing endpoint answers with a Medusa error body (`{ type, code,
+    // message }`) rather than facets. Parsing it anyway and returning it as
+    // `filters` is what sent an unguarded `undefined.map()` into the browser
+    // and took the category page down, so a non-2xx becomes "no facets".
+    if (!response.ok) {
+      logMedusaRequestError(
+        '/store/filter-product-attributes',
+        new Error(`Unexpected status ${response.status}`)
+      )
+      return emptyStoreFilters()
+    }
+
+    return normalizeStoreFilters(await response.json())
   } catch (error) {
     logMedusaRequestError('/store/filter-product-attributes', error)
-    return {
-      collection: [],
-      type: [],
-      material: [],
-      color_temperature: [],
-      wattage: [],
-      ip_rating: [],
-      voltage: [],
-      product_type: [],
-      strip_width: [],
-      profile: [],
-    }
+    return emptyStoreFilters()
   }
 }
 
