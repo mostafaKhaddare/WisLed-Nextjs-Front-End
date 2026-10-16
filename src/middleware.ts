@@ -255,5 +255,13 @@ export const config = {
   // storefront locale logic below and the CMS admin cannot load.
   // `_next/image` is excluded too: asset requests need no region rewrite,
   // and every middleware invocation spends edge execution budget.
-  matcher: ['/((?!api|payload|payload-admin|_next/static|_next/image|favicon.ico).*)'],
+  //
+  // `sitemap.xml`, `robots.txt` and any other `.xml` route are excluded for the
+  // same reason as `payload-admin`: they are root-level endpoints with no
+  // country segment, so the locale rewrite below would turn
+  // `/sitemap.xml` into a 404 at `/ma/sitemap.xml` and Google would see a
+  // failing sitemap.
+  matcher: [
+    '/((?!api|payload|payload-admin|_next/static|_next/image|favicon.ico|robots.txt|.*\\.xml).*)',
+  ],
 }
