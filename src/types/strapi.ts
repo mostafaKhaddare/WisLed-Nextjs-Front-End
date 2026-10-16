@@ -16,6 +16,24 @@ export interface StrapiData<T> {
   data: T
 }
 
+export type HeroSlide = {
+  id?: string | number
+  Image:
+    | {
+        url: string
+        alternativeText?: string
+      }
+    | {
+        url: string
+        alternativeText?: string
+      }[]
+    | null
+  Headline: string
+  Text?: string
+  BtnText?: string
+  BtnLink?: string
+}
+
 export type HeroBanner = {
   Headline: string
   Text: string
@@ -31,6 +49,11 @@ export type HeroBanner = {
     url: string
     alternativeText?: string
   }[]
+  /**
+   * Per-image copy added alongside the original single headline. Optional so
+   * content that has not been migrated keeps rendering from `Headline`/`Image`.
+   */
+  Slides?: HeroSlide[] | null
 }
 
 export type BannerResponse<T extends string> = {
