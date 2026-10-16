@@ -89,7 +89,7 @@ const LookbookCard: React.FC<LookbookCardProps> = ({
                     // `touch-action: none` on interactive markers prevents
                     // the browser from trying to scroll/drag when the user
                     // taps a hotspot, avoiding gesture conflicts with the
-                    // carousel viewport's pan-x handling.
+                    // carousel viewport's pan-y handling.
                     touchAction: 'none',
                     pointerEvents: 'auto',
                 }}

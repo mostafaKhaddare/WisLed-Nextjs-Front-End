@@ -173,11 +173,11 @@ export default function ItemQtySelect({
         </button>
       </div>
 
-      {/* A real cap gets stated; an unmanaged inventory says so rather than
-          quietly implying a limit. */}
-      {!bare && !error && (
+      {/* Only state a real cap. An unmanaged inventory says nothing rather
+          than implying a limit that does not exist. */}
+      {!bare && !error && isCapped && (
         <span className="text-xs text-ui-fg-subtle">
-          {isCapped ? `Max ${formatLimit(maxQuantity)}` : 'Sans limite'}
+          Max {formatLimit(maxQuantity)}
         </span>
       )}
       {error && <span className="text-xs text-negative">{error}</span>}

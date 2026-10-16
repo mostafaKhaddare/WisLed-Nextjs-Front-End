@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import Image from 'next/image'
 
 import { StoreCollection } from '@medusajs/types'
+import { buildCollectionCards } from '@lib/util/collection-image'
 import { Box } from '@modules/common/components/box'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { CollectionsData } from 'types/strapi'
@@ -15,21 +16,11 @@ export default function CollectionsMenu({
   cmsCollections: CollectionsData
   medusaCollections: StoreCollection[]
 }) {
-  const validCollections = useMemo(() => {
-    if (!cmsCollections.data.length || !medusaCollections.length) return null
-    const collections = cmsCollections.data.filter((cmsCollection) =>
-      medusaCollections.some(
-        (medusaCollection) => medusaCollection.handle === cmsCollection.Handle
-      )
-    )
-    if (!collections || collections.length < 1) return null
-    return collections.sort((a, b) => b.id - a.id)
-  }, [cmsCollections, medusaCollections])
-
   const newestCollections = useMemo(() => {
-    if (!validCollections) return null
-    return validCollections.slice(0, 3)
-  }, [validCollections])
+    if (!medusaCollections.length) return null
+    const cards = buildCollectionCards(cmsCollections.data, medusaCollections)
+    return cards.length ? cards.slice(0, 3) : null
+  }, [cmsCollections, medusaCollections])
 
   if (!newestCollections) return null
 
@@ -59,13 +50,13 @@ export default function CollectionsMenu({
 
       {/* Collection tiles */}
       <div className="grid grid-cols-3 gap-5">
-        {newestCollections.map((element, id) => (
+        {newestCollections.map((element) => (
           <CollectionTile
-            key={id}
-            title={element.Title}
-            handle={element.Handle}
-            imgSrc={element.Image.url}
-            description={element.Description}
+            key={element.handle}
+            title={element.title}
+            handle={element.handle}
+            imgSrc={element.imgSrc}
+            description={element.description}
           />
         ))}
       </div>
@@ -96,21 +87,27 @@ const CollectionTile = ({
   title: string
   description: string
   handle: string
-  imgSrc: string
+  imgSrc?: string
 }) => {
   return (
     <LocalizedClientLink href={`/collections/${handle}`} className="group block">
       <Box className="relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl" style={{ height: '260px' }}>
         {/* Image */}
-        <Image
-          src={imgSrc}
-          alt={`${title} collection image`}
-          fill
-          sizes="(max-width: 1280px) 33vw, 400px"
-          loading="lazy"
-          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
-        />
-
+        {imgSrc ? (
+          <Image
+            src={imgSrc}
+            alt={`${title} collection image`}
+            fill
+            sizes="(max-width: 1280px) 33vw, 400px"
+            loading="lazy"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-br from-[#0F1B33] via-[#16305c] to-[#1D4ED8]"
+          />
+        )}
         {/* Multi-stop gradient: richer overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-300" />
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -129,9 +126,11 @@ const CollectionTile = ({
             <h3 className="text-lg font-black leading-tight text-white drop-shadow-md transition-transform duration-300 group-hover:translate-y-[-2px]">
               {title}
             </h3>
-            <p className="line-clamp-2 text-[12.5px] leading-relaxed text-white/75 transition-opacity duration-300">
-              {description}
-            </p>
+            {description && (
+              <p className="line-clamp-2 text-[12.5px] leading-relaxed text-white/75 transition-opacity duration-300">
+                {description}
+              </p>
+            )}
           </div>
         </Box>
 

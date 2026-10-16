@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 
 import { cn } from '@lib/util/cn'
@@ -37,9 +37,6 @@ const LookbookCarousel = ({
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
 
-    // Viewport ref for touch-direction detection
-    const viewportRef = useRef<HTMLDivElement | null>(null)
-
     const onSelect = useCallback(() => {
         if (!emblaApi) return
         setCanScrollPrev(emblaApi.canScrollPrev())
@@ -63,84 +60,12 @@ const LookbookCarousel = ({
 
     const hasOverflow = slideCount > 1
 
-    // ── Mobile scroll fix ───────────────────────────────────────────────
-    // Problem: on mobile, the carousel viewport has `overflow: hidden` which
-    // creates a scroll container. Even with `touch-action: pan-y` on the
-    // viewport (set via CSS), some browsers still block vertical page scroll
-    // when the touch starts inside the carousel.
-    //
-    // Fix: Listen for `pointerdown` on the viewport. If the subsequent
-    // `pointermove` is predominantly vertical (page scroll intent), we
-    // temporarily set `overflow: visible` on the viewport so the page can
-    // scroll. If it's horizontal (carousel swipe intent), we restore
-    // `overflow: hidden` and let Embla handle the drag.
-    useEffect(() => {
-        const viewport = viewportRef.current
-        if (!viewport) return
-
-        let startX = 0
-        let startY = 0
-        let directionDetermined = false
-        let isVertical = false
-        const THRESHOLD = 5
-
-        const handlePointerDown = (e: PointerEvent) => {
-            if (e.pointerType !== 'touch') return
-            startX = e.clientX
-            startY = e.clientY
-            directionDetermined = false
-            isVertical = false
-        }
-
-        const handlePointerMove = (e: PointerEvent) => {
-            if (!startX || !startY) return
-            if (e.pointerType !== 'touch') return
-
-            const dx = Math.abs(e.clientX - startX)
-            const dy = Math.abs(e.clientY - startY)
-
-            // Determine direction once at the start of the gesture
-            if (!directionDetermined && (dx > THRESHOLD || dy > THRESHOLD)) {
-                directionDetermined = true
-                isVertical = dy > dx
-                if (isVertical) {
-                    // Vertical — allow page scroll by making viewport transparent to scroll
-                    viewport.style.overflow = 'visible'
-                } else {
-                    // Horizontal — keep carousel behavior
-                    viewport.style.overflow = 'hidden'
-                }
-            }
-        }
-
-        const handlePointerUp = () => {
-            // Reset state
-            startX = 0
-            startY = 0
-            directionDetermined = false
-            viewport.style.overflow = 'hidden'
-        }
-
-        const handlePointerCancel = handlePointerUp
-        const handlePointerLeave = handlePointerUp
-        const handlePointerOut = handlePointerUp
-
-        viewport.addEventListener('pointerdown', handlePointerDown, { passive: true })
-        viewport.addEventListener('pointermove', handlePointerMove, { passive: true })
-        viewport.addEventListener('pointerup', handlePointerUp, { passive: true })
-        viewport.addEventListener('pointercancel', handlePointerCancel, { passive: true })
-        viewport.addEventListener('pointerleave', handlePointerLeave, { passive: true })
-        viewport.addEventListener('pointerout', handlePointerOut, { passive: true })
-
-        return () => {
-            viewport.removeEventListener('pointerdown', handlePointerDown)
-            viewport.removeEventListener('pointermove', handlePointerMove)
-            viewport.removeEventListener('pointerup', handlePointerUp)
-            viewport.removeEventListener('pointercancel', handlePointerCancel)
-            viewport.removeEventListener('pointerleave', handlePointerLeave)
-            viewport.removeEventListener('pointerout', handlePointerOut)
-        }
-    }, [emblaApi])
+    // Vertical vs. horizontal gesture splitting is handled entirely in CSS by
+    // `touch-action: pan-y` on `.embla__viewport` and `.lookbook-card`. The
+    // browser scrolls the page for vertical drags and hands horizontal drags
+    // to Embla, so no JS direction detection is needed. (The previous
+    // `overflow: visible` toggle was a workaround for a card-level
+    // `touch-action: pan-x`, which has since been corrected.)
 
     return (
         <div>
@@ -210,24 +135,18 @@ const LookbookCarousel = ({
                 {/*
                     The viewport clips the track, so the page itself never scrolls sideways.
                     `touch-action: pan-y` (from globals.css) tells the browser to handle
-                    vertical scrolling and lets Embla handle horizontal dragging.
+                    vertical scrolling and lets Embla handle horizontal dragging. The cards
+                    carry the same `pan-y`, so a finger that lands on an image still scrolls
+                    the page.
 
                     The crossfade is opacity-only on purpose. A `will-change: transform` here
                     (or a transform in the wrapper style) promotes this subtree to its own
                     compositing layer on mobile Safari, which silently kills scroll chaining:
                     the page stops scrolling as soon as a finger lands on a slide. Only the
                     opacity is ever animated, so the layer is never needed.
-
-                    On mobile, the JS pointer-event handler above is a backup: it detects
-                    the primary drag direction and temporarily toggles `overflow` on this
-                    viewport. Vertical drag → overflow: visible (page scrolls through).
-                    Horizontal drag → overflow: hidden (carousel owns it).
                 */}
                 <div
-                    ref={(node) => {
-                        viewportRef.current = node
-                        emblaRef(node)
-                    }}
+                    ref={emblaRef}
                     className={cn(
                         'embla__viewport mt-10 overflow-hidden lookbook-fade',
                         visible ? 'lookbook-fade--in' : 'lookbook-fade--out',

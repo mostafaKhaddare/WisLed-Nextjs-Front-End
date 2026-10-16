@@ -4,6 +4,10 @@ import { useMemo, useState } from 'react'
 import Image from 'next/image'
 
 import { StoreCollection } from '@medusajs/types'
+import {
+  buildCollectionCards,
+  type CollectionCard,
+} from '@lib/util/collection-image'
 import { Box } from '@modules/common/components/box'
 import { Button } from '@modules/common/components/button'
 import { Container } from '@modules/common/components/container'
@@ -25,7 +29,7 @@ const CollectionTile = ({
 }: {
   title: string
   handle: string
-  imgSrc: string
+  imgSrc?: string
   description: string
 }) => {
   return (
@@ -34,14 +38,23 @@ const CollectionTile = ({
       className="group block"
     >
       <Box className="relative h-[180px] overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:shadow-xl small:h-[260px]">
-        <Image
-          src={imgSrc}
-          alt={`${title} collection image`}
-          fill
-          sizes="(max-width: 640px) 100vw, 50vw"
-          loading="lazy"
-          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
-        />
+        {imgSrc ? (
+          <Image
+            src={imgSrc}
+            alt={`${title} collection image`}
+            fill
+            sizes="(max-width: 640px) 100vw, 50vw"
+            loading="lazy"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
+          />
+        ) : (
+          // No image on either source yet — a branded wash keeps the tile
+          // readable instead of rendering a broken <img>.
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-br from-[#0F1B33] via-[#16305c] to-[#1D4ED8]"
+          />
+        )}
 
         {/* Legibility wash — always on, never darkened on hover. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
@@ -57,15 +70,18 @@ const CollectionTile = ({
             <h3 className="font-sora text-lg font-bold leading-tight text-white drop-shadow-md small:text-xl">
               {title}
             </h3>
-            <p className="line-clamp-2 text-[12.5px] leading-relaxed text-white/75">
-              {description}
-            </p>
+            {description && (
+              <p className="line-clamp-2 text-[12.5px] leading-relaxed text-white/75">
+                {description}
+              </p>
+            )}
           </div>
         </Box>
       </Box>
     </LocalizedClientLink>
   )
 }
+
 const Collections = ({
   cmsCollections,
   medusaCollections,
@@ -77,15 +93,16 @@ const Collections = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const validCollections = useMemo(() => {
-    if (!cmsCollections.data.length || !medusaCollections.length) return null
-    const collections = cmsCollections.data.filter((cmsCollection) =>
-      medusaCollections.some(
-        (medusaCollection) => medusaCollection.handle === cmsCollection.Handle
-      )
-    )
-    if (!collections || collections.length < 1) return null
-    return collections.sort((a, b) => b.id - a.id)
+  /**
+   * Collections come from Medusa (the catalogue source of truth) and are
+   * filtered/ordered by the shared helper, which also resolves each image
+   * Medusa-first (`metadata.image`) with a CMS fallback. See
+   * `@lib/util/collection-image`.
+   */
+  const validCollections = useMemo<CollectionCard[] | null>(() => {
+    if (!medusaCollections.length) return null
+    const cards = buildCollectionCards(cmsCollections.data, medusaCollections)
+    return cards.length ? cards : null
   }, [cmsCollections, medusaCollections])
 
   const collectionsToShow = useMemo(() => {
@@ -97,7 +114,7 @@ const Collections = ({
 
   return (
     <Container>
-      {/* 1. Place the Heading here, above the grid */}
+      {/* 1. Heading above the grid */}
       <SectionHeading as="h2" accent>
         Acheter par application
       </SectionHeading>
@@ -107,21 +124,15 @@ const Collections = ({
         </div>
       )}
 
-      {/* 2. Flexible Grid */}
+      {/* 2. Flexible grid: 1 col mobile, 2 cols from small up. */}
       <div className="grid grid-cols-1 gap-4 small:grid-cols-2 large:grid-cols-2 xl:grid-cols-2">
-        {/* Adjusted to 2 cols for better visuals for collections, or maybe 4? User said 4 items. 
-             If 4 items, 2x2 grid is standard. If I change to 4 cols, they might be small. 
-             Let's use responsive: 1 col mobile, 2 cols tablet, 2 cols desktop?
-             The previous code had grid-cols-2 small:grid-cols-2.
-             Let's use grid-cols-1 small:grid-cols-2.
-         */}
-        {collectionsToShow.map((element, id) => (
+        {collectionsToShow.map((element) => (
           <CollectionTile
-            key={id}
-            title={element.Title}
-            handle={element.Handle}
-            imgSrc={element.Image.url}
-            description={element.Description}
+            key={element.handle}
+            title={element.title}
+            handle={element.handle}
+            imgSrc={element.imgSrc}
+            description={element.description}
           />
         ))}
       </div>

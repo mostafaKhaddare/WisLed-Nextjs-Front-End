@@ -4,6 +4,7 @@ import React, { Fragment, useMemo, useState } from 'react'
 import Image from 'next/image'
 
 import { createNavigation } from '@lib/constants'
+import { resolveCollectionImage } from '@lib/util/collection-image'
 import { StoreCollection, StoreProductCategory } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { Button } from '@modules/common/components/button'
@@ -96,8 +97,20 @@ const SideMenu = ({
       const strapiCollection = strapiCollections.data.find(
         (cmsCollection) => cmsCollection.Handle === item.handle_id
       )
+      const medusaCollection = collections.find(
+        (collection) => collection.handle === item.handle_id
+      )
+      // Medusa `metadata.image` wins over the CMS image so a collection image
+      // can be managed straight from the Medusa admin. See
+      // `@lib/util/collection-image`.
+      const collectionImage = resolveCollectionImage(
+        medusaCollection?.metadata?.image,
+        strapiCollection?.Image?.url
+      )
+      const collectionTitle =
+        strapiCollection?.Title || medusaCollection?.title || item.name
 
-      if (item.type === 'collection' && strapiCollection) {
+      if (item.type === 'collection' && (strapiCollection || collectionImage)) {
         return (
           <LocalizedClientLink
             key={index}
@@ -105,19 +118,26 @@ const SideMenu = ({
             className="relative mb-2 block overflow-hidden rounded-xl"
             onClick={handleClose}
           >
-            <Image
-              src={strapiCollection.Image.url}
-              alt={strapiCollection.Title}
-              width={600}
-              height={160}
-              className="h-[160px] w-full object-cover"
-            />
+            {collectionImage ? (
+              <Image
+                src={collectionImage}
+                alt={collectionTitle}
+                width={600}
+                height={160}
+                className="h-[160px] w-full object-cover"
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="h-[160px] w-full bg-gradient-to-br from-[#0F1B33] via-[#16305c] to-[#1D4ED8]"
+              />
+            )}
             <Box className="absolute bottom-6 left-6">
               <Heading
                 as="h3"
                 className="text-xl text-white font-bold"
               >
-                {strapiCollection.Title}
+                {collectionTitle}
               </Heading>
             </Box>
           </LocalizedClientLink>
