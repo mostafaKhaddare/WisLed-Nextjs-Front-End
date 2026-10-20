@@ -141,7 +141,15 @@ export type ProductFilters = {
     id: string
     value: string
   }[]
+  control_protocol?: {
+    id: string
+    value: string
+  }[]
   compatibility?: {
+    id: string
+    value: string
+  }[]
+  control_compatibility?: {
     id: string
     value: string
   }[]
@@ -157,6 +165,22 @@ export type ProductFilters = {
     id: string
     value: string
   }[]
+  brand?: { id: string; value: string }[]
+  input_voltage?: { id: string; value: string }[]
+  led_technology?: { id: string; value: string }[]
+  technology?: { id: string; value: string }[]
+  profile_type?: { id: string; value: string }[]
+  shape?: { id: string; value: string }[]
+  width?: { id: string; value: string }[]
+  height?: { id: string; value: string }[]
+  diffuser_type?: { id: string; value: string }[]
+  form_factor?: { id: string; value: string }[]
+  dimmable?: { id: string; value: string }[]
+  dimming?: { id: string; value: string }[]
+  channels?: { id: string; value: string }[]
+  number_of_channels?: { id: string; value: string }[]
+  connectivity?: { id: string; value: string }[]
+  remote_control_type?: { id: string; value: string }[]
 }
 export type CategoryImage = {
   id?: string

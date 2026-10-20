@@ -101,17 +101,25 @@ export default function ProductFilters({
           </>
         )}
 
-        <FilterWrapper
-          title="Type de produit"
-          content={<FilterItems items={typeOptions} param="type" />}
-        />
-        <Divider />
+        {typeOptions && typeOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Type de produit"
+              content={<FilterItems items={typeOptions} param="type" />}
+            />
+            <Divider />
+          </>
+        )}
 
-        <FilterWrapper
-          title="Matériau"
-          content={<FilterItems items={materialOptions} param="material" />}
-        />
-        <Divider />
+        {materialOptions && materialOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Matériau"
+              content={<FilterItems items={materialOptions} param="material" />}
+            />
+            <Divider />
+          </>
+        )}
 
         {/* Temperature de couleur */}
         {colorTemperatureOptions.length > 0 && (

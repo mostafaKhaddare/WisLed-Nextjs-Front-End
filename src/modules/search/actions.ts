@@ -57,6 +57,24 @@ type SearchParams = {
   controller_type?: string[]
   beam_angle?: string[]
   cuttable?: string[]
+  brand?: string[]
+  input_voltage?: string[]
+  led_technology?: string[]
+  technology?: string[]
+  profile_type?: string[]
+  shape?: string[]
+  width?: string[]
+  height?: string[]
+  diffuser_type?: string[]
+  form_factor?: string[]
+  dimmable?: string[]
+  dimming?: string[]
+  control_compatibility?: string[]
+  control_protocol?: string[]
+  channels?: string[]
+  number_of_channels?: string[]
+  connectivity?: string[]
+  remote_control_type?: string[]
 }
 
 /**
@@ -93,29 +111,47 @@ export async function search({
   ip_rating,
   ip,
   voltage,
+  input_voltage,
   roll_length,
   length,
+  width,
+  height,
   led_type,
+  led_technology,
+  technology,
   led_density,
   density,
   product_type,
   strip_width,
   profile,
+  profile_type,
+  shape,
   dimensions,
   finish,
+  diffuser_type,
   installation_type,
   mounting_type,
+  form_factor,
   compatible_accessories,
   output_wattage,
   output_voltage,
   current,
   output_current,
+  dimmable,
+  dimming,
   protocol,
   protocols,
+  control_protocol,
   compatibility,
+  control_compatibility,
   controller_type,
   beam_angle,
   cuttable,
+  brand,
+  channels,
+  number_of_channels,
+  connectivity,
+  remote_control_type,
 }: SearchParams): Promise<SearchedProducts> {
   const sortBy =
     order === 'price_asc'
@@ -192,29 +228,47 @@ export async function search({
   addMulti('ip_rating', ip_rating)
   addMulti('ip', ip)
   addMulti('voltage', voltage)
+  addMulti('input_voltage', input_voltage)
   addMulti('roll_length', roll_length)
   addMulti('length', length)
+  addMulti('width', width)
+  addMulti('height', height)
   addMulti('led_type', led_type)
+  addMulti('led_technology', led_technology)
+  addMulti('technology', technology)
   addMulti('led_density', led_density)
   addMulti('density', density)
   addMulti('product_type', product_type)
   addMulti('strip_width', strip_width)
   addMulti('profile', profile)
+  addMulti('profile_type', profile_type)
+  addMulti('shape', shape)
   addMulti('dimensions', dimensions)
   addMulti('finish', finish)
+  addMulti('diffuser_type', diffuser_type)
   addMulti('installation_type', installation_type)
   addMulti('mounting_type', mounting_type)
+  addMulti('form_factor', form_factor)
   addMulti('compatible_accessories', compatible_accessories)
   addMulti('output_wattage', output_wattage)
   addMulti('output_voltage', output_voltage)
   addMulti('current', current)
   addMulti('output_current', output_current)
+  addMulti('dimmable', dimmable)
+  addMulti('dimming', dimming)
   addMulti('protocol', protocol)
   addMulti('protocols', protocols)
+  addMulti('control_protocol', control_protocol)
   addMulti('compatibility', compatibility)
+  addMulti('control_compatibility', control_compatibility)
   addMulti('controller_type', controller_type)
   addMulti('beam_angle', beam_angle)
   addMulti('cuttable', cuttable)
+  addMulti('brand', brand)
+  addMulti('channels', channels)
+  addMulti('number_of_channels', number_of_channels)
+  addMulti('connectivity', connectivity)
+  addMulti('remote_control_type', remote_control_type)
 
   if (query) {
     const rawQ = safeDecodeURIComponent(query)
