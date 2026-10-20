@@ -28,32 +28,132 @@ export type ProductFilters = {
     id: string
     value: string
   }[]
-  // New filter attributes for LED lighting e-commerce
-  color_temperature: {
+  // LED/spec filter attributes
+  color?: {
     id: string
     value: string
   }[]
-  wattage: {
+  light_color?: {
     id: string
     value: string
   }[]
-  ip_rating: {
+  color_temperature?: {
     id: string
     value: string
   }[]
-  voltage: {
+  wattage?: {
     id: string
     value: string
   }[]
-  product_type: {
+  wattage_per_metre?: {
     id: string
     value: string
   }[]
-  strip_width: {
+  power?: {
     id: string
     value: string
   }[]
-  profile: {
+  ip_rating?: {
+    id: string
+    value: string
+  }[]
+  ip?: {
+    id: string
+    value: string
+  }[]
+  voltage?: {
+    id: string
+    value: string
+  }[]
+  roll_length?: {
+    id: string
+    value: string
+  }[]
+  length?: {
+    id: string
+    value: string
+  }[]
+  led_type?: {
+    id: string
+    value: string
+  }[]
+  led_density?: {
+    id: string
+    value: string
+  }[]
+  density?: {
+    id: string
+    value: string
+  }[]
+  product_type?: {
+    id: string
+    value: string
+  }[]
+  strip_width?: {
+    id: string
+    value: string
+  }[]
+  profile?: {
+    id: string
+    value: string
+  }[]
+  dimensions?: {
+    id: string
+    value: string
+  }[]
+  finish?: {
+    id: string
+    value: string
+  }[]
+  installation_type?: {
+    id: string
+    value: string
+  }[]
+  mounting_type?: {
+    id: string
+    value: string
+  }[]
+  compatible_accessories?: {
+    id: string
+    value: string
+  }[]
+  output_wattage?: {
+    id: string
+    value: string
+  }[]
+  output_voltage?: {
+    id: string
+    value: string
+  }[]
+  current?: {
+    id: string
+    value: string
+  }[]
+  output_current?: {
+    id: string
+    value: string
+  }[]
+  protocol?: {
+    id: string
+    value: string
+  }[]
+  protocols?: {
+    id: string
+    value: string
+  }[]
+  compatibility?: {
+    id: string
+    value: string
+  }[]
+  controller_type?: {
+    id: string
+    value: string
+  }[]
+  beam_angle?: {
+    id: string
+    value: string
+  }[]
+  cuttable?: {
     id: string
     value: string
   }[]
