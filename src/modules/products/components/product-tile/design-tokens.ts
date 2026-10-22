@@ -45,6 +45,7 @@ export function getVariantDotColor(value: string): string {
   if (v.includes('6000') || v.includes('6500')) return '#CFE4FF'
 
   // Special emitters.
+  if (v.includes('rgbw')) return '#E91E63'
   if (v.includes('rgb')) return '#E5484D'
   if (v.includes('cct')) return '#FFD27A'
   if (v.includes('tunable') || v.includes('variable')) return '#FFD27A'
@@ -52,12 +53,21 @@ export function getVariantDotColor(value: string): string {
   // Named colours (French and English).
   if (v === 'black' || v === 'noir') return '#1F2937'
   if (v === 'white' || v === 'blanc') return '#FFFFFF'
-  if (v.includes('red') || v.includes('rouge')) return '#EF4444'
+  if (v.includes('red') || v.includes('rouge') || v.includes('rouge vif')) return '#EF4444'
   if (v.includes('green') || v.includes('vert')) return '#22C55E'
   if (v.includes('blue') || v.includes('bleu')) return '#3B82F6'
+  if (v.includes('yellow') || v.includes('jaune')) return '#F59E0B'
+  if (v.includes('orange')) return '#FB923C'
+  if (v.includes('pink') || v.includes('rose')) return '#EC4899'
+  if (v.includes('purple') || v.includes('violet') || v.includes('mauve')) return '#A855F7'
+  if (v.includes('cyan') || v.includes('turquoise') || v.includes('aqua')) return '#06B6D4'
+  if (v.includes('amber')) return '#F59E0B'
   if (v.includes('gold') || v.includes('or')) return '#FFD700'
   if (v.includes('silver') || v.includes('argent')) return '#C0C0C0'
   if (v.includes('aluminium')) return '#C7CDD8'
+  if (v.includes('warm white') || v.includes('blanc chaud')) return '#FFD27A'
+  if (v.includes('cold white') || v.includes('blanc froid') || v.includes('daylight')) return '#F3F8FF'
+  if (v.includes('neutral white') || v.includes('blanc neutre')) return '#FFF1C9'
 
   return HAIRLINE
 }

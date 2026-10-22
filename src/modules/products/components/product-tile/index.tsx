@@ -28,10 +28,14 @@ const TILE_SIZES: Record<'list' | 'carousel', string> = {
 
 /** Options whose values are best read as colour / temperature swatches. */
 const COLOR_OPTION_RE =
-  /temp|couleur|color|kelvin|blanc|white|rgb|cct|teinte|ambiance|lumiere|lumière/i
+  /temp|couleur|color|kelvin|blanc|white|rgb|cct|teinte|ambiance|lumiere|lumière|rouge|vert|bleu|jaune|rose|violet|orange|noir/i
 
-function isColorOption(title: string): boolean {
-  return COLOR_OPTION_RE.test(title ?? '')
+function isColorOption(title: string, values?: string[]): boolean {
+  if (COLOR_OPTION_RE.test(title ?? '')) return true
+  if (values && values.some((v) => /rgb|rgbw|cct|kelvin|\d{3,4}\s*k|rouge|vert|bleu|jaune|rose|violet|orange|blanc|noir/i.test(v))) {
+    return true
+  }
+  return false
 }
 
 /** Rough weight so measurable options read before free-form ones. */
@@ -205,7 +209,8 @@ export const ProductTile = memo(function ProductTile({
 
   const colorOption = useMemo(
     () =>
-      optionsToRender.find((o: any) => isColorOption(o.title)) ??
+      optionsToRender.find((o: any) => isColorOption(o.title, o.values)) ??
+      optionsToRender.find((o: any) => /rgb|rgbw|cct|couleur|color/i.test(o.title ?? '') || (o.values||[]).some((v:string)=>/rgb|rgbw/i.test(v))) ??
       optionsToRender[0],
     [optionsToRender]
   )
