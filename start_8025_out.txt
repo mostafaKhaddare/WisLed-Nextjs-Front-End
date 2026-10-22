@@ -1,0 +1,5 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:8025
+   - Network:      http://192.168.1.106:8025
+
+ ✓ Starting...

@@ -211,20 +211,24 @@ export const ProductTile = memo(function ProductTile({
   )
 
   /**
-   * Colour / temperature values become the labelled chips; everything else is
-   * folded into the one-line spec strip under the title, which is where the
-   * mock shows "480 LED/m · 5 m · 24V · IP20".
+   * Colour / temperature values become the labelled chips; length/voltage
+   * etc are shown as pill tags similar to colors.
    */
   const chips = useMemo(
     () => (colorOption ? colorOption.values.slice(0, MAX_VARIANT_CHIPS) : []),
     [colorOption]
   )
 
+  const tagOptions = useMemo(() => {
+    const others = optionsToRender.filter((o: any) => o !== colorOption)
+    return others.slice(0, 3)
+  }, [optionsToRender, colorOption])
+
   const specLine = useMemo(() => {
     const others = optionsToRender.filter((o: any) => o !== colorOption)
     const values = Array.from(
       new Set(others.flatMap((o: any) => o.values as string[]))
-    ).slice(0, MAX_SPEC_ITEMS)
+    ).slice(MAX_SPEC_ITEMS)
 
     return values.join(' · ')
   }, [optionsToRender, colorOption])
@@ -351,13 +355,13 @@ export const ProductTile = memo(function ProductTile({
         )}
 
         {/* Variant chips */}
-        {chips.length > 0 && (
+        {(chips.length > 0 || tagOptions.length > 0) && (
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5 small:mt-3 small:gap-2">
             {chips.map((val: string) => {
               const dot = getVariantDotColor(val)
               return (
                 <button
-                  key={val}
+                  key={`color-${val}`}
                   type="button"
                   onClick={(e) =>
                     colorOption && handleOptionClick(e, colorOption.id, val)
@@ -384,6 +388,26 @@ export const ProductTile = memo(function ProductTile({
                 </button>
               )
             })}
+            {tagOptions.flatMap((opt: any) =>
+              (opt.values as string[]).slice(0, MAX_VARIANT_CHIPS).map((val: string) => (
+                <button
+                  key={`${opt.id}-${val}`}
+                  type="button"
+                  onClick={(e) => handleOptionClick(e, opt.id, val)}
+                  title={val}
+                  aria-label={`Voir la variante ${val}`}
+                  className={cn(
+                    'inline-flex h-[21.6px] shrink-0 items-center rounded-[10px] px-2',
+                    'font-jakarta text-[11px] font-semibold leading-none transition-[filter]',
+                    'hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D4ED8]',
+                    'small:h-[23.2px] small:px-2.5 small:text-xs'
+                  )}
+                  style={{ backgroundColor: CHIP_BG, color: CHIP_TEXT }}
+                >
+                  {val}
+                </button>
+              ))
+            )}
           </div>
         )}
 
