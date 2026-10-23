@@ -142,6 +142,22 @@ export const paymentInfoMap: Record<
     title: 'Paiement manuel',
     icon: <CreditCard />,
   },
+  pp_manual_manual: {
+    title: 'Paiement manuel',
+    icon: <CreditCard />,
+  },
+  manual: {
+    title: 'Paiement à la livraison',
+    icon: <CreditCard />,
+  },
+  'pp_manual_cash_on_delivery': {
+    title: 'Paiement à la livraison',
+    icon: <CreditCard />,
+  },
+  cash_on_delivery: {
+    title: 'Paiement à la livraison',
+    icon: <CreditCard />,
+  },
   // Add more payment providers here
 }
 
@@ -153,7 +169,14 @@ export const isPaypal = (providerId?: string) => {
   return providerId?.startsWith('pp_paypal')
 }
 export const isManual = (providerId?: string) => {
-  return providerId?.startsWith('pp_system_default')
+  if (!providerId) return false
+  const id = providerId.toLowerCase()
+  return (
+    id.startsWith('pp_system_default') ||
+    id.includes('manual') ||
+    id.includes('cash_on_delivery') ||
+    id.includes('cod')
+  )
 }
 
 // Add currencies that don't need to be divided by 100
