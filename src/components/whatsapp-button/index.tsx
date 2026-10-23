@@ -9,7 +9,7 @@ interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({
-  phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212710420420',
+  phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212648522511',
   defaultMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || 'Hello! I would like more information.',
   className = '',
 }: WhatsAppButtonProps) {
@@ -27,7 +27,6 @@ export function WhatsAppButton({
   const handleClick = () => {
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
   }
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()

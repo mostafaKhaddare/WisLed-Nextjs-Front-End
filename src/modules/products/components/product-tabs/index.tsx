@@ -241,7 +241,7 @@ const ProductTechnicalDocumentsTab = ({
                   {label}
                 </span>
                 <span className="text-xs text-secondary dark:text-white/40">
-                  {isPdf ? 'Fichier PDF' : 'Document technique'} · Ouvrir ↗
+                  {isPdf ? 'Fichier PDF' : 'Fiche technique'} · Ouvrir ↗
                 </span>
               </div>
             </Link>
