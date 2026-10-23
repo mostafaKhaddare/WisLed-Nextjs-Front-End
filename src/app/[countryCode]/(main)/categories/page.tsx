@@ -1,7 +1,6 @@
 import { listCategories } from '@lib/data/categories'
 import { Container } from '@modules/common/components/container'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
-import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 
 export const metadata = {
@@ -35,7 +34,13 @@ export default async function CategoryPage({ params }: { params: { countryCode: 
           <LocalizedClientLink href="/" className="hover:text-[#050505] transition-colors">
             Accueil
           </LocalizedClientLink>
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              fillRule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
           <span className="text-[#050505] font-medium">Catégories</span>
         </nav>
 
@@ -110,7 +115,13 @@ export default async function CategoryPage({ params }: { params: { countryCode: 
                           </p>
                         </div>
                         <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#FFC400] flex items-center justify-center shadow-lg group-hover:translate-x-1 transition-transform duration-300">
-                          <ChevronRight className="h-5 w-5 text-[#050505]" aria-hidden="true" />
+                          <svg className="h-5 w-5 text-[#050505]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path
+                              fillRule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
                         </div>
                       </div>
                     </div>
