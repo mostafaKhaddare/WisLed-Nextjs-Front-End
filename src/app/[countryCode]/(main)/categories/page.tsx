@@ -97,10 +97,9 @@ export default async function CategoryPage({ params }: { params: { countryCode: 
                           </div>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    </div>
+                      </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 lg:p-6">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 lg:p-6 bg-gradient-to-t from-black/40 via-black/15 to-transparent">
                       <div className="flex items-end justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <h2
