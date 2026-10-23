@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 
 import { RadioGroup } from '@headlessui/react'
 import { setShippingMethod } from '@lib/data/cart'
@@ -19,6 +20,53 @@ import {
 } from '@modules/common/components/radio'
 import { Stepper } from '@modules/common/components/stepper'
 import { Text } from '@modules/common/components/text'
+
+const SHIPPING_LOGOS: Record<string, string> = {
+  ghazala: '/images/shipping/ghazala-express.png',
+  'ghazala express': '/images/shipping/ghazala-express.png',
+  ozon: '/images/shipping/ozon-express.png',
+  'ozon express': '/images/shipping/ozon-express.png',
+  sendit: '/images/shipping/sendit.png',
+  sun: '/images/shipping/sun-express.png',
+  'sun express': '/images/shipping/sun-express.png',
+  amana: '/images/shipping/amana.png',
+}
+
+function getShippingLogo(name: string): string | null {
+  const key = name.toLowerCase()
+  for (const [k, v] of Object.entries(SHIPPING_LOGOS)) {
+    if (key.includes(k)) return v
+  }
+  return null
+}
+
+function ShippingLogo({ name }: { name: string }) {
+  const logo = getShippingLogo(name)
+  const [error, setError] = useState(false)
+
+  if (!logo || error) {
+    return (
+      <div className="flex h-10 w-14 shrink-0 items-center justify-center rounded-md bg-[#F8F9FA] border border-[#E5E7EB]">
+        <svg className="h-5 w-5 text-[#6B6B6B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+        </svg>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-white border border-[#E5E7EB]">
+      <Image
+        src={logo}
+        alt={`Logo ${name}`}
+        fill
+        sizes="56px"
+        className="object-contain p-1"
+        onError={() => setError(true)}
+      />
+    </div>
+  )
+}
 
 type ShippingProps = {
   cart: HttpTypes.StoreCart
@@ -113,15 +161,15 @@ const Shipping: React.FC<ShippingProps> = ({
                   value={option.id}
                   data-testid="delivery-option-radio"
                   className={cn(
-                    'flex cursor-pointer flex-row items-center justify-between gap-1 border p-2 !pr-4 text-basic-primary transition-all duration-200',
+                    'flex cursor-pointer flex-row items-center justify-between gap-2 border p-2.5 !pr-4 text-basic-primary transition-all duration-200 rounded-lg hover:border-[#FFC400]/60',
                     {
-                      'border-action-primary':
+                      'border-[#FFC400] bg-[#FFFBEB]':
                         option.id === selectedShippingMethod?.id,
                     }
                   )}
                 >
-                  <Box className="flex w-full items-center gap-x-2">
-                    <RadioGroupRoot className="m-3">
+                  <Box className="flex w-full items-center gap-x-3">
+                    <RadioGroupRoot className="m-2">
                       <RadioGroupItem
                         id={option.id}
                         value={option.id}
@@ -130,9 +178,10 @@ const Shipping: React.FC<ShippingProps> = ({
                         <RadioGroupIndicator />
                       </RadioGroupItem>
                     </RadioGroupRoot>
+                    <ShippingLogo name={option.name} />
                     <Box className="flex w-full flex-col gap-1 small:flex-row small:items-center small:justify-between">
-                      <span className="text-lg">{option.name}</span>
-                      <span className="justify-self-end text-md">
+                      <span className="text-base font-medium">{option.name}</span>
+                      <span className="justify-self-end text-base font-semibold">
                         {convertToLocale({
                           amount: option.amount,
                           currency_code: cart?.currency_code,
@@ -161,17 +210,20 @@ const Shipping: React.FC<ShippingProps> = ({
       ) : (
         <Box className="text-small-regular">
           {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
-            <div className="flex flex-col p-4">
-              <Text size="lg" className="text-basic-primary">
-                Méthode de livraison
-              </Text>
-              <Text className="text-secondary">
-                {selectedShippingMethod?.name},{' '}
-                {convertToLocale({
-                  amount: selectedShippingMethod?.amount,
-                  currency_code: cart?.currency_code,
-                })}
-              </Text>
+            <div className="flex items-center gap-3 p-4">
+              <ShippingLogo name={selectedShippingMethod?.name || ''} />
+              <div className="flex flex-col">
+                <Text size="lg" className="text-basic-primary">
+                  Méthode de livraison
+                </Text>
+                <Text className="text-secondary">
+                  {selectedShippingMethod?.name},{' '}
+                  {convertToLocale({
+                    amount: selectedShippingMethod?.amount,
+                    currency_code: cart?.currency_code,
+                  })}
+                </Text>
+              </div>
             </div>
           )}
         </Box>
