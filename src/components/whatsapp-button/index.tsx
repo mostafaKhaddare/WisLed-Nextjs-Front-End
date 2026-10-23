@@ -10,7 +10,7 @@ interface WhatsAppButtonProps {
 
 export function WhatsAppButton({
   phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212648522511',
-  defaultMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || 'Hello! I would like more information.',
+  defaultMessage = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||' Bonjour ! 👋 Je souhaite en savoir plus sur vos produits et solutions d’éclairage LED.',
   className = '',
 }: WhatsAppButtonProps) {
   const [isVisible, setIsVisible] = useState(false)
