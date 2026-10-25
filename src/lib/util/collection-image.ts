@@ -10,8 +10,8 @@
  *     (`metadata.image`). This is editable straight from the Medusa admin's
  *     Metadata field, which is what makes a collection image manageable
  *     without the CMS.
- *   - The CMS (Payload), on the `collections` record whose `Handle` matches the
- *     Medusa collection handle.
+ *   - The CMS (Payload), on the `collections` record whose `Handle` (or, when
+ *     the handle has drifted, `Title`) matches the Medusa collection.
  *
  * Medusa wins when it carries an image so a collection can be fully managed
  * from the Medusa admin; the CMS image stays as the fallback for collections
@@ -33,6 +33,34 @@ type CmsCollectionLike = {
   Description: string
   Image?: { url?: string | null } | null
 }
+
+/**
+ * Normalise a handle/title into a comparison key. Medusa handles are lowercase
+ * and usually unaccented; older CMS records are not always, and one CMS handle
+ * even contains a typo. Matching on both the handle and the title keeps those
+ * records connected to their Medusa collection.
+ */
+const normalizeKey = (value: string | null | undefined) =>
+  (value ?? '')
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+/**
+ * Pick the most useful CMS record when two records resolve to the same key.
+ * The CMS has a legacy duplicate collection whose short description is just the
+ * title; the richer record is the one we want to display.
+ */
+const pickRicherCmsRecord = (
+  existing: CmsCollectionLike | undefined,
+  candidate: CmsCollectionLike
+) =>
+  !existing ||
+  (candidate.Description?.trim().length ?? 0) >
+    (existing.Description?.trim().length ?? 0)
 
 export type CollectionCard = {
   title: string
@@ -80,18 +108,36 @@ export function buildCollectionCards(
   medusaCollections: MedusaCollectionLike[],
   options: { includeUncurated?: boolean } = {}
 ): CollectionCard[] {
-  const cmsByHandle = new Map(
-    cmsCollections.map((cmsCollection) => [cmsCollection.Handle, cmsCollection])
-  )
+  const cmsByHandle = new Map<string, CmsCollectionLike>()
+  const cmsByTitle = new Map<string, CmsCollectionLike>()
+
+  for (const cmsCollection of cmsCollections) {
+    const handleKey = normalizeKey(cmsCollection.Handle)
+    const titleKey = normalizeKey(cmsCollection.Title)
+
+    if (pickRicherCmsRecord(cmsByHandle.get(handleKey), cmsCollection)) {
+      cmsByHandle.set(handleKey, cmsCollection)
+    }
+
+    if (pickRicherCmsRecord(cmsByTitle.get(titleKey), cmsCollection)) {
+      cmsByTitle.set(titleKey, cmsCollection)
+    }
+  }
 
   const cards: CollectionCard[] = []
 
   for (const medusaCollection of medusaCollections) {
-    const cmsCollection = cmsByHandle.get(medusaCollection.handle)
+    const cmsCollection =
+      cmsByHandle.get(normalizeKey(medusaCollection.handle)) ??
+      cmsByTitle.get(normalizeKey(medusaCollection.title))
     const imgSrc = resolveCollectionImage(
       medusaCollection.metadata?.image,
       cmsCollection?.Image?.url
     )
+    const metadataDescription =
+      typeof medusaCollection.metadata?.description === 'string'
+        ? medusaCollection.metadata.description.trim()
+        : ''
 
     // Neither curated in the CMS nor carrying a Medusa image: skip it so the
     // curated sections (homepage, nav) only ever show intentionally published
@@ -103,7 +149,8 @@ export function buildCollectionCards(
     cards.push({
       title: cmsCollection?.Title || medusaCollection.title,
       handle: medusaCollection.handle,
-      description: cmsCollection?.Description ?? '',
+      description:
+        cmsCollection?.Description?.trim() || metadataDescription || '',
       imgSrc,
       createdAt: medusaCollection.created_at,
     })
