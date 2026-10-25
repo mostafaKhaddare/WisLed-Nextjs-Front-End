@@ -74,16 +74,20 @@ export default function NavContent(props: any) {
       </Box>
 
       {/* ─── DESKTOP LAYOUT (large screens) ─── */}
-      <Box className="hidden w-full items-center justify-between large:flex">
+      <Box className="hidden min-h-16 w-full items-center justify-between gap-3 large:flex">
         {/* LEFT: Logo */}
-        <Box className="relative shrink-0 flex items-center">
-          <LocalizedClientLink href="/" className="block">
-            <WisLedLogo className="h-7" />
+        <Box className="relative flex shrink-0 items-center">
+          <LocalizedClientLink
+            href="/"
+            className="focus-visible:ring-action-primary/25 block transition-opacity duration-200 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4"
+            aria-label="WisLED, retour à l'accueil"
+          >
+            <WisLedLogo className="h-6 xl:h-7" />
           </LocalizedClientLink>
         </Box>
 
         {/* CENTER: Navigation links */}
-        <Box className="flex flex-1 items-center justify-center px-8">
+        <Box className="flex min-w-0 flex-1 items-stretch justify-center self-stretch px-2 xl:px-8">
           <Navigation
             countryCode={props.countryCode}
             productCategories={props.productCategories}
@@ -93,7 +97,7 @@ export default function NavContent(props: any) {
         </Box>
 
         {/* RIGHT: Search + Actions */}
-        <Box className="flex items-center gap-2 shrink-0">
+        <Box className="flex shrink-0 items-center gap-2.5 xl:gap-3">
           <Box className="relative shrink-0">
             {isDesktopSearchOpen ? (
               <SearchDropdown
@@ -104,12 +108,19 @@ export default function NavContent(props: any) {
               />
             ) : (
               <button
+                type="button"
                 onClick={() => setIsDesktopSearchOpen(true)}
-                className="flex w-[280px] items-center gap-2 border border-basic-primary/15 bg-secondary px-3.5 py-2 text-sm text-secondary transition-all duration-200 hover:border-basic-primary/25 hover:bg-secondary/50 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/15 dark:hover:bg-white/[0.08] xl:w-[320px]"
+                aria-label="Rechercher un produit"
+                className="focus-visible:ring-action-primary/25 group flex h-10 w-[176px] items-center gap-2.5 rounded-full border border-basic-primary/10 bg-secondary/60 px-4 text-left font-jakarta text-[12.5px] text-secondary transition-all duration-200 hover:border-action-primary/25 hover:bg-secondary hover:text-basic-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 dark:border-white/10 dark:bg-white/[0.045] dark:text-white/50 dark:hover:bg-white/[0.07] dark:hover:text-white/80 xl:w-[232px] 2xl:w-[280px]"
                 data-testid="search-button-desktop"
               >
-                <SearchIcon className="h-4 w-4 shrink-0" />
-                <span>Rechercher un produit...</span>
+                <SearchIcon className="h-4 w-4 shrink-0 transition-colors duration-200 group-hover:text-action-primary dark:group-hover:text-wisled-400" />
+                <span className="truncate">
+                  <span className="xl:hidden">Rechercher…</span>
+                  <span className="hidden xl:inline">
+                    Rechercher un produit…
+                  </span>
+                </span>
               </button>
             )}
           </Box>
