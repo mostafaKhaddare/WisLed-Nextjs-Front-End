@@ -16,7 +16,7 @@ export const ContactHeaderSection = ({ data }: { data: ContentAttributes }) => {
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute -right-32 -top-32 h-[520px] w-[520px] rounded-full opacity-15 blur-[120px]"
-          style={{ background: 'radial-gradient(circle, #3b82f6, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #1d4ed8, transparent 70%)' }}
         />
         <div
           className="absolute -bottom-32 -left-32 h-[480px] w-[480px] rounded-full opacity-10 blur-[120px]"

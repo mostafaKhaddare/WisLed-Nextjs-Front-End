@@ -109,9 +109,9 @@ const ColorGuideModal = ({ isOpen, close }: ColorGuideModalProps) => {
                                     </div>
 
                                     {/* 6000K - Cool White */}
-                                    <div className="flex flex-col gap-3 p-4 rounded-xl bg-blue-50/50 hover:bg-blue-50 transition-colors border border-blue-100/50">
+                                    <div className="flex flex-col gap-3 p-4 rounded-xl bg-wisled-50/50 hover:bg-wisled-50 transition-colors border border-wisled-100/50">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 flex-shrink-0 rounded-full shadow-sm flex items-center justify-center text-[10px] font-bold text-gray-800 shadow-blue-200"
+                                            <div className="h-10 w-10 flex-shrink-0 rounded-full shadow-sm flex items-center justify-center text-[10px] font-bold text-gray-800 shadow-wisled-200"
                                                 style={{ background: 'linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%)', border: '1px solid #e2e8f0' }}>
                                                 6000K
                                             </div>
@@ -119,13 +119,13 @@ const ColorGuideModal = ({ isOpen, close }: ColorGuideModalProps) => {
                                         </div>
                                         <div className="space-y-2 pl-1">
                                             <div>
-                                                <span className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Description</span>
+                                                <span className="text-[10px] uppercase font-bold text-wisled-400 tracking-wider">Description</span>
                                                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mt-0.5">
                                                     Une lumière intense et stimulante avec une légère teinte bleutée. Elle offre un contraste maximal et favorise la concentration.
                                                 </p>
                                             </div>
                                             <div>
-                                                <span className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Applications Idéales</span>
+                                                <span className="text-[10px] uppercase font-bold text-wisled-400 tracking-wider">Applications Idéales</span>
                                                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mt-0.5">
                                                     Garages, ateliers, zones techniques, hôpitaux, vitrines modernes et éclairage de sécurité.
                                                 </p>

@@ -2,33 +2,34 @@ export const colors = {
   colors: {
     // WISLED Neutral Grayscale
     grey: {
-      10: 'rgb(255, 255, 255)',    // White
-      50: 'rgb(248, 250, 252)',    // Slate 50
-      100: 'rgb(241, 245, 249)',   // Slate 100
-      200: 'rgb(226, 232, 240)',   // Slate 200
-      300: 'rgb(203, 213, 225)',   // Slate 300
-      400: 'rgb(148, 163, 184)',   // Slate 400
-      500: 'rgb(100, 116, 139)',   // Slate 500
-      600: 'rgb(71, 85, 105)',     // Slate 600
-      700: 'rgb(51, 65, 85)',      // Slate 700
-      800: 'rgb(30, 41, 59)',      // Slate 800
-      900: 'rgb(15, 23, 42)',      // Slate 900
-      950: 'rgb(2, 6, 23)',        // Slate 950
+      10: 'rgb(255, 255, 255)', // White
+      50: 'rgb(248, 250, 252)', // Slate 50
+      100: 'rgb(241, 245, 249)', // Slate 100
+      200: 'rgb(226, 232, 240)', // Slate 200
+      300: 'rgb(203, 213, 225)', // Slate 300
+      400: 'rgb(148, 163, 184)', // Slate 400
+      500: 'rgb(100, 116, 139)', // Slate 500
+      600: 'rgb(71, 85, 105)', // Slate 600
+      700: 'rgb(51, 65, 85)', // Slate 700
+      800: 'rgb(30, 41, 59)', // Slate 800
+      900: 'rgb(15, 23, 42)', // Slate 900
+      950: 'rgb(2, 6, 23)', // Slate 950
     },
 
-    // WISLED Blue Palette
+    // WISLED Blue Palette — anchored on the brand primary #1d4ed8.
+    // Keep this scale in sync with `preset/plugins/colors.ts`.
     wisled: {
-      50: 'rgb(239, 246, 255)',    // #eff6ff
-      100: 'rgb(219, 234, 254)',   // #dbeafe
-      200: 'rgb(190, 219, 255)',   // #bedbff
-      300: 'rgb(142, 197, 255)',   // #8ec5ff
-      400: 'rgb(81, 162, 255)',    // #51a2ff
-      500: 'rgb(43, 127, 255)',    // #2b7fff - PRIMARY BRAND
-      600: 'rgb(21, 93, 252)',     // #155dfc
-      700: 'rgb(20, 71, 230)',     // #1447e6
-      800: 'rgb(25, 60, 184)',     // #193cb8
-      900: 'rgb(28, 57, 142)',     // #1c398e
-      950: 'rgb(22, 36, 86)',      // #162456 - DARKEST
+      50: 'rgb(239, 246, 255)', // #eff6ff
+      100: 'rgb(219, 234, 254)', // #dbeafe
+      200: 'rgb(191, 219, 254)', // #bfdbfe
+      300: 'rgb(147, 197, 253)', // #93c5fd
+      400: 'rgb(96, 165, 250)', // #60a5fa
+      500: 'rgb(29, 78, 216)', // #1d4ed8 - PRIMARY BRAND
+      600: 'rgb(30, 64, 175)', // #1e40af
+      700: 'rgb(30, 58, 138)', // #1e3a8a
+      800: 'rgb(30, 58, 138)', // #1e3a8a
+      900: 'rgb(23, 37, 84)', // #172554
+      950: 'rgb(15, 23, 42)', // #0f172a - DARKEST
     },
 
     // Twitter "Like" Red (#E0245E) - kept for error states
@@ -74,14 +75,21 @@ export const colors = {
     },
   },
   backgroundImage: {
-    'wisled-gradient-primary': 'linear-gradient(135deg, #2b7fff 0%, #1447e6 100%)',
-    'wisled-gradient-light': 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-    'wisled-gradient-dark': 'linear-gradient(135deg, #162456 0%, #1c398e 100%)',
+    'wisled-gradient-primary':
+      'linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%)',
+    'wisled-gradient-light':
+      'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+    'wisled-gradient-dark': 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)',
   },
   backgroundColor: {
     static: 'rgb(var(--bg-static) / <alpha-value>)',
     primary: 'rgb(var(--bg-primary) / <alpha-value>)',
     secondary: 'rgb(var(--bg-secondary) / <alpha-value>)',
+    'action-primary': 'rgb(var(--content-action-primary) / <alpha-value>)',
+    'action-primary-hover':
+      'rgb(var(--content-action-primary-hover) / <alpha-value>)',
+    'action-primary-pressed':
+      'rgb(var(--content-action-primary-pressed) / <alpha-value>)',
     'category-image-tile': 'rgb(var(--bg-category-image-tile) / <alpha-value>)',
     'wisled-50': 'rgb(var(--wisled-50) / <alpha-value>)',
     'wisled-100': 'rgb(var(--wisled-100) / <alpha-value>)',
@@ -144,13 +152,36 @@ export const colors = {
     positive: 'rgb(var(--border-positive) / <alpha-value>)',
     warning: 'rgb(var(--border-warning) / <alpha-value>)',
   },
+  fill: {
+    'action-primary': 'rgb(var(--content-action-primary) / <alpha-value>)',
+    'wisled-500': 'rgb(var(--wisled-500) / <alpha-value>)',
+  },
+  ringColor: {
+    'action-primary': 'rgb(var(--content-action-primary) / <alpha-value>)',
+    'action-primary-hover':
+      'rgb(var(--content-action-primary-hover) / <alpha-value>)',
+    'action-primary-pressed':
+      'rgb(var(--content-action-primary-pressed) / <alpha-value>)',
+  },
+  ringOffsetColor: {
+    'action-primary': 'rgb(var(--content-action-primary) / <alpha-value>)',
+  },
+  gradientColorStops: {
+    'action-primary': 'rgb(var(--content-action-primary) / <alpha-value>)',
+    'action-primary-hover':
+      'rgb(var(--content-action-primary-hover) / <alpha-value>)',
+    'action-primary-pressed':
+      'rgb(var(--content-action-primary-pressed) / <alpha-value>)',
+  },
 }
 
 export const boxShadow = {
   'complementary-basic': '0 2px 10px rgba(0, 0, 0, 0.2)',
-  'wisled-primary': '0 4px 14px rgba(43, 127, 255, 0.25)',
-  'wisled-primary-hover': '0 6px 20px rgba(43, 127, 255, 0.35)',
-  'wisled-focus': '0 0 0 3px rgba(43, 127, 255, 0.20)',
-  'card-subtle': '0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06)',
-  'card-hover': '0 10px 25px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.08)',
+  'wisled-primary': '0 4px 14px rgba(29, 78, 216, 0.25)',
+  'wisled-primary-hover': '0 6px 20px rgba(29, 78, 216, 0.35)',
+  'wisled-focus': '0 0 0 3px rgba(29, 78, 216, 0.20)',
+  'card-subtle':
+    '0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06)',
+  'card-hover':
+    '0 10px 25px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.08)',
 }

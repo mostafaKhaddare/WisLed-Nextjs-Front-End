@@ -12,7 +12,7 @@ const SUBJECT_CONFIG: Record<string, { color: string; bg: string; border: string
     priority: 'Haute priorité',
   },
   'Support technique': {
-    color: '#3b82f6',
+    color: '#1d4ed8',
     bg: '#eff6ff',
     border: '#bfdbfe',
     emoji: '🔧',
@@ -168,7 +168,7 @@ function buildEmailHtml({
                 <td width="50%" style="padding-bottom:20px;padding-left:12px;vertical-align:top;">
                   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;">
                     <div style="font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">✉️ Email</div>
-                    <a href="mailto:${email}" style="font-size:15px;font-weight:700;color:#3b82f6;text-decoration:none;">${email}</a>
+                    <a href="mailto:${email}" style="font-size:15px;font-weight:700;color:#1d4ed8;text-decoration:none;">${email}</a>
                   </div>
                 </td>
               </tr>

@@ -164,7 +164,7 @@ const ProductSpecificationsTab = ({
             <tr
               key={key}
               className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                } transition-colors duration-200 hover:bg-indigo-50`}
+                } transition-colors duration-200 hover:bg-wisled-50`}
             >
               <td className="break-words px-3 py-3 text-sm font-medium text-gray-800">
                 {formatKey(key, 'spec_')}
@@ -212,7 +212,7 @@ const ProductTechnicalDocumentsTab = ({
               <div
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${isPdf
                     ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
-                    : 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
+                    : 'bg-wisled-50 text-wisled-600 dark:bg-wisled-900/20 dark:text-wisled-400'
                   }`}
               >
                 {isPdf ? (

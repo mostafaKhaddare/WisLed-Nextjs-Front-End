@@ -47,7 +47,7 @@ export default function UpperNavbar() {
   return (
     <div
       data-testid="upper-nav"
-      className="relative z-40 w-full border-b border-white/10 bg-wisled-950 bg-[radial-gradient(120%_140%_at_0%_0%,rgba(43,127,255,0.3),transparent_58%)] font-jakarta text-white"
+      className="relative z-40 w-full border-b border-white/10 bg-wisled-950 bg-[radial-gradient(120%_140%_at_0%_0%,rgba(29,78,216,0.3),transparent_58%)] font-jakarta text-white"
     >
       {/* Fine luminous rule separating the utility strip from the main navbar. */}
       <span
