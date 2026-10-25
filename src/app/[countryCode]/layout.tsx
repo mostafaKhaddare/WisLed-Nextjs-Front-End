@@ -44,6 +44,7 @@ export const metadata: Metadata = {
   },
   description: 'Découvrez notre collection exclusive de luminaires LED modernes. Qualité premium, design innovative et économie d\'énergie pour sublimer votre intérieur.',
   keywords: ['LED', 'Éclairage', 'Design', 'Luminaires', 'Intérieur', 'Décoration'],
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'WisLed - Éclairage LED Moderne & Design',
     description: 'Découvrez notre collection exclusive de luminaires LED modernes.',
