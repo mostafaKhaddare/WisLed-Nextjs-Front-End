@@ -302,9 +302,7 @@ const Hero = ({
                           quality={90}
                           draggable={false}
                         />
-                        {/* Dark wash so the copy stays legible over any photo. */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0F1B33] via-[#0F1B33]/45 to-transparent" />
-                      </>
+s                      </>
                     ) : (
                       <HeroArtwork />
                     )}
