@@ -60,10 +60,10 @@ const LookbookCard: React.FC<LookbookCardProps> = ({
             />
 
                 Keeps white overlay text legible on light product shots.
-                <div
+                {/* <div
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent"
-                />
+                /> */}
         </div>
 
         <div

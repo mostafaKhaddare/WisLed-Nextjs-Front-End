@@ -50,10 +50,7 @@ const CollectionTile = ({
         ) : (
           // No image on either source yet — a branded wash keeps the tile
           // readable instead of rendering a broken <img>.
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-br from-[#0F1B33] via-[#16305c] to-[#1D4ED8]"
-          />
+          <div></div>
         )}
 
         {/* Legibility wash — always on, never darkened on hover. */}
