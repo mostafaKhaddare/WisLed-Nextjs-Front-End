@@ -109,13 +109,17 @@ export const storeSortOptions = [
 ]
 
 
+export type PaymentInfo = {
+  title: string
+  description?: string
+  icon: React.JSX.Element
+}
+
 /* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
-export const paymentInfoMap: Record<
-  string,
-  { title: string; icon: React.JSX.Element }
-> = {
+export const paymentInfoMap: Record<string, PaymentInfo> = {
   pp_stripe_stripe: {
-    title: 'Carte de crédit',
+    title: 'Carte bancaire',
+    description: 'Paiement sécurisé par Stripe',
     icon: <StripeIcon />,
   },
   'pp_stripe-blik_stripe': {
@@ -136,29 +140,67 @@ export const paymentInfoMap: Record<
   },
   pp_paypal_paypal: {
     title: 'PayPal',
+    description: 'Paiement sécurisé avec votre compte PayPal',
     icon: <PayPalIcon />,
   },
+  // Medusa's built-in manual provider. In this store it represents COD.
   pp_system_default: {
-    title: 'Paiement manuel',
+    title: 'Paiement à la livraison',
+    description:
+      'Payez en espèces au moment de la réception de votre commande.',
     icon: <CreditCard />,
   },
   pp_manual_manual: {
-    title: 'Paiement manuel',
+    title: 'Paiement à la livraison',
+    description:
+      'Payez en espèces au moment de la réception de votre commande.',
     icon: <CreditCard />,
   },
   manual: {
     title: 'Paiement à la livraison',
+    description:
+      'Payez en espèces au moment de la réception de votre commande.',
     icon: <CreditCard />,
   },
   'pp_manual_cash_on_delivery': {
     title: 'Paiement à la livraison',
+    description:
+      'Payez en espèces au moment de la réception de votre commande.',
     icon: <CreditCard />,
   },
   cash_on_delivery: {
     title: 'Paiement à la livraison',
+    description:
+      'Payez en espèces au moment de la réception de votre commande.',
     icon: <CreditCard />,
   },
   // Add more payment providers here
+}
+
+export const getPaymentInfo = (providerId?: string | null): PaymentInfo =>
+  (providerId && paymentInfoMap[providerId]) || {
+    title: 'Paiement sécurisé',
+    icon: <CreditCard />,
+  }
+
+// COD first so the default choice is the most common local payment method.
+const paymentPriority = [
+  'pp_system_default',
+  'pp_manual_manual',
+  'manual',
+  'pp_manual_cash_on_delivery',
+  'cash_on_delivery',
+  'pp_stripe_stripe',
+  'pp_paypal_paypal',
+]
+
+export const getPaymentPriority = (providerId?: string) => {
+  if (!providerId) return Number.MAX_SAFE_INTEGER
+  const index = paymentPriority.indexOf(providerId)
+  if (index !== -1) return index
+  if (providerId.startsWith('pp_stripe')) return 20
+  if (providerId.startsWith('pp_paypal')) return 30
+  return 40
 }
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers

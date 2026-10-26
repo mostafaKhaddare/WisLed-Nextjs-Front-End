@@ -9,9 +9,16 @@ type ItemProps = {
 }
 
 const Item = ({ item }: ItemProps) => {
+  const variantTitle =
+    (item as HttpTypes.StoreOrderLineItem & {
+      variant_title?: string
+    }).variant_title ||
+    (item as HttpTypes.StoreCartLineItem & { variant?: { title?: string } })
+      .variant?.title
+
   return (
     <Box className="flex w-full bg-primary p-4" data-testid="product-row">
-      <div className="flex h-[90px] w-[90px]">
+      <div className="flex h-[90px] w-[90px] shrink-0">
         <Thumbnail thumbnail={item.thumbnail} size="square" alt={item.product_title} />
       </div>
       <Box className="px-4 medium:flex-grow">
@@ -21,8 +28,13 @@ const Item = ({ item }: ItemProps) => {
         <Text className="font-medium" data-testid="product-name">
           {item.product_title}
         </Text>
-        <Text size="base" className="text-secondary">
-          {item.quantity} {item.quantity > 1 ? 'items' : 'item'}
+        {variantTitle && (
+          <Text size="base" className="text-secondary">
+            {variantTitle}
+          </Text>
+        )}
+        <Text size="base" className="mt-1 text-secondary">
+          Quantité : {item.quantity}
         </Text>
         <LineItemPrice
           item={item}

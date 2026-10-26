@@ -79,6 +79,9 @@ const Shipping: React.FC<ShippingProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedOptionId, setSelectedOptionId] = useState(
+    cart.shipping_methods?.at(-1)?.shipping_option_id ?? ''
+  )
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -88,7 +91,10 @@ const Shipping: React.FC<ShippingProps> = ({
 
   const selectedShippingMethod = availableShippingMethods?.find(
     // To do: remove the previously selected shipping method instead of using the last one
-    (method) => method.id === cart.shipping_methods?.at(-1)?.shipping_option_id
+    (method) =>
+      method.id ===
+      (selectedOptionId ||
+        cart.shipping_methods?.at(-1)?.shipping_option_id)
   )
 
   const handleEdit = () => {
@@ -96,18 +102,31 @@ const Shipping: React.FC<ShippingProps> = ({
   }
 
   const handleSubmit = () => {
+    if (!selectedOptionId || isLoading) {
+      return
+    }
+
     router.push(pathname + '?step=payment', { scroll: false })
   }
 
   const set = async (id: string) => {
+    const previousOptionId = selectedOptionId
+    setSelectedOptionId(id)
     setIsLoading(true)
-    await setShippingMethod({ cartId: cart.id, shippingMethodId: id })
-      .catch((err) => {
-        setError(err.message)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
+    setError(null)
+
+    try {
+      await setShippingMethod({ cartId: cart.id, shippingMethodId: id })
+      router.refresh()
+    } catch (err: any) {
+      setSelectedOptionId(previousOptionId)
+      setError(
+        err?.message ||
+          "Impossible de sélectionner ce mode de livraison. Veuillez réessayer."
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -153,7 +172,7 @@ const Shipping: React.FC<ShippingProps> = ({
       </Box>
       {isOpen ? (
         <Box data-testid="delivery-options-container">
-          <RadioGroup value={selectedShippingMethod?.id || ''} onChange={set}>
+          <RadioGroup value={selectedOptionId} onChange={set}>
             {availableShippingMethods?.map((option) => {
               return (
                 <RadioGroup.Option
@@ -164,7 +183,7 @@ const Shipping: React.FC<ShippingProps> = ({
                     'flex cursor-pointer flex-row items-center justify-between gap-2 border p-2.5 !pr-4 text-basic-primary transition-all duration-200 rounded-lg hover:border-[#FFC400]/60',
                     {
                       'border-[#FFC400] bg-[#FFFBEB]':
-                        option.id === selectedShippingMethod?.id,
+                        option.id === selectedOptionId,
                     }
                   )}
                 >
@@ -173,7 +192,7 @@ const Shipping: React.FC<ShippingProps> = ({
                       <RadioGroupItem
                         id={option.id}
                         value={option.id}
-                        checked={option.id === selectedShippingMethod?.id}
+                        checked={option.id === selectedOptionId}
                       >
                         <RadioGroupIndicator />
                       </RadioGroupItem>
@@ -201,7 +220,7 @@ const Shipping: React.FC<ShippingProps> = ({
             className="mt-6"
             onClick={handleSubmit}
             isLoading={isLoading}
-            disabled={!cart.shipping_methods?.[0]}
+            disabled={!selectedOptionId || isLoading}
             data-testid="submit-delivery-option-button"
           >
             Continuer vers le paiement

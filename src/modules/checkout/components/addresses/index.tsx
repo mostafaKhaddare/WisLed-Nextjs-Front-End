@@ -8,7 +8,7 @@ import {
   useSearchParams,
 } from 'next/navigation'
 
-import { initiatePaymentSession, setAddresses } from '@lib/data/cart'
+import { setAddresses } from '@lib/data/cart'
 import { useCheckoutForms } from '@lib/hooks/use-checkout-forms'
 import compareAddresses from '@lib/util/addresses'
 import { HttpTypes } from '@medusajs/types'
@@ -113,20 +113,13 @@ const Addresses = ({
           checkout.values.same_as_shipping ? 'on' : 'off'
         )
 
-        const activeSession = cart?.payment_collection?.payment_sessions?.find(
-          (paymentSession: any) => paymentSession.status === 'pending'
-        )
-
-        await Promise.all([
-          startTransition(() => {
-            formAction(formData)
-          }),
-          activeSession
-            ? initiatePaymentSession(cart, {
-                provider_id: activeSession.provider_id,
-              })
-            : Promise.resolve(),
-        ])
+        // The address action redirects to the delivery step. Do not start a
+        // payment session in parallel here: it would use the old cart total
+        // and race with the redirect. The session is created on the payment
+        // step once the cart has been refreshed.
+        startTransition(() => {
+          formAction(formData)
+        })
       }
     } catch (error) {
       console.error('Error:', error)

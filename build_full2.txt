@@ -1,0 +1,155 @@
+﻿   ▲ Next.js 15.5.25
+   - Environments: .env
+
+   Creating an optimized production build ...
+npx.cmd : Browserslist: browsers data (caniuse-lite) is 21 months old. Please run:
+At line:4 char:74
++ ... ject\WisLed-v1\WisLed-NextjsFront-End"; & npx next build 2>&1 | Out-F ...
++                                             ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully in 77s
+   Linting and checking validity of types ...
+
+./src/app/[countryCode]/(main)/categories/page.tsx
+12:46  Warning: 'params' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/lib/order-confirmation/pdf.ts
+467:3  Warning: 'leftY' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/migrations/20260930_144933_initial.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+929:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+929:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/migrations/20261016_204719_hero_banner_slides.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+23:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+23:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/modules/blog/templates/blogPostTemplate/index.tsx
+10:10  Warning: 'Button' is defined but never used.  unused-imports/no-unused-imports
+13:25  Warning: 'ArrowRightIcon' is defined but never used.  unused-imports/no-unused-imports
+19:7  Warning: 'TABS' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/modules/checkout/components/payment-container/index.tsx
+1:22  Warning: 'JSX' is defined but never used.  unused-imports/no-unused-imports
+
+./src/modules/layout/templates/nav/collections-menu.tsx
+151:3  Warning: 'description' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/scripts/repair-media-s3.ts
+66:21  Warning: 'HeadObjectCommand' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/scripts/upload-media-to-s3.ts
+34:7  Warning: 'FORCE' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+[Medusa] Store request failed {
+  resource: '/store/regions',
+  status: undefined,
+  type: undefined,
+  message: 'Service Unavailable',
+  url: undefined
+}
+[Medusa] Store request failed {
+  resource: '/store/product-categories',
+  status: undefined,
+  type: undefined,
+  message: 'Service Unavailable',
+  url: undefined
+}
+[Medusa] Store request failed {
+  resource: '/store/collections',
+  status: undefined,
+  type: undefined,
+  message: 'Service Unavailable',
+  url: undefined
+}
+   Generating static pages (0/12) ...
+   Generating static pages (3/12) 
+   Generating static pages (6/12) 
+[storage] S3 config -> enabled=true present=[S3_BUCKET,S3_REGION,S3_ACCESS_KEY_ID,S3_SECRET_ACCESS_KEY] missing=[none] S3_ENDPOINT=set S3_FORCE_PATH_STYLE=set
+   Generating static pages (9/12) 
+[Medusa] Store request failed {
+ ✓ Generating static pages (12/12)
+  resource: '/store/collections',
+  status: undefined,
+  type: undefined,
+  message: 'Service Unavailable',
+  url: undefined
+}
+[Medusa] Store request failed {
+  resource: '/store/product-categories',
+  status: undefined,
+  type: undefined,
+  message: 'Service Unavailable',
+  url: undefined
+}
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                        Size  First Load JS
+┌ ○ /_not-found                                    1 kB         105 kB
+├ ƒ /[countryCode]                              29.9 kB         220 kB
+├ ƒ /[countryCode]/about-us                     4.73 kB         124 kB
+├ ƒ /[countryCode]/account                      12.7 kB         183 kB
+├ ƒ /[countryCode]/account/addresses             4.4 kB         237 kB
+├ ƒ /[countryCode]/account/orders               1.47 kB         121 kB
+├ ƒ /[countryCode]/account/orders/details/[id]     4 kB         171 kB
+├ ƒ /[countryCode]/account/profile              5.33 kB         172 kB
+├ ƒ /[countryCode]/blog                         5.17 kB         229 kB
+├ ● /[countryCode]/blog/[slug]                  1.95 kB         187 kB
+├ ƒ /[countryCode]/cart                         2.58 kB         194 kB
+├ ƒ /[countryCode]/categories                     360 B         113 kB
+├ ● /[countryCode]/categories/[...category]     4.05 kB         261 kB
+├ ƒ /[countryCode]/checkout                     29.7 kB         294 kB
+├ ƒ /[countryCode]/collections                    360 B         113 kB
+├ ● /[countryCode]/collections/[handle]         1.48 kB         265 kB
+├ ƒ /[countryCode]/contact-us                   5.39 kB         119 kB
+├ ƒ /[countryCode]/faq                          1.21 kB         152 kB
+├ ƒ /[countryCode]/hero-check                   3.45 kB         168 kB
+├ ƒ /[countryCode]/order/confirmed/[id]         1.64 kB         284 kB
+├ ƒ /[countryCode]/privacy-policy               2.18 kB         156 kB
+├ ƒ /[countryCode]/products/[handle]            18.7 kB         236 kB
+├ ƒ /[countryCode]/reset-password               7.65 kB         178 kB
+├ ƒ /[countryCode]/results/[query]              1.48 kB         265 kB
+├ ƒ /[countryCode]/shop                         1.48 kB         265 kB
+├ ƒ /[countryCode]/terms-and-conditions         2.18 kB         156 kB
+├ ƒ /[countryCode]/wishlist                     3.83 kB         320 kB
+├ ƒ /api/[...slug]                                183 B         104 kB
+├ ƒ /api/contact                                  183 B         104 kB
+├ ƒ /api/orders/[id]/confirmation                 266 B         104 kB
+├ ƒ /api/revalidate                               183 B         104 kB
+├ ƒ /api/strapi-revalidate                        183 B         104 kB
+├ ○ /apple-icon.png                                 0 B            0 B
+├ ○ /icon.png                                       0 B            0 B
+├ ƒ /payload-admin/[[...segments]]              5.33 kB         684 kB
+├ ○ /robots.txt                                   183 B         104 kB
+├ ○ /sitemap.xml                                  183 B         104 kB
+└ ƒ /storage-s3-generate-signed-url               183 B         104 kB
++ First Load JS shared by all                    104 kB
+  ├ chunks/1255-623a1bc706ecd6cc.js             46.1 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js         54.2 kB
+  └ other shared chunks (total)                 3.36 kB
+
+
+ƒ Middleware                                    34.9 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

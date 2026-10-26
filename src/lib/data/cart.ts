@@ -4,7 +4,9 @@ import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { sdk } from '@lib/config'
+import { sendOrderConfirmationEmail } from '@lib/order-confirmation/email'
 import medusaError from '@lib/util/medusa-error'
+import { ORDER_CONFIRMATION_FIELDS } from '@lib/util/order-fields'
 import { isVariantPurchasable } from '@lib/util/product-availability'
 import { HttpTypes } from '@medusajs/types'
 import { omit } from 'lodash'
@@ -437,27 +439,66 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 export async function placeOrder() {
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error('No existing cart found when placing an order')
+    throw new Error('Aucun panier trouvé lors du passage de commande.')
   }
 
   const authHeaders = await getAuthHeaders()
 
-  const cartRes = await sdk.store.cart
-    .complete(cartId, {}, authHeaders)
-    .then((cartRes) => {
-      revalidateTag('cart')
-      return cartRes
-    })
-    .catch(medusaError)
-
-  if (cartRes?.type === 'order') {
-    const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
-    removeCartId()
-    redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}`)
+  let cartRes
+  try {
+    cartRes = await sdk.store.cart.complete(cartId, {}, authHeaders)
+    revalidateTag('cart')
+  } catch (err) {
+    throw medusaError(err)
   }
 
-  return cartRes.cart
+  if (!cartRes || cartRes.type !== 'order') {
+    throw new Error(
+      "La commande n'a pas pu être créée. Vérifiez vos informations et réessayez."
+    )
+  }
+
+  const order = cartRes.order
+  const countryCode =
+    order.shipping_address?.country_code?.toLowerCase() || 'ma'
+  const orderId = order.id
+
+  await removeCartId()
+
+  // Send the confirmation before redirecting so the customer never lands on
+  // the success page without the PDF email having been attempted. Email
+  // failures must never turn a successfully placed order into an error, and
+  // the Resend idempotency key prevents duplicates if complete is retried.
+  try {
+    let fullOrder = order as typeof order & {
+      items?: HttpTypes.StoreOrderLineItem[] | null
+    }
+
+    try {
+      const response = await sdk.store.order.retrieve(
+        orderId,
+        { fields: ORDER_CONFIRMATION_FIELDS },
+        authHeaders
+      )
+      if (response.order) {
+        fullOrder = response.order
+      }
+    } catch (retrieveError) {
+      console.warn(
+        `[Order ${orderId}] Could not load full order for confirmation email`,
+        retrieveError
+      )
+    }
+
+    await sendOrderConfirmationEmail(fullOrder)
+  } catch (emailError) {
+    console.error(
+      `[Order ${orderId}] Confirmation email failed; order was still placed.`,
+      emailError
+    )
+  }
+
+  redirect(`/${countryCode}/order/confirmed/${orderId}`)
 }
 
 /**

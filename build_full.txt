@@ -1,0 +1,70 @@
+﻿   ▲ Next.js 15.5.25
+   - Environments: .env
+
+   Creating an optimized production build ...
+npx.cmd : Browserslist: browsers data (caniuse-lite) is 21 months old. Please run:
+At line:4 char:74
++ ... ject\WisLed-v1\WisLed-NextjsFront-End"; & npx next build 2>&1 | Out-F ...
++                                             ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully in 63s
+   Linting and checking validity of types ...
+
+./src/app/[countryCode]/(main)/categories/page.tsx
+12:46  Warning: 'params' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/lib/order-confirmation/pdf.ts
+467:3  Warning: 'leftY' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/migrations/20260930_144933_initial.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+929:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+929:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/migrations/20261016_204719_hero_banner_slides.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+23:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+23:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/modules/blog/templates/blogPostTemplate/index.tsx
+10:10  Warning: 'Button' is defined but never used.  unused-imports/no-unused-imports
+13:25  Warning: 'ArrowRightIcon' is defined but never used.  unused-imports/no-unused-imports
+19:7  Warning: 'TABS' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/modules/checkout/components/payment-container/index.tsx
+1:22  Warning: 'JSX' is defined but never used.  unused-imports/no-unused-imports
+
+./src/modules/layout/templates/nav/collections-menu.tsx
+151:3  Warning: 'description' is defined but never used. Allowed unused args must match /^_/u.  unused-imports/no-unused-vars
+
+./src/scripts/repair-media-s3.ts
+66:21  Warning: 'HeadObjectCommand' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+./src/scripts/upload-media-to-s3.ts
+34:7  Warning: 'FORCE' is assigned a value but never used. Allowed unused vars must match /^_/u.  unused-imports/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+Failed to compile.
+
+./src/modules/order/templates/order-completed-template.tsx:90:20
+Type error: Type '"7xl"' is not assignable to type '"sm" | "md" | "lg" | "full"'.
+
+[0m [90m 88 |[39m       {[90m/* ── Hero confirmation ── */[39m}
+ [90m 89 |[39m       [33m<[39m[33mBox[39m className[33m=[39m[32m"bg-gradient-to-b from-[#eff6ff] to-secondary 
+border-b border-[#dbeafe]"[39m[33m>[39m
+[31m[1m>[22m[39m[90m 90 |[39m         [33m<[39m[33mContainer[39m maxWidth[33m=[39m[32m"7xl"[39m 
+className[33m=[39m[32m"px-4 py-12 small:px-6 small:py-16"[39m[33m>[39m
+ [90m    |[39m                    [31m[1m^[22m[39m
+ [90m 91 |[39m           [33m<[39m[33mBox[39m className[33m=[39m[32m"mx-auto max-w-2xl 
+text-center"[39m[33m>[39m
+ [90m 92 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"inline-flex h-24 w-24 items-center 
+justify-center rounded-full border border-[#1d4ed8] bg-white shadow-[0_20px_50px_rgba(29,78,216,0.12)]"[39m[33m>[39m
+ [90m 93 |[39m               [33m<[39m[33mCheckCircleIcon[39m className[33m=[39m[32m"h-12 w-12 
+text-[#1d4ed8]"[39m [33m/[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

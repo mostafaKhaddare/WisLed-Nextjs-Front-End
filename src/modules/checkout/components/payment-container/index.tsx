@@ -1,7 +1,7 @@
 import React, { type JSX } from 'react'
 
 import { RadioGroup } from '@headlessui/react'
-import { isManual } from '@lib/constants'
+import { isManual, type PaymentInfo } from '@lib/constants'
 import { formatNameForTestId } from '@lib/util/formatNameForTestId'
 import { clx } from '@medusajs/ui'
 import { Box } from '@modules/common/components/box'
@@ -17,7 +17,7 @@ type PaymentContainerProps = {
   paymentProviderId: string
   selectedPaymentOptionId: string | null
   disabled?: boolean
-  paymentInfoMap: Record<string, { title: string; icon: JSX.Element }>
+  paymentInfoMap: Record<string, PaymentInfo>
 }
 
 const PaymentContainer: React.FC<PaymentContainerProps> = ({
@@ -55,10 +55,17 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
               <RadioGroupIndicator />
             </RadioGroupItem>
           </RadioGroupRoot>
-          <Box className="flex w-full items-center justify-between gap-1">
-            <span className="text-lg">
-              {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
-            </span>
+          <Box className="flex w-full items-center justify-between gap-3">
+            <Box className="flex flex-col gap-0.5">
+              <span className="text-lg">
+                {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
+              </span>
+              {paymentInfoMap[paymentProviderId]?.description && (
+                <span className="text-sm text-secondary">
+                  {paymentInfoMap[paymentProviderId].description}
+                </span>
+              )}
+            </Box>
             {isManual(paymentProviderId) && isDevelopment && (
               <PaymentTest className="hidden small:block" />
             )}

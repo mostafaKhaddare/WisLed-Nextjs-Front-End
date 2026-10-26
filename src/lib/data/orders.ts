@@ -2,6 +2,7 @@
 
 import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
+import { ORDER_CONFIRMATION_FIELDS } from '@lib/util/order-fields'
 
 import { getAuthHeaders } from './cookies'
 
@@ -10,7 +11,7 @@ export async function retrieveOrder(id: string) {
   return sdk.store.order
     .retrieve(
       id,
-      { fields: '*payment_collections.payments,+fulfillment_status' },
+      { fields: ORDER_CONFIRMATION_FIELDS },
       { next: { tags: ['order'] }, ...authHeaders }
     )
     .then(({ order }) => order)

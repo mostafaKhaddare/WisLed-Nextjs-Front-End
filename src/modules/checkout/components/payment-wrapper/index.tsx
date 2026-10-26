@@ -3,6 +3,7 @@
 import React, { createContext } from 'react'
 
 import { isPaypal, isStripe } from '@lib/constants'
+import { findActivePaymentSession } from '@lib/util/payment-session'
 import { HttpTypes } from '@medusajs/types'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { loadStripe } from '@stripe/stripe-js'
@@ -22,8 +23,8 @@ const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
 
 const Wrapper: React.FC<WrapperProps> = ({ cart, children }) => {
-  const paymentSession = cart.payment_collection?.payment_sessions?.find(
-    (s) => s.status === 'pending'
+  const paymentSession = findActivePaymentSession(
+    cart?.payment_collection?.payment_sessions
   )
 
   if (
@@ -53,7 +54,7 @@ const Wrapper: React.FC<WrapperProps> = ({ cart, children }) => {
       <PayPalScriptProvider
         options={{
           clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test',
-          currency: cart?.currency_code.toUpperCase(),
+          currency: cart?.currency_code?.toUpperCase() || 'MAD',
           intent: 'authorize',
           components: 'buttons',
         }}

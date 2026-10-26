@@ -1,4 +1,4 @@
-import { paymentInfoMap } from '@lib/constants'
+import { getPaymentInfo, isManual } from '@lib/constants'
 import { HttpTypes } from '@medusajs/types'
 import { Text } from '@medusajs/ui'
 import { Box } from '@modules/common/components/box'
@@ -8,22 +8,29 @@ type PaymentDetailsProps = {
 }
 
 const PaymentDetails = ({ order }: PaymentDetailsProps) => {
-  const payment = order.payment_collections?.[0].payments?.[0]
+  const payment = order.payment_collections?.[0]?.payments?.[0]
+  const paymentInfo = getPaymentInfo(payment?.provider_id)
+  const shippingMethod = order.shipping_methods?.[0]
 
   return (
     <Box className="bg-primary p-2">
       <Box className="p-4">
-        <Text size="large">Delivery method</Text>
+        <Text size="large">Mode de livraison</Text>
         <Text size="base" className="text-secondary">
-          {order.shipping_methods[0].name}
+          {shippingMethod?.name || 'Livraison à domicile'}
         </Text>
       </Box>
 
       <Box className="p-4">
-        <Text size="large">Payment method</Text>
+        <Text size="large">Mode de paiement</Text>
         <Text size="base" className="text-secondary">
-          {paymentInfoMap[payment.provider_id].title}
+          {paymentInfo.title}
         </Text>
+        {isManual(payment?.provider_id) && (
+          <Text size="small" className="mt-1 text-secondary">
+            Le paiement est effectué à la réception de votre commande.
+          </Text>
+        )}
       </Box>
     </Box>
   )
