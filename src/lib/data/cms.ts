@@ -4,7 +4,6 @@ import { convertLexicalToMarkdown } from '@payloadcms/richtext-lexical'
 
 import { getCmsClient } from '@lib/payload/client'
 
-import type { Inspiration as InspirationEntry } from '@lib/data/strapi'
 import type {
   AboutUsData,
   BlogData,
@@ -46,7 +45,7 @@ import type {
 
 type Any = any
 
-type InspirationsData = { data: InspirationEntry[] }
+type InspirationsData = { data: Any[] }
 
 /** Narrow a string to a known global slug; returns null when unrecognised. */
 const CONTENT_PAGE_GLOBALS: Record<string, string> = {

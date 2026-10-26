@@ -253,7 +253,9 @@ export default async function CategoryTemplate({
   // Build breadcrumbs
   const categoryTrail: Array<{ name: string; handle: string }> = []
   let cat = currentCategory
-  while (cat) {
+  const visited = new Set<string>()
+  while (cat && cat.name && cat.handle && !visited.has(cat.id)) {
+    visited.add(cat.id)
     categoryTrail.unshift({ name: cat.name, handle: cat.handle })
     cat = cat.parent_category
   }
@@ -284,12 +286,14 @@ export default async function CategoryTemplate({
         {/* Subcategories */}
         {currentCategory.category_children?.length > 0 && (
           <SubcategoryCards
-            subcategories={currentCategory.category_children.map((subcat) => ({
-              id: subcat.id,
-              name: subcat.name,
-              handle: subcat.handle,
-              image: (subcat as any).product_category_image?.[0] || null,
-            }))}
+            subcategories={currentCategory.category_children
+              .filter((subcat) => subcat && subcat.id && subcat.name && subcat.handle)
+              .map((subcat) => ({
+                id: subcat.id,
+                name: subcat.name,
+                handle: subcat.handle,
+                image: (subcat as any).product_category_image?.[0] || null,
+              }))}
           />
         )}
 

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { StoreProduct } from '@medusajs/types'
-import { Inspiration, STRAPI_API_URL, getAttributes } from '@lib/data/strapi'
 import { sdk } from '@lib/config'
 import { useRouter } from 'next/navigation'
 import { Container } from '@modules/common/components/container'
@@ -22,18 +21,23 @@ const ANIMATION_CSS = `
   }
 `
 
+const getAttributes = (item: any) => {
+  if (!item) return null
+  return item.attributes || item
+}
+
 const LookbookSection = ({
     regionId,
     inspirations,
 }: {
     regionId: string
-    inspirations: Inspiration[]
+    inspirations: any[]
 }) => {
     const router = useRouter()
     const [activeTab, setActiveTab] = useState('All')
     const [isVisible, setIsVisible] = useState(true)
     const [gridKey, setGridKey] = useState(0)
-    const [currentApiUrl, setCurrentApiUrl] = useState(STRAPI_API_URL)
+    const [currentApiUrl, setCurrentApiUrl] = useState(process.env.NEXT_PUBLIC_BASE_URL ?? '')
     const [productsData, setProductsData] = useState<Record<string, StoreProduct>>({})
 
     // ── Inject CSS once ───────────────────────────────────────────────────────
@@ -48,7 +52,7 @@ const LookbookSection = ({
     // ── Fix localhost for mobile preview ──────────────────────────────────────
     useEffect(() => {
         if (typeof window === 'undefined') return
-        let base = STRAPI_API_URL
+        let base = process.env.NEXT_PUBLIC_BASE_URL ?? ''
         if (base.includes('localhost')) base = base.replace('localhost', window.location.hostname)
         if (base.includes('127.0.0.1')) base = base.replace('127.0.0.1', window.location.hostname)
         setCurrentApiUrl(base)
