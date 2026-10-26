@@ -26,15 +26,10 @@ type ItemQtySelectProps = {
   className?: string
 }
 
-/** Below this many options a dropdown still beats typing, so only render one
- *  when the stock figure is small enough to be useful. */
+/** Only offer the preset list when the real cap sits comfortably above the
+ *  preset maximum, so the number of options never reveals the exact stock
+ *  figure. */
 const DROPDOWN_THRESHOLD = 20
-
-function formatLimit(maxQuantity: number): string {
-  return Number.isFinite(maxQuantity)
-    ? String(Math.floor(maxQuantity))
-    : 'illimitée'
-}
 
 export default function ItemQtySelect({
   qty,
@@ -62,15 +57,13 @@ export default function ItemQtySelect({
         return
       }
       if (next > upper) {
-        setError(
-          `Seulement ${formatLimit(maxQuantity)} unité(s) disponible(s).`
-        )
+        setError('La quantité maximale disponible est atteinte.')
         return
       }
       setError(null)
       action(next)
     },
-    [action, maxQuantity, upper]
+    [action, upper]
   )
 
   const step = (delta: number) => commit(qty + delta)
@@ -113,7 +106,7 @@ export default function ItemQtySelect({
   }
 
   const showDropdown =
-    !bare && isCapped && upper >= 1 && upper <= DROPDOWN_THRESHOLD
+    !bare && isCapped && upper > DROPDOWN_THRESHOLD && qty <= DROPDOWN_THRESHOLD
 
   return (
     <div className={cn('flex w-max flex-col gap-1', className)}>
@@ -144,7 +137,6 @@ export default function ItemQtySelect({
           type="number"
           inputMode="numeric"
           min={1}
-          max={isCapped ? upper : undefined}
           value={draft}
           aria-label="Choose quantity"
           data-testid="item-qty-select"
@@ -154,7 +146,7 @@ export default function ItemQtySelect({
           onKeyDown={handleKeyDown}
           className={cn(
             'w-14 border-x border-ui-border-base bg-transparent text-center text-md font-medium text-ui-fg-base outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-            bare && '!h-14 !w-10 !border-0 !font-jakarta !text-base !font-bold'
+            bare && '!text-base !h-14 !w-10 !border-0 !font-jakarta !font-bold'
           )}
         />
 
@@ -174,10 +166,11 @@ export default function ItemQtySelect({
       </div>
 
       {/* Only state a real cap. An unmanaged inventory says nothing rather
-          than implying a limit that does not exist. */}
-      {!bare && !error && isCapped && (
+          than implying a limit that does not exist. The message deliberately
+          carries no number: exact stock levels must never be exposed. */}
+      {!bare && !error && isCapped && upper > 0 && qty >= upper && (
         <span className="text-xs text-ui-fg-subtle">
-          Max {formatLimit(maxQuantity)}
+          Quantité maximale disponible atteinte
         </span>
       )}
       {error && <span className="text-xs text-negative">{error}</span>}
@@ -190,7 +183,10 @@ export default function ItemQtySelect({
           onChange={(event) => commit(Number(event.target.value))}
           className="mt-0.5 h-8 rounded-md border border-ui-border-base bg-ui-bg-base px-2 text-md text-ui-fg-base outline-none"
         >
-          {Array.from({ length: upper }, (_, index) => index + 1).map((value) => (
+          {Array.from(
+            { length: DROPDOWN_THRESHOLD },
+            (_, index) => index + 1
+          ).map((value) => (
             <option key={value} value={value}>
               {value}
             </option>

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { FaWhatsapp } from "react-icons/fa";
 import { addToCart } from '@lib/data/cart'
 import { useCartStore } from '@lib/store/useCartStore'
+import { isVariantPurchasable } from '@lib/util/product-availability'
 import { HttpTypes } from '@medusajs/types'
 import ItemQtySelect from '@modules/cart/components/item-qty-select'
 import { Box } from '@modules/common/components/box'
@@ -117,19 +118,10 @@ export default function ProductActions({
   // --- NEW WHATSAPP FUNCTION END ---
 
   // check if the selected variant is in stock
-  const inStock = useMemo(() => {
-    // No variant configured at all — treat as available
-    if (!selectedVariant) return false
-    if (!selectedVariant.manage_inventory) return true
-    if (selectedVariant.allow_backorder) return true
-    if (
-      selectedVariant.manage_inventory &&
-      (selectedVariant.inventory_quantity || 0) > 0
-    ) {
-      return true
-    }
-    return false
-  }, [selectedVariant])
+  const inStock = useMemo(
+    () => isVariantPurchasable(selectedVariant),
+    [selectedVariant]
+  )
 
   /** How many of the selected variant are already in the cart. */
   const cartQuantity = useMemo(() => {

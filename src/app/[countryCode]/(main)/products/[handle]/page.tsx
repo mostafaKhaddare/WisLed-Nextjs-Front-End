@@ -38,15 +38,19 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const title = `${product.title} | WisLed`
   const description = product.description || `${product.title} - WisLed`
   const images = product.images?.map((img) => img.url) || (product.thumbnail ? [product.thumbnail] : [])
+  const canonicalUrl = `${getBaseURL()}/${params.countryCode}/products/${handle}`
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
       images,
-      url: `${getBaseURL()}/${params.countryCode}/products/${handle}`,
+      url: canonicalUrl,
       type: 'website',        // Note: 'product' is not a valid OG type in Next.js Metadata API;
       // the correct signal for product pages is sent via JSON-LD instead.
     },
@@ -82,7 +86,11 @@ export default async function ProductPage(props: Props) {
 
   return (
     <>
-      <ProductJsonLd product={pricedProduct} region={region} currencyCode={region.currency_code} />
+      <ProductJsonLd
+        product={pricedProduct}
+        currencyCode={region.currency_code}
+        countryCode={params.countryCode}
+      />
       <ProductTemplate
         product={pricedProduct}
         region={region}

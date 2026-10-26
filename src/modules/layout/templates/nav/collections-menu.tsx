@@ -230,11 +230,7 @@ function CollectionTile({
         <span className="line-clamp-2 block font-sora text-lg font-bold leading-tight text-white">
           {title}
         </span>
-        {description ? (
-          <span className="mt-1.5 line-clamp-2 block text-[11.5px] leading-relaxed text-white/70">
-            {description}
-          </span>
-        ) : null}
+        
       </span>
     </LocalizedClientLink>
   )

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
+import { isVariantPurchasable } from '@lib/util/product-availability'
 import { HttpTypes } from '@medusajs/types'
 import { omit } from 'lodash'
 
@@ -144,16 +145,18 @@ export async function addToCartCheapestVariant({
       }
     }
 
-    // Find the cheapest variant
-    const cheapestVariant = detailedProduct.variants.reduce(
-      (cheapest, current) =>
-        cheapest.calculated_price.original_amount <
-        current.calculated_price.original_amount
-          ? cheapest
-          : current
-    )
+    // Find the cheapest variant that can actually be purchased. Untracked or
+    // backordered variants are purchasable even when `inventory_quantity` is
+    // null, so they must not be treated as sold out.
+    const cheapestVariant = [...(detailedProduct.variants ?? [])]
+      .filter(isVariantPurchasable)
+      .sort(
+        (a, b) =>
+          (a.calculated_price?.calculated_amount ?? Number.POSITIVE_INFINITY) -
+          (b.calculated_price?.calculated_amount ?? Number.POSITIVE_INFINITY)
+      )[0]
 
-    if (cheapestVariant.inventory_quantity <= 0) {
+    if (!cheapestVariant) {
       return {
         success: false,
         error: 'Product is out of stock',
