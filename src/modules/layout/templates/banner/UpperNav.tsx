@@ -47,13 +47,13 @@ export default function UpperNavbar() {
   return (
     <div
       data-testid="upper-nav"
-      className="relative z-40 w-full border-b border-white/10 bg-wisled-950 bg-[radial-gradient(120%_140%_at_0%_0%,rgba(29,78,216,0.3),transparent_58%)] font-jakarta text-white"
+      className="relative z-40 w-full border-b border-[#0F1B33]/30 bg-[#0F1B33] font-jakarta text-white"
     >
       {/* Fine luminous rule separating the utility strip from the main navbar. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-wisled-400/40 to-transparent"
-      />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#FFC857]/40 to-transparent"
+          />
 
       <Container className="relative flex h-9 items-center justify-between gap-3 !px-4 !py-0 medium:!px-14">
         {/* Left: rotating service messages — the quiet, informative side of the bar. */}
@@ -69,10 +69,10 @@ export default function UpperNavbar() {
                 key={slide.text}
                 className="flex min-w-0 flex-[0_0_100%] items-center gap-2.5"
               >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/65 ring-1 ring-inset ring-white/10">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#FFC857]/15 text-[#FFC857] ring-1 ring-inset ring-[#FFC857]/30">
                   {slide.icon}
                 </span>
-                <span className="truncate text-[11px] font-medium tracking-[0.01em] text-white/70">
+                <span className="truncate text-[11px] font-medium tracking-[0.01em] text-white/80">
                   {slide.text}
                 </span>
               </div>
@@ -93,18 +93,18 @@ export default function UpperNavbar() {
               aria-label="Envoyer un e-mail à info@wisled.ma"
               className="h-7 items-center gap-2 font-jakarta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-wisled-950"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.07] text-white/70 ring-1 ring-inset ring-white/10 transition-colors duration-200 group-hover:bg-white/[0.12] group-hover:text-white">
-                <MdEmail aria-hidden="true" className="h-3.5 w-3.5" />
-              </span>
-              <span className="hidden text-[11px] font-medium tracking-[0.01em] text-white/60 transition-colors duration-200 group-hover:text-white large:inline">
-                info@wisled.ma
-              </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFC857]/15 text-[#FFC857] ring-1 ring-inset ring-[#FFC857]/30 transition-colors duration-200 group-hover:bg-[#FFC857] group-hover:text-[#0F1B33]">
+                  <MdEmail aria-hidden="true" className="h-3.5 w-3.5" />
+                </span>
+                <span className="hidden whitespace-nowrap text-[11px] font-medium tracking-[0.01em] text-white/80 transition-colors duration-200 group-hover:text-[#FFC857] large:inline">
+                  info@wisled.ma
+                </span>
             </Link>
           </Button>
 
           <span
             aria-hidden="true"
-            className="hidden h-3.5 w-px bg-white/10 medium:block"
+            className="hidden h-3.5 w-px bg-[#FFC857]/20 medium:block"
           />
 
           <Button
@@ -116,12 +116,12 @@ export default function UpperNavbar() {
             <Link
               href="tel:+212648522511"
               aria-label="Appeler le +212 648 522 511"
-              className="h-7 items-center gap-2 font-jakarta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-wisled-950"
+              className="h-7 items-center gap-2 font-jakarta focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC857]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F1B33]"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-wisled-500/15 text-wisled-300 ring-1 ring-inset ring-wisled-400/20 transition-colors duration-200 group-hover:bg-wisled-500/25 group-hover:text-wisled-200">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFC857]/15 text-[#FFC857] ring-1 ring-inset ring-[#FFC857]/30 transition-colors duration-200 group-hover:bg-[#FFC857] group-hover:text-[#0F1B33]">
                 <HeadphonesIcon aria-hidden="true" className="h-3.5 w-3.5" />
               </span>
-              <span className="hidden whitespace-nowrap text-[11px] font-semibold tracking-[0.01em] text-white/85 transition-colors duration-200 group-hover:text-white small:inline">
+              <span className="hidden whitespace-nowrap text-[11px] font-semibold tracking-[0.01em] text-white/85 transition-colors duration-200 group-hover:text-[#FFC857] small:inline">
                 +212 648 522 511
               </span>
             </Link>

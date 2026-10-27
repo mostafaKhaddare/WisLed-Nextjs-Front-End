@@ -25,10 +25,10 @@ export default async function NavWrapper(props: any) {
       <UpperNav />
       <Container
         as="nav"
-        className="duration-400  sticky top-0 z-50 mx-0 max-w-full border-b border-basic-primary bg-primary !py-0 transition-all ease-in-out medium:!px-14"
+        className="sticky top-0 z-50 mx-0 max-w-full border-b border-[#E4E7EF] bg-white shadow-sm !py-0 medium:!px-14"
       >
 
-        <Container className="flex items-center justify-between gap-2  !p-0">
+        <Container className="flex items-center justify-between gap-2 !p-0">
           <NavContent
             productCategories={productCategories}
             collections={collections}
@@ -40,6 +40,5 @@ export default async function NavWrapper(props: any) {
         </Container>
       </Container>
     </>
-
   )
 }

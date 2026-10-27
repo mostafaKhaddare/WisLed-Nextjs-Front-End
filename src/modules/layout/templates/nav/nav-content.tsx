@@ -111,7 +111,7 @@ export default function NavContent(props: any) {
                 type="button"
                 onClick={() => setIsDesktopSearchOpen(true)}
                 aria-label="Rechercher un produit"
-                className="focus-visible:ring-action-primary/25 group flex h-10 w-[176px] items-center gap-2.5 rounded-full border border-basic-primary/10 bg-secondary/60 px-4 text-left font-jakarta text-[12.5px] text-secondary transition-all duration-200 hover:border-action-primary/25 hover:bg-secondary hover:text-basic-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 dark:border-white/10 dark:bg-white/[0.045] dark:text-white/50 dark:hover:bg-white/[0.07] dark:hover:text-white/80 xl:w-[232px] 2xl:w-[280px]"
+                className="focus-visible:ring-action-primary/25 group flex h-10 w-[176px] items-center gap-2.5 rounded-[14px] border border-[#E4E7EF] bg-[#F0F2F8] px-4 text-left font-jakarta text-[12.5px] text-[#0F1B33] transition-all duration-200 hover:border-[#1D4ED8] hover:bg-[#F0F2F8] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 dark:border-white/10 dark:bg-white/[0.045] dark:text-white/50 dark:hover:bg-white/[0.07] dark:hover:text-white/80 xl:w-[232px] 2xl:w-[280px]"
                 data-testid="search-button-desktop"
               >
                 <SearchIcon className="h-4 w-4 shrink-0 transition-colors duration-200 group-hover:text-action-primary dark:group-hover:text-wisled-400" />
