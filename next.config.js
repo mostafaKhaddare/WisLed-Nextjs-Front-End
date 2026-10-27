@@ -8,16 +8,6 @@ checkEnvVariables()
  */
 const remotePatterns = [
   {
-    protocol: 'http',
-    hostname: 'localhost',
-  },
-  {
-    protocol: 'http',
-    hostname: '127.0.0.1',
-    port: '1337',
-    pathname: '/uploads/**',
-  },
-  {
     protocol: 'https',
     hostname: 'medusa-public-images.s3.eu-west-1.amazonaws.com',
   },
