@@ -138,48 +138,18 @@ export default async function StoreTemplate({
     results = searchResponse.results
     count = searchResponse.count
   } catch (_) {
-    // Fallback: fetch products from Medusa
+    // Fallback: fetch products from Medusa. The Medusa SDK product.list does
+    // not accept color/ip_rating (they live in metadata), so we fetch with
+    // +metadata and filter client-side below.
     const queryParams: any = {
       limit: 12,
+      fields:
+        '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*options,+metadata',
     }
 
     if (collection) queryParams.collection_id = collection.split(',')
     if (type) queryParams.type_id = type.split(',')
     if (material) queryParams.materials = material.split(',')
-
-    // New filter parameters for fallback
-    if (color) queryParams.color = color.split(',')
-    if (light_color) queryParams.light_color = light_color.split(',')
-    if (color_temperature) queryParams.color_temperature = color_temperature.split(',')
-    if (wattage) queryParams.wattage = wattage.split(',')
-    if (wattage_per_metre) queryParams.wattage_per_metre = wattage_per_metre.split(',')
-    if (power) queryParams.power = power.split(',')
-    if (ip_rating) queryParams.ip_rating = ip_rating.split(',')
-    if (ip) queryParams.ip = ip.split(',')
-    if (voltage) queryParams.voltage = voltage.split(',')
-    if (roll_length) queryParams.roll_length = roll_length.split(',')
-    if (length) queryParams.length = length.split(',')
-    if (led_type) queryParams.led_type = led_type.split(',')
-    if (led_density) queryParams.led_density = led_density.split(',')
-    if (density) queryParams.density = density.split(',')
-    if (product_type) queryParams.product_type = product_type.split(',')
-    if (strip_width) queryParams.strip_width = strip_width.split(',')
-    if (profile) queryParams.profile = profile.split(',')
-    if (dimensions) queryParams.dimensions = dimensions.split(',')
-    if (finish) queryParams.finish = finish.split(',')
-    if (installation_type) queryParams.installation_type = installation_type.split(',')
-    if (mounting_type) queryParams.mounting_type = mounting_type.split(',')
-    if (compatible_accessories) queryParams.compatible_accessories = compatible_accessories.split(',')
-    if (output_wattage) queryParams.output_wattage = output_wattage.split(',')
-    if (output_voltage) queryParams.output_voltage = output_voltage.split(',')
-    if (current) queryParams.current = current.split(',')
-    if (output_current) queryParams.output_current = output_current.split(',')
-    if (protocol) queryParams.protocol = protocol.split(',')
-    if (protocols) queryParams.protocols = protocols.split(',')
-    if (compatibility) queryParams.compatibility = compatibility.split(',')
-    if (controller_type) queryParams.controller_type = controller_type.split(',')
-    if (beam_angle) queryParams.beam_angle = beam_angle.split(',')
-    if (cuttable) queryParams.cuttable = cuttable.split(',')
 
     if (price) {
       const ranges = price.split(',')
@@ -212,26 +182,49 @@ export default async function StoreTemplate({
         countryCode,
       }).then(({ response }) => response)
 
-    // Shape products and get cheapest variant price
-    const shaped = fallbackProducts.map((product: any) => {
-      const prices = getProductPrice({ product })
-      const cheapest = prices?.cheapestPrice
+    // Parse multi-valued filter params (comma-separated strings from URL)
+    const parseMulti = (v?: string) =>
+      v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
+    const selectedColors = parseMulti(color)
+    const selectedIpRatings = parseMulti(ip_rating ?? ip)
 
-      return {
-        id: product.id,
-        title: product.title,
-        handle: product.handle,
-        thumbnail: product.thumbnail,
-        created_at: product.created_at,
-        updated_at: product.updated_at,
-        calculated_price: cheapest?.calculated_price_number ?? 0,
-        sale_price: cheapest?.original_price_number ?? 0,
-        regular_price: cheapest?.original_price_number ?? 0,
-        // Include variants & options so ProductTile can render variant swatches
-        variants: product.variants ?? [],
-        options: product.options ?? [],
+    // Client-side metadata filtering for facets the SDK does not support
+    const matchesMetadata = (product: any) => {
+      const metadata = product.metadata ?? {}
+      if (selectedColors.length > 0) {
+        const productColor = String(metadata.color ?? '').toLowerCase()
+        if (!selectedColors.includes(productColor)) return false
       }
-    })
+      if (selectedIpRatings.length > 0) {
+        const productIp =
+          String(metadata.ip_rating ?? metadata.ip ?? '').toLowerCase()
+        if (!selectedIpRatings.includes(productIp)) return false
+      }
+      return true
+    }
+
+    // Shape products and get cheapest variant price
+    const shaped = fallbackProducts
+      .filter(matchesMetadata)
+      .map((product: any) => {
+        const prices = getProductPrice({ product })
+        const cheapest = prices?.cheapestPrice
+
+        return {
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          thumbnail: product.thumbnail,
+          created_at: product.created_at,
+          updated_at: product.updated_at,
+          calculated_price: cheapest?.calculated_price_number ?? 0,
+          sale_price: cheapest?.original_price_number ?? 0,
+          regular_price: cheapest?.original_price_number ?? 0,
+          // Include variants & options so ProductTile can render variant swatches
+          variants: product.variants ?? [],
+          options: product.options ?? [],
+        }
+      })
 
     // JS-side sorting
     if (sortBy === 'price_asc') {
@@ -245,7 +238,7 @@ export default async function StoreTemplate({
     }
 
     results = shaped
-    count = fallbackCount ?? shaped.length
+    count = shaped.length
   }
 
   // Recommended products

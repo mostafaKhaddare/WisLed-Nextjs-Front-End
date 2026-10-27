@@ -56,6 +56,14 @@ export default function ActiveProductFilters({
     return activeMaterialNames?.includes(material.id)
   })
 
+  // Couleur
+  const activeColorIds = useActiveFilterHandles({
+    key: FILTER_KEYS.COLOR_KEY,
+  })
+  const activeColors = filters.color?.filter((c) => {
+    return activeColorIds?.includes(c.id)
+  })
+
   // Prices
   const activePricesHandles = useActiveFilterHandles({
     key: FILTER_KEYS.PRICE_KEY,
@@ -144,6 +152,7 @@ export default function ActiveProductFilters({
     activeCollections?.length > 0 ||
     activeTypes?.length > 0 ||
     activeMaterials?.length > 0 ||
+    activeColors?.length > 0 ||
     activePrices?.length > 0 ||
     activeColorTemps?.length > 0 ||
     activeWattages?.length > 0 ||
@@ -181,6 +190,14 @@ export default function ActiveProductFilters({
           label="Matériau"
           filterKey={FILTER_KEYS.MATERIAL_KEY}
           options={activeMaterials}
+          handleRemoveFilter={handleRemoveFilter}
+        />
+      )}
+      {activeColors?.length > 0 && (
+        <ActiveFilterItem
+          label="Couleur"
+          filterKey={FILTER_KEYS.COLOR_KEY}
+          options={activeColors?.map((c) => ({ value: c.value, id: c.id }))}
           handleRemoveFilter={handleRemoveFilter}
         />
       )}
@@ -233,7 +250,7 @@ export default function ActiveProductFilters({
         />
       )}
       <Button asChild variant="text" className="text-sm font-semibold text-gray-600 hover:text-red-600 transition-colors underline sm:ml-auto sm:shrink-02">
-        <Link href={finalClearAllUrl}>Effacer les filtres</Link>
+        <Link href={finalClearAllUrl}>Réinitialiser</Link>
       </Button>
     </Box>
   )

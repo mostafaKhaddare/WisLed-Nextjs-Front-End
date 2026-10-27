@@ -42,6 +42,11 @@ export default function ProductFilters({
     value: material.value,
   }))
 
+  const colorOptions = (filters.color || []).map((color) => ({
+    id: color.id,
+    value: color.value,
+  }))
+
   // New filter options for LED lighting
   const colorTemperatureOptions = filters.color_temperature?.map((ct) => ({
     id: ct.id,
@@ -116,6 +121,17 @@ export default function ProductFilters({
             <FilterWrapper
               title="Matériau"
               content={<FilterItems items={materialOptions} param="material" />}
+            />
+            <Divider />
+          </>
+        )}
+
+        {/* Couleur */}
+        {colorOptions && colorOptions.length > 0 && (
+          <>
+            <FilterWrapper
+              title="Couleur"
+              content={<FilterItems items={colorOptions} param="color" />}
             />
             <Divider />
           </>
@@ -277,6 +293,19 @@ export default function ProductFilters({
             </SelectTrigger>
             <SelectContent className="w-full">
               <FilterItems items={materialOptions} param="material" />
+            </SelectContent>
+          </Select>
+        )}
+        {colorOptions && colorOptions.length > 0 && (
+          <Select value={null} onValueChange={() => { }}>
+            <SelectTrigger
+              aria-label="Choisir une ou plusieurs couleurs"
+              data-testid="color-filter"
+            >
+              Couleur
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <FilterItems items={colorOptions} param="color" />
             </SelectContent>
           </Select>
         )}
