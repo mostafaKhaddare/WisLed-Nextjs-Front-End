@@ -17,7 +17,6 @@
     "baseUrl": "./src",
     "paths": {
       "@lib/*": ["lib/*"],
-      "@components/*": ["components/*"],
       "@modules/*": ["modules/*"],
       "@pages/*": ["pages/*"],
       "@payload-config": ["payload.config.ts"]

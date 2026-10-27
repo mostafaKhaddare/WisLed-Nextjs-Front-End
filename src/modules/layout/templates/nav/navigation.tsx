@@ -134,10 +134,10 @@ export default function Navigation({
                 data-testid={formatNameForTestId(`${item.name}-dropdown`)}
                 aria-current={active ? 'true' : undefined}
                 className={cn(
-                  'group relative flex h-full items-center gap-1.5 px-3 font-jakarta text-[15px] font-semibold tracking-[0.01em] transition-colors duration-200 xl:px-3.5 min-h-[44px]',
+                  'group relative flex h-full items-center gap-1.5 px-3 font-jakarta text-[13px] font-semibold tracking-[0.01em] transition-colors duration-200 xl:px-3.5',
                   active || isDropdownOpen
-                    ? 'bg-[#0F1B33] text-white dark:bg-[#0F1B33] dark:text-white'
-                    : 'text-basic-primary/75 hover:text-[#1D4ED8] dark:text-white/65 dark:hover:text-[#1D4ED8]'
+                    ? 'text-action-primary hover:text-action-primary dark:text-wisled-400 dark:hover:text-wisled-400'
+                    : 'text-basic-primary/75 hover:text-basic-primary dark:text-white/65 dark:hover:text-white'
                 )}
               >
                 {item.name}
@@ -151,13 +151,13 @@ export default function Navigation({
                   />
                 )}
 
-                {/* Active pill background (handled on the link itself) */}
+                {/* Active / hover indicator, aligned with the nav border */}
                 <span
                   aria-hidden="true"
                   className={cn(
                     'absolute inset-x-3 bottom-0 h-[2px] rounded-full transition-all duration-300',
                     active || isDropdownOpen
-                      ? 'bg-[#1D4ED8] opacity-100 dark:bg-[#1D4ED8]'
+                      ? 'bg-action-primary opacity-100 dark:bg-wisled-400'
                       : 'bg-basic-primary/15 opacity-0 group-hover:opacity-100 dark:bg-white/20'
                   )}
                 />
