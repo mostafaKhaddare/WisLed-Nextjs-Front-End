@@ -56,16 +56,71 @@ function excerptOf(content: string): string {
 }
 
 /**
- * Horizontal blog card: 84x84 rounded thumbnail on the left, title and
- * excerpt stacked on the right. Matches the mock's 112px tall white tile.
+ * Desktop blog card: 160px square image area, title 18px bold, 2-line excerpt
+ * in #5B6577, radius 24px, subtle border, hover lift 2px.
  */
-const BlogCard = ({ post, index }: BlogCardProps) => {
+const DesktopBlogCard = ({ post, index }: BlogCardProps) => {
   const gradient = THUMB_GRADIENTS[index % THUMB_GRADIENTS.length]
   const bar = THUMB_BARS[index % THUMB_BARS.length]
   const excerpt = post.Description ?? excerptOf(post.Content)
-  // Strapi hands back an absolute URL, so it is used as-is. Posts without a
-  // featured image fall back to the tinted placeholder so the tile still has a
-  // fixed 84x84 square on the left.
+  const cover = post.FeaturedImage?.url
+
+  return (
+    <LocalizedClientLink
+      href={`/blog/${post.Slug}`}
+      className="group block rounded-[24px] border border-[#E4E7EF] bg-white transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(20,20,59,0.12)] dark:border-white/[0.08] dark:bg-[#141A2B]"
+      data-testid="blog-card"
+    >
+      {/* Image area: 160px square */}
+      <div
+        className="relative h-[160px] w-full shrink-0 overflow-hidden rounded-[20px]"
+        style={cover ? undefined : { background: gradient }}
+      >
+        {cover ? (
+          <Image
+            src={cover}
+            alt={post.FeaturedImage?.alternativeText ?? post.Title}
+            fill
+            sizes="160px"
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <>
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-1/2 h-[40px] w-[96px] -translate-x-1/2 -translate-y-1/2 rounded"
+              style={{
+                background: bar.fill,
+                boxShadow: `0 0 24px 6px ${bar.ring}`,
+              }}
+            />
+            <span className="absolute inset-0 grid place-items-center bg-black/5" />
+          </>
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-col gap-2">
+        <h3 className="line-clamp-2 font-jakarta text-[18px] font-bold leading-snug text-[#0F1B33] dark:text-white group-hover:text-[#1D4ED8] transition-colors">
+          {post.Title}
+        </h3>
+        {excerpt && (
+          <p className="line-clamp-2 font-jakarta text-[14px] leading-relaxed text-[#5B6577] dark:text-gray-400">
+            {excerpt}
+          </p>
+        )}
+      </div>
+    </LocalizedClientLink>
+  )
+}
+
+/**
+ * Mobile blog card: horizontal 84x84 thumbnail with title and excerpt on the right.
+ * Keeps the existing mobile layout untouched.
+ */
+const MobileBlogCard = ({ post, index }: BlogCardProps) => {
+  const gradient = THUMB_GRADIENTS[index % THUMB_GRADIENTS.length]
+  const bar = THUMB_BARS[index % THUMB_BARS.length]
+  const excerpt = post.Description ?? excerptOf(post.Content)
   const cover = post.FeaturedImage?.url
 
   return (
@@ -74,7 +129,6 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
       className="flex h-[112px] items-center gap-4 rounded-[20px] bg-white p-[14px] shadow-[0_1px_2px_rgba(20,20,59,0.05),0_8px_24px_-14px_rgba(20,20,59,0.14)] transition-shadow hover:shadow-[0_2px_4px_rgba(20,20,59,0.06),0_16px_32px_-16px_rgba(20,20,59,0.2)] dark:bg-[#141A2B] dark:shadow-none dark:ring-1 dark:ring-white/[0.06]"
       data-testid="blog-card"
     >
-      {/* Thumbnail — the post's real cover art when the CMS supplies one. */}
       <div
         className="relative h-[84px] w-[84px] shrink-0 overflow-hidden rounded-2xl"
         style={cover ? undefined : { background: gradient }}
@@ -102,7 +156,6 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
         )}
       </div>
 
-      {/* Copy */}
       <div className="flex min-w-0 flex-col gap-1.5">
         <h3 className="line-clamp-2 font-jakarta text-[15px] font-bold leading-snug text-[#0F1B33] dark:text-white">
           {post.Title}
@@ -117,56 +170,96 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
   )
 }
 
-/** WhatsApp / FAQ help panel shown directly under the blog list. */
-const HelpCard = () => (
-  <Box
-    className="flex flex-col gap-3 rounded-3xl p-5 shadow-[0_8px_24px_-14px_rgba(20,20,59,0.35)] dark:shadow-none dark:ring-1 dark:ring-white/10"
-    style={{
-      background:
-        'radial-gradient(120% 120% at 100% 0%, #EAF1FF 0%, #FFFFFF 58%)',
-    }}
-  >
-    <Heading
-      as="h3"
-      className="font-sora text-[19px] font-semibold leading-snug text-[#0F1B33] dark:text-white"
-    >
-      Besoin d&apos;aide pour votre projet ?
-    </Heading>
-    <p className="font-jakarta text-sm leading-[1.45] text-[#5B6577] dark:text-gray-400">
-      Décrivez votre espace : on vous conseille le ruban, l&apos;alimentation et
-      le contrôleur adaptés.
-    </p>
+/** "Besoin d'aide ?" card — horizontal layout on desktop, vertical on mobile. */
+const HelpCard = () => {
+  const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '212648522511'
+  const defaultMessage =
+    process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||
+    "Bonjour ! 👋 Je souhaite en savoir plus sur vos produits et solutions d'éclairage LED."
+  const encodedMessage = encodeURIComponent(defaultMessage)
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`
 
-    <LocalizedClientLink
-      href="https://wa.me/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="mt-1 inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-3xl bg-[#25D366] font-jakarta text-[15px] font-bold leading-none text-[#06260F] transition-colors hover:bg-[#1FBE5B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
+  return (
+    <Box
+      className={`
+        flex flex-col gap-3 rounded-3xl p-5 shadow-[0_8px_24px_-14px_rgba(20,20,59,0.35)]
+        dark:shadow-none dark:ring-1 dark:ring-white/10
+        lg:flex-row lg:items-center lg:justify-between lg:p-[40px]
+      `}
+      style={{
+        background:
+          'radial-gradient(120% 120% at 100% 0%, #EAF1FF 0%, #FFFFFF 58%)',
+      }}
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#06260F"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z" />
-      </svg>
-      Écrire sur WhatsApp
-    </LocalizedClientLink>
+      <div className="flex flex-col gap-1">
+        <Heading
+          as="h3"
+          className={`
+            font-sora text-[19px] font-semibold leading-snug text-[#0F1B33] dark:text-white
+            lg:text-[24px]
+          `}
+        >
+          Besoin d&apos;aide pour votre projet ?
+        </Heading>
+        <p className="font-jakarta text-sm leading-[1.45] text-[#5B6577] dark:text-gray-400 lg:max-w-[420px]">
+          Décrivez votre espace : on vous conseille le ruban, l&apos;alimentation et
+          le contrôleur adaptés.
+        </p>
+      </div>
 
-    <LocalizedClientLink
-      href="/faq"
-      className="mx-auto mt-1 font-jakarta text-sm font-semibold text-[#0F1B33] hover:underline dark:text-white"
-    >
-      Voir la FAQ
-    </LocalizedClientLink>
-  </Box>
-)
+      <div className={`
+        flex flex-col gap-2 mt-1 w-full
+        lg:flex-row lg:items-center lg:gap-3 lg:mt-0 lg:w-auto
+      `}>
+        <LocalizedClientLink
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`
+            inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-3xl bg-[#25D366] font-jakarta text-[15px] font-bold leading-none text-[#06260F] transition-colors hover:bg-[#1FBE5B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2
+            lg:w-auto lg:px-6
+          `}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#06260F"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z" />
+          </svg>
+          Écrire sur WhatsApp
+        </LocalizedClientLink>
+
+        <LocalizedClientLink
+          href="/chat"
+          className={`
+            inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-3xl bg-[#1D4ED8] font-jakarta text-[15px] font-bold leading-none text-white transition-colors hover:bg-[#1E40AF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D4ED8] focus-visible:ring-offset-2
+            lg:w-auto lg:px-6
+          `}
+          aria-label="Ouvrir le chat en direct"
+        >
+          Chat en direct
+        </LocalizedClientLink>
+
+        <LocalizedClientLink
+          href="/faq"
+          className={`
+            mx-auto mt-1 font-jakarta text-sm font-semibold text-[#0F1B33] hover:underline dark:text-white
+            lg:mx-0 lg:mt-0 lg:text-[15px]
+          `}
+        >
+          Voir la FAQ
+        </LocalizedClientLink>
+      </div>
+    </Box>
+  )
+}
 
 export function ExploreBlog({ posts }: { posts: BlogPost[] }) {
   if (!posts || posts.length === 0) return null
@@ -174,27 +267,43 @@ export function ExploreBlog({ posts }: { posts: BlogPost[] }) {
   return (
     <Container className="!py-8 small:!py-12" data-testid="get-inspired-section">
       <Box className="flex flex-col gap-5">
+        {/* Title row: heading + "Afficher tout" link */}
         <Box className="flex items-center justify-between">
-          <Heading
-            as="h2"
-            className="text-2xl font-bold text-basic-primary small:text-3xl"
-          >
+          <Heading as="h2" className="text-2xl font-bold text-basic-primary small:text-3xl">
             Actualités
           </Heading>
-          <Button className="hidden w-max large:flex" variant="tonal" asChild>
-            <LocalizedClientLink href="/blog">Read more</LocalizedClientLink>
-          </Button>
+          <div className={`
+            hidden w-max large:flex
+            lg:flex
+          `}>
+            <Button variant="tonal" asChild>
+              <LocalizedClientLink href="/blog">Afficher tout</LocalizedClientLink>
+            </Button>
+          </div>
+          <div className="flex items-end">
+            <Button className="hidden w-max large:flex" variant="tonal" asChild>
+              <LocalizedClientLink href="/blog">Read more</LocalizedClientLink>
+            </Button>
+          </div>
         </Box>
 
-        {/* Single stacked column of horizontal cards, at every breakpoint. */}
-        <Box className="flex flex-col gap-3">
+        {/* Desktop: 3 equal cards in a grid (gap 20px). Mobile: stacked horizontal cards. */}
+        <div
+          className={`
+            flex flex-col gap-3
+            lg:grid lg:grid-cols-3 lg:gap-[20px]
+          `}
+        >
           {posts.map((post, index) => (
-            <BlogCard key={post.Slug || index} post={post} index={index} />
+            <>
+              <MobileBlogCard key={`mobile-${post.Slug || index}`} post={post} index={index} />
+              <DesktopBlogCard key={`desktop-${post.Slug || index}`} post={post} index={index} />
+            </>
           ))}
-        </Box>
+        </div>
 
-        {/* "Afficher tout" sits directly under the news list. */}
-        <Button className="mx-auto flex w-max" asChild>
+        {/* "Afficher tout" sits directly under the news list (mobile only). */}
+        <Button className="mx-auto flex w-max hidden lg:block" asChild>
           <LocalizedClientLink href="/blog">Afficher tout</LocalizedClientLink>
         </Button>
 
