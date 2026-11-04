@@ -170,78 +170,88 @@ export default async function CategoryTemplate({
       })
     }
 
-     const response = await getProductsList({
-       pageParam: pageNumber,
-       queryParams,
-       countryCode,
-     })
-     const fallbackProducts = response.response.products
-     const fallbackCount = response.response.count
+     try {
+       const response = await getProductsList({
+         pageParam: pageNumber,
+         queryParams,
+         countryCode,
+       })
+       const fallbackProducts = response.response.products
+       const fallbackCount = response.response.count
 
-    // Parse multi-valued filter params (comma-separated strings from URL)
-    const parseMulti = (v?: string) =>
-      v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
-    const selectedColors = parseMulti(color)
-    const selectedIpRatings = parseMulti(ip_rating ?? ip)
+      // Parse multi-valued filter params (comma-separated strings from URL)
+      const parseMulti = (v?: string) =>
+        v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
+      const selectedColors = parseMulti(color)
+      const selectedIpRatings = parseMulti(ip_rating ?? ip)
 
-    // Client-side metadata filtering for facets the SDK does not support
-    const matchesMetadata = (product: any) => {
-      const metadata = product.metadata ?? {}
-      if (selectedColors.length > 0) {
-        const productColor = String(metadata.color ?? '').toLowerCase()
-        if (!selectedColors.includes(productColor)) return false
-      }
-      if (selectedIpRatings.length > 0) {
-        const productIp =
-          String(metadata.ip_rating ?? metadata.ip ?? '').toLowerCase()
-        if (!selectedIpRatings.includes(productIp)) return false
-      }
-      return true
-    }
-
-     // Shape products and compute cheapest variant price
-     const shaped = (fallbackProducts || [])
-       .filter(matchesMetadata)
-       .map((product: any) => {
-        const prices = getProductPrice({ product })
-        const cheapest = prices?.cheapestPrice
-
-        return {
-          id: product.id,
-          title: product.title,
-          handle: product.handle,
-          thumbnail: product.thumbnail,
-          created_at: product.created_at,
-          updated_at: product.updated_at,
-          calculated_price: cheapest?.calculated_price_number ?? 0,
-          sale_price: cheapest?.original_price_number ?? 0,
-          regular_price: cheapest?.original_price_number ?? 0,
-          // Include variants & options so ProductTile can render variant swatches
-          variants: product.variants ?? [],
-          options: product.options ?? [],
+      // Client-side metadata filtering for facets the SDK does not support
+      const matchesMetadata = (product: any) => {
+        const metadata = product.metadata ?? {}
+        if (selectedColors.length > 0) {
+          const productColor = String(metadata.color ?? '').toLowerCase()
+          if (!selectedColors.includes(productColor)) return false
         }
-      })
+        if (selectedIpRatings.length > 0) {
+          const productIp =
+            String(metadata.ip_rating ?? metadata.ip ?? '').toLowerCase()
+          if (!selectedIpRatings.includes(productIp)) return false
+        }
+        return true
+      }
 
-    // JS-side sorting for price
-    if (sortBy === 'price_asc') {
-      shaped.sort((a, b) => a.calculated_price - b.calculated_price)
-    } else if (sortBy === 'price_desc') {
-      shaped.sort((a, b) => b.calculated_price - a.calculated_price)
-    } else if (sortBy === 'created_at') {
-      shaped.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    }
+       // Shape products and compute cheapest variant price
+       const shaped = (fallbackProducts || [])
+         .filter(matchesMetadata)
+         .map((product: any) => {
+          const prices = getProductPrice({ product })
+          const cheapest = prices?.cheapestPrice
 
-    results = shaped
-    count = shaped.length
+          return {
+            id: product.id,
+            title: product.title,
+            handle: product.handle,
+            thumbnail: product.thumbnail,
+            created_at: product.created_at,
+            updated_at: product.updated_at,
+            calculated_price: cheapest?.calculated_price_number ?? 0,
+            sale_price: cheapest?.original_price_number ?? 0,
+            regular_price: cheapest?.original_price_number ?? 0,
+            // Include variants & options so ProductTile can render variant swatches
+            variants: product.variants ?? [],
+            options: product.options ?? [],
+          }
+        })
+
+      // JS-side sorting for price
+      if (sortBy === 'price_asc') {
+        shaped.sort((a, b) => a.calculated_price - b.calculated_price)
+      } else if (sortBy === 'price_desc') {
+        shaped.sort((a, b) => b.calculated_price - a.calculated_price)
+      } else if (sortBy === 'created_at') {
+        shaped.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      }
+
+      results = shaped
+      count = shaped.length
+     } catch (fallbackErr) {
+       results = []
+       count = 0
+     }
   }
 
     // Recommended products
-    const recommendedResponse = await getProductsList({
-      pageParam: 0,
-      queryParams: { limit: 9 },
-      countryCode,
-    })
-    const recommendedProducts = recommendedResponse.response.products || []
+    let recommendedProducts: any[] = []
+    try {
+      const recommendedResponse = await getProductsList({
+        pageParam: 0,
+        queryParams: { limit: 9 },
+        countryCode,
+      })
+      recommendedProducts = recommendedResponse.response.products || []
+    } catch (err) {
+      recommendedProducts = []
+    }
 
   // Build breadcrumbs
   const categoryTrail: Array<{ name: string; handle: string }> = []
