@@ -176,76 +176,60 @@ export async function middleware(request: NextRequest) {
     regionMap = new Map()
   }
 
-  const countryCode = regionMap && (await getCountryCode(request, regionMap))
   const pathname = request.nextUrl.pathname
-  const firstPathSegment = pathname.split('/')[1]?.toLowerCase()
-  const isCountryPath = Boolean(firstPathSegment && /^[a-z]{2}$/.test(firstPathSegment))
-  const isAlreadyDefaultLocale =
-    pathname === `/${DEFAULT_REGION}` || pathname.startsWith(`/${DEFAULT_REGION}/`)
+  const firstPathSegment = pathname.split('/')[1]?.toLowerCase() || ''
+  const isTwoLetterSegment = /^[a-z]{2}$/.test(firstPathSegment)
+  const hasKnownCountryPrefix =
+    regionMap.size > 0 ? regionMap.has(firstPathSegment) : firstPathSegment === DEFAULT_REGION
+  const hasCountryPrefix = isTwoLetterSegment && hasKnownCountryPrefix
 
-  // Keep the default storefront at `/` while resolving the existing
-  // country-scoped route internally.
-  if (
-    !isAlreadyDefaultLocale &&
-    !isCountryPath &&
-    (!firstPathSegment || !regionMap.has(firstPathSegment))
-  ) {
+  // Non-localized storefront paths (e.g. /categories/..., /collections/...) are
+  // resolved internally to the default locale route so existing URLs keep working.
+  if (!hasCountryPrefix) {
     const localizedUrl = request.nextUrl.clone()
     localizedUrl.pathname = `/${DEFAULT_REGION}${pathname === '/' ? '' : pathname}`
-    return NextResponse.rewrite(localizedUrl)
-  }
+    const response = NextResponse.rewrite(localizedUrl)
 
-  if (!countryCode) {
-    if (isAlreadyDefaultLocale || isCountryPath) {
-      return NextResponse.next()
+    if (cartId && !checkoutStep) {
+      const redirectUrl = `${request.nextUrl.origin}/${DEFAULT_REGION}${pathname === '/' ? '' : pathname}${request.nextUrl.search ? `${request.nextUrl.search}&step=address` : '?step=address'}`
+      const redirectResponse = NextResponse.redirect(redirectUrl, 307)
+      redirectResponse.cookies.set('_medusa_cart_id', cartId, { maxAge: 60 * 60 * 24 })
+      if (isOnboarding) {
+        redirectResponse.cookies.set('_medusa_onboarding', 'true', { maxAge: 60 * 60 * 24 })
+      }
+      return redirectResponse
     }
 
-    const fallbackPath = pathname === '/' ? '' : pathname
-    const redirectUrl = `${request.nextUrl.origin}/${DEFAULT_REGION}${fallbackPath}${request.nextUrl.search}`
-    return NextResponse.redirect(redirectUrl, 307)
+    if (isOnboarding && !onboardingCookie) {
+      response.cookies.set('_medusa_onboarding', 'true', { maxAge: 60 * 60 * 24 })
+    }
+
+    response.cookies.set('_medusa_country_code', DEFAULT_REGION, { maxAge: 60 * 60 * 24 * 7 })
+    return response
   }
 
-  const urlHasCountryCode =
-    countryCode && request.nextUrl.pathname.split('/')[1].includes(countryCode)
+  // Paths already prefixed with a country code (e.g. /ma/categories/..., /ma/collections/...)
+  // should render the same locale-scoped route. Rewrite to the same path for consistent
+  // handling with non-prefixed URLs and to avoid direct-path routing issues.
+  const countryCode = firstPathSegment
+  const response = NextResponse.rewrite(request.nextUrl.clone())
 
-  // check if one of the country codes is in the url
-  if (
-    urlHasCountryCode &&
-    (!isOnboarding || onboardingCookie) &&
-    (!cartId || cartIdCookie)
-  ) {
-    return NextResponse.next()
-  }
-
-  const redirectPath =
-    request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname
-
-  const queryString = request.nextUrl.search ? request.nextUrl.search : ''
-
-  let redirectUrl = request.nextUrl.href
-
-  let response = NextResponse.redirect(redirectUrl, 307)
-
-  // If no country code is set, we redirect to the relevant region.
-  if (!urlHasCountryCode && countryCode) {
-    redirectUrl = `${request.nextUrl.origin}/${countryCode}${redirectPath}${queryString}`
-    response = NextResponse.redirect(`${redirectUrl}`, 307)
-  }
-
-  // If a cart_id is in the params, we set it as a cookie and redirect to the address step.
   if (cartId && !checkoutStep) {
-    redirectUrl = `${redirectUrl}&step=address`
-    response = NextResponse.redirect(`${redirectUrl}`, 307)
-    response.cookies.set('_medusa_cart_id', cartId, { maxAge: 60 * 60 * 24 })
+    const redirectUrl = `${request.nextUrl.origin}${pathname}${request.nextUrl.search ? `${request.nextUrl.search}&step=address` : '?step=address'}`
+    const redirectResponse = NextResponse.redirect(redirectUrl, 307)
+    redirectResponse.cookies.set('_medusa_cart_id', cartId, { maxAge: 60 * 60 * 24 })
+    if (isOnboarding) {
+      redirectResponse.cookies.set('_medusa_onboarding', 'true', { maxAge: 60 * 60 * 24 })
+    }
+    redirectResponse.cookies.set('_medusa_country_code', countryCode, { maxAge: 60 * 60 * 24 * 7 })
+    return redirectResponse
   }
 
-  // Set a cookie to indicate that we're onboarding. This is used to show the onboarding flow.
-  if (isOnboarding) {
-    response.cookies.set('_medusa_onboarding', 'true', {
-      maxAge: 60 * 60 * 24,
-    })
+  if (isOnboarding && !onboardingCookie) {
+    response.cookies.set('_medusa_onboarding', 'true', { maxAge: 60 * 60 * 24 })
   }
 
+  response.cookies.set('_medusa_country_code', countryCode, { maxAge: 60 * 60 * 24 * 7 })
   return response
 }
 
