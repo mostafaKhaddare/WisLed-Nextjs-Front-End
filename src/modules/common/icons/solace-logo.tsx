@@ -1,12 +1,5 @@
+import { orbitron } from '@lib/fonts'
 import { IconProps } from 'types/icon'
-import { Orbitron } from 'next/font/google'
-
-// 1. Configure the "Lighting" style font
-const orbitron = Orbitron({
-  subsets: ['latin'],
-  weight: ['700'], // Bold is best for logos
-  display: 'swap',
-})
 
 export const WisLedLogo = (props: IconProps) => {
   return (

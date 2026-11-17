@@ -1,10 +1,6 @@
 import { Metadata } from 'next'
-import {
-  Montserrat,
-  Plus_Jakarta_Sans,
-  Sora,
-} from 'next/font/google'
 
+import { montserrat, plusJakartaSans, sora } from '@lib/fonts'
 import { getBaseURL } from '@lib/util/env'
 import { WishlistProvider } from '@lib/context/wishlist-context'
 import { ProgressBar } from '@modules/common/components/progress-bar'
@@ -12,29 +8,6 @@ import { ThemeProvider } from '@modules/common/components/theme-provider'
 import { Toaster } from 'sonner'
 
 import 'styles/globals.css'
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-montserrat',
-  display: 'swap',
-})
-
-// Product cards, tabs and option pills are drawn against the design mock, which
-// specifies Plus Jakarta Sans for UI copy and Sora for figures.
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-plus-jakarta-sans',
-  display: 'swap',
-})
-
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  variable: '--font-sora',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
