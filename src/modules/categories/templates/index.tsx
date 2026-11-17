@@ -142,48 +142,41 @@ export default async function CategoryTemplate({
   } catch (err) {
     // Fallback to direct Medusa query. The Medusa SDK product.list does not
     // accept color/ip_rating (they live in metadata), so we fetch with
-    // +metadata and filter client-side below.
-    const queryParams: any = {
-      limit: 12,
+    // +metadata and filter client-side below when needed.
+    const baseQueryParams: any = {
       category_id: [currentCategory.id],
       fields:
         '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*options,+metadata',
     }
 
-    if (collection) queryParams.collection_id = collection.split(',')
-    if (type) queryParams.type_id = type.split(',')
-    if (material) queryParams.materials = material.split(',')
+    if (collection) baseQueryParams.collection_id = collection.split(',')
+    if (type) baseQueryParams.type_id = type.split(',')
+    if (material) baseQueryParams.materials = material.split(',')
 
     if (price) {
       const ranges = price.split(',')
       ranges.forEach((r) => {
-        if (r === 'under-100') queryParams['price[lte]'] = 100
+        if (r === 'under-100') baseQueryParams['price[lte]'] = 100
         if (r === '100-500') {
-          queryParams['price[gte]'] = 100
-          queryParams['price[lte]'] = 500
+          baseQueryParams['price[gte]'] = 100
+          baseQueryParams['price[lte]'] = 500
         }
         if (r === '501-1000') {
-          queryParams['price[gte]'] = 501
-          queryParams['price[lte]'] = 1000
+          baseQueryParams['price[gte]'] = 501
+          baseQueryParams['price[lte]'] = 1000
         }
-        if (r === 'more-than-1000') queryParams['price[gte]'] = 1000
+        if (r === 'more-than-1000') baseQueryParams['price[gte]'] = 1000
       })
     }
 
-     try {
-       const response = await getProductsList({
-         pageParam: pageNumber,
-         queryParams,
-         countryCode,
-       })
-       const fallbackProducts = response.response.products
-       const fallbackCount = response.response.count
-
+    try {
       // Parse multi-valued filter params (comma-separated strings from URL)
       const parseMulti = (v?: string) =>
         v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
       const selectedColors = parseMulti(color)
       const selectedIpRatings = parseMulti(ip_rating ?? ip)
+      const hasClientMetadataFilters =
+        selectedColors.length > 0 || selectedIpRatings.length > 0
 
       // Client-side metadata filtering for facets the SDK does not support
       const matchesMetadata = (product: any) => {
@@ -200,44 +193,84 @@ export default async function CategoryTemplate({
         return true
       }
 
-       // Shape products and compute cheapest variant price
-       const shaped = (fallbackProducts || [])
-         .filter(matchesMetadata)
-         .map((product: any) => {
-          const prices = getProductPrice({ product })
-          const cheapest = prices?.cheapestPrice
+      const shapeProduct = (product: any) => {
+        const prices = getProductPrice({ product })
+        const cheapest = prices?.cheapestPrice
 
-          return {
-            id: product.id,
-            title: product.title,
-            handle: product.handle,
-            thumbnail: product.thumbnail,
-            created_at: product.created_at,
-            updated_at: product.updated_at,
-            calculated_price: cheapest?.calculated_price_number ?? 0,
-            sale_price: cheapest?.original_price_number ?? 0,
-            regular_price: cheapest?.original_price_number ?? 0,
-            // Include variants & options so ProductTile can render variant swatches
-            variants: product.variants ?? [],
-            options: product.options ?? [],
-          }
-        })
-
-      // JS-side sorting for price
-      if (sortBy === 'price_asc') {
-        shaped.sort((a, b) => a.calculated_price - b.calculated_price)
-      } else if (sortBy === 'price_desc') {
-        shaped.sort((a, b) => b.calculated_price - a.calculated_price)
-      } else if (sortBy === 'created_at') {
-        shaped.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        return {
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          thumbnail: product.thumbnail,
+          created_at: product.created_at,
+          updated_at: product.updated_at,
+          calculated_price: cheapest?.calculated_price_number ?? 0,
+          sale_price: cheapest?.original_price_number ?? 0,
+          regular_price: cheapest?.original_price_number ?? 0,
+          // Include variants & options so ProductTile can render variant swatches
+          variants: product.variants ?? [],
+          options: product.options ?? [],
+        }
       }
 
-      results = shaped
-      count = shaped.length
-     } catch (fallbackErr) {
-       results = []
-       count = 0
-     }
+      const sortProducts = (items: any[]) => {
+        if (sortBy === 'price_asc') {
+          items.sort((a, b) => a.calculated_price - b.calculated_price)
+        } else if (sortBy === 'price_desc') {
+          items.sort((a, b) => b.calculated_price - a.calculated_price)
+        } else if (sortBy === 'created_at') {
+          items.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )
+        }
+        return items
+      }
+
+      const limit = 12
+
+      if (hasClientMetadataFilters) {
+        // Fetch all matching products from Medusa so client-side filters,
+        // counts, and pagination remain accurate.
+        let pageParam = 1
+        let nextPage: number | null = 1
+        const allProducts: any[] = []
+
+        while (nextPage) {
+          const response = await getProductsList({
+            pageParam,
+            queryParams: { ...baseQueryParams, limit },
+            countryCode,
+          })
+          const batch = response.response.products || []
+          allProducts.push(...batch)
+          nextPage = response.nextPage
+          if (!nextPage || batch.length === 0) break
+          pageParam = nextPage
+        }
+
+        const filtered = sortProducts(
+          allProducts.filter(matchesMetadata).map(shapeProduct)
+        )
+        count = filtered.length
+        const start = (pageNumber - 1) * limit
+        results = filtered.slice(start, start + limit)
+      } else {
+        const response = await getProductsList({
+          pageParam: pageNumber,
+          queryParams: { ...baseQueryParams, limit },
+          countryCode,
+        })
+        const fallbackProducts = response.response.products || []
+        const fallbackCount = response.response.count ?? fallbackProducts.length
+
+        results = sortProducts(fallbackProducts.map(shapeProduct))
+        count = fallbackCount
+      }
+    } catch (fallbackErr) {
+      results = []
+      count = 0
+    }
   }
 
     // Recommended products

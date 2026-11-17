@@ -140,73 +140,63 @@ export default async function StoreTemplate({
   } catch (_) {
     // Fallback: fetch products from Medusa. The Medusa SDK product.list does
     // not accept color/ip_rating (they live in metadata), so we fetch with
-    // +metadata and filter client-side below.
-    const queryParams: any = {
-      limit: 12,
+    // +metadata and filter client-side below when needed.
+    const baseQueryParams: any = {
       fields:
         '*variants.calculated_price,+variants.inventory_quantity,*variants,*variants.prices,*options,+metadata',
     }
 
-    if (collection) queryParams.collection_id = collection.split(',')
-    if (type) queryParams.type_id = type.split(',')
-    if (material) queryParams.materials = material.split(',')
+    if (collection) baseQueryParams.collection_id = collection.split(',')
+    if (type) baseQueryParams.type_id = type.split(',')
+    if (material) baseQueryParams.materials = material.split(',')
 
     if (price) {
       const ranges = price.split(',')
       ranges.forEach((r) => {
         if (r === '0-100') {
-          queryParams.price_to = 100
+          baseQueryParams.price_to = 100
         }
         if (r === '100-300') {
-          queryParams.price_from = 100
-          queryParams.price_to = 300
+          baseQueryParams.price_from = 100
+          baseQueryParams.price_to = 300
         }
         if (r === '300-500') {
-          queryParams.price_from = 300
-          queryParams.price_to = 500
+          baseQueryParams.price_from = 300
+          baseQueryParams.price_to = 500
         }
         if (r === '500-1000') {
-          queryParams.price_from = 500
-          queryParams.price_to = 1000
+          baseQueryParams.price_from = 500
+          baseQueryParams.price_to = 1000
         }
         if (r === '1000-999999') {
-          queryParams.price_from = 1000
+          baseQueryParams.price_from = 1000
         }
       })
     }
 
-    const { products: fallbackProducts, count: fallbackCount } =
-      await getProductsList({
-        pageParam: pageNumber,
-        queryParams,
-        countryCode,
-      }).then(({ response }) => response)
+    try {
+      const parseMulti = (v?: string) =>
+        v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
+      const selectedColors = parseMulti(color)
+      const selectedIpRatings = parseMulti(ip_rating ?? ip)
+      const hasClientMetadataFilters =
+        selectedColors.length > 0 || selectedIpRatings.length > 0
 
-    // Parse multi-valued filter params (comma-separated strings from URL)
-    const parseMulti = (v?: string) =>
-      v ? v.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean) : []
-    const selectedColors = parseMulti(color)
-    const selectedIpRatings = parseMulti(ip_rating ?? ip)
-
-    // Client-side metadata filtering for facets the SDK does not support
-    const matchesMetadata = (product: any) => {
-      const metadata = product.metadata ?? {}
-      if (selectedColors.length > 0) {
-        const productColor = String(metadata.color ?? '').toLowerCase()
-        if (!selectedColors.includes(productColor)) return false
+      const matchesMetadata = (product: any) => {
+        const metadata = product.metadata ?? {}
+        if (selectedColors.length > 0) {
+          const productColor = String(metadata.color ?? '').toLowerCase()
+          if (!selectedColors.includes(productColor)) return false
+        }
+        if (selectedIpRatings.length > 0) {
+          const productIp =
+            String(metadata.ip_rating ?? metadata.ip ?? '').toLowerCase()
+          if (!selectedIpRatings.includes(productIp)) return false
+        }
+        return true
       }
-      if (selectedIpRatings.length > 0) {
-        const productIp =
-          String(metadata.ip_rating ?? metadata.ip ?? '').toLowerCase()
-        if (!selectedIpRatings.includes(productIp)) return false
-      }
-      return true
-    }
 
-    // Shape products and get cheapest variant price
-    const shaped = fallbackProducts
-      .filter(matchesMetadata)
-      .map((product: any) => {
+      const shapeProduct = (product: any) => {
         const prices = getProductPrice({ product })
         const cheapest = prices?.cheapestPrice
 
@@ -224,21 +214,62 @@ export default async function StoreTemplate({
           variants: product.variants ?? [],
           options: product.options ?? [],
         }
-      })
+      }
 
-    // JS-side sorting
-    if (sortBy === 'price_asc') {
-      shaped.sort((a, b) => a.calculated_price - b.calculated_price)
-    } else if (sortBy === 'price_desc') {
-      shaped.sort((a, b) => b.calculated_price - a.calculated_price)
-    } else if (sortBy === 'created_at') {
-      shaped.sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+      const sortProducts = (items: any[]) => {
+        if (sortBy === 'price_asc') {
+          items.sort((a, b) => a.calculated_price - b.calculated_price)
+        } else if (sortBy === 'price_desc') {
+          items.sort((a, b) => b.calculated_price - a.calculated_price)
+        } else if (sortBy === 'created_at') {
+          items.sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )
+        }
+        return items
+      }
+
+      const limit = 12
+
+      if (hasClientMetadataFilters) {
+        let pageParam = 1
+        let nextPage: number | null = 1
+        const allProducts: any[] = []
+
+        while (nextPage) {
+          const response = await getProductsList({
+            pageParam,
+            queryParams: { ...baseQueryParams, limit },
+            countryCode,
+          })
+          const batch = response.response.products || []
+          allProducts.push(...batch)
+          nextPage = response.nextPage
+          if (!nextPage || batch.length === 0) break
+          pageParam = nextPage
+        }
+
+        const filtered = sortProducts(
+          allProducts.filter(matchesMetadata).map(shapeProduct)
+        )
+        count = filtered.length
+        const start = (pageNumber - 1) * limit
+        results = filtered.slice(start, start + limit)
+      } else {
+        const { products: fallbackProducts, count: fallbackCount } =
+          await getProductsList({
+            pageParam: pageNumber,
+            queryParams: { ...baseQueryParams, limit },
+            countryCode,
+          }).then(({ response }) => response)
+
+        results = sortProducts((fallbackProducts || []).map(shapeProduct))
+        count = fallbackCount ?? results.length
+      }
+    } catch (fallbackErr) {
+      results = []
+      count = 0
     }
-
-    results = shaped
-    count = shaped.length
   }
 
   // Recommended products
